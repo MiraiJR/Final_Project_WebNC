@@ -18,6 +18,7 @@ import { AccountRespDTO } from './dto/response/AccountRespDTO';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { ForgotPasswordReqDTO } from './dto/request/ForgotPasswordReq';
+import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
 
 @Controller('/auth')
 export class AuthController {
@@ -74,5 +75,13 @@ export class AuthController {
     this.authService.forgotPassword(email);
 
     return 'Please! Check your email to change your password!';
+  }
+
+  @Post('/change-password')
+  @HttpCode(HttpStatus.OK)
+  async handleChangePassword(@Body() dataReq: ChangePasswordReqDTO) {
+    await this.authService.changePassword(dataReq);
+
+    return 'Change password successfully!';
   }
 }

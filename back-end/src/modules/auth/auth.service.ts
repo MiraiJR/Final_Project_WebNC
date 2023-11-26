@@ -16,6 +16,7 @@ import { RefreshTokenReqDTO } from './dto/request/RefreshTokenReq';
 import { AccountRespDTO } from './dto/response/AccountRespDTO';
 import { PayloadToken } from 'src/shared/types/PayloadToken';
 import { MailService } from '../mail/mail.service';
+import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
 
 @Injectable()
 export class AuthService {
@@ -150,6 +151,28 @@ export class AuthService {
     this.mailService.sendMailForgetPassword(email, token);
   }
 
+  async changePassword(dataReq: ChangePasswordReqDTO) {
+    const { password, token } = dataReq;
+
+    try {
+      const { userId } = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_FORGOT_PASSWORD_KEY'),
+      });
+
+      const matchedUser = await this.userService.findById(userId);
+
+      const salt = await SALT_HASH_PWD;
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      await this.userService.updateUser({
+        ...matchedUser,
+        password: hashedPassword,
+      });
+    } catch (error) {
+      throw new ForbiddenException('Token is not valid!');
+    }
+  }
+
   signAccessToken(payload: number): string {
     return this.jwtService.sign(
       {
@@ -189,11 +212,11 @@ export class AuthService {
   asignForgotPasswordToken(userId: number): string {
     return this.jwtService.sign(
       {
-        user: userId,
+        userId,
       },
       {
-        secret: this.configService.get('JWT_ACTIVE_EMAIL_KEY'),
-        expiresIn: this.configService.get('JWT_ACTIVE_EMAIL_EXPIRED'),
+        secret: this.configService.get('JWT_FORGOT_PASSWORD_KEY'),
+        expiresIn: this.configService.get('JWT_FORGOT_PASSWORD_EXPIRED'),
       },
     );
   }
