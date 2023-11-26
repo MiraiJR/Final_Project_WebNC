@@ -6,19 +6,25 @@ import {
   HttpStatus,
   Post,
   Query,
+  Redirect,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginReqDTO } from './dto/request/LoginReq';
 import { RegisterReqDTO } from './dto/request/RegisterReq';
-import { AuthGuard } from 'src/shared/guards/AuthGuard';
-import UserDecorator from 'src/shared/decorators/user.decorator';
 import { RefreshTokenReqDTO } from './dto/request/RefreshTokenReq';
 import { AccountRespDTO } from './dto/response/AccountRespDTO';
+import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
+import { ForgotPasswordReqDTO } from './dto/request/ForgotPasswordReq';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private configService: ConfigService,
+  ) {}
 
   @Post('/login')
   @HttpCode(HttpStatus.OK)
@@ -50,9 +56,23 @@ export class AuthController {
 
   @Get('/verify-email')
   @HttpCode(HttpStatus.OK)
-  async handleVerifyEmail(@Query('token') token: string) {
+  async handleVerifyEmail(
+    @Query('token') token: string,
+    @Res() res: Response,
+  ): Promise<void> {
     await this.authService.verifyEmailToCreateUser(token);
 
-    return 'Verify email successfully!';
+    return res.redirect(302, `${process.env.URL_FE}/auth/sign-in`);
+  }
+
+  @Post('/forgot-password')
+  @HttpCode(HttpStatus.OK)
+  async handleForgotPassword(
+    @Body() dataReq: ForgotPasswordReqDTO,
+  ): Promise<string> {
+    const { email } = dataReq;
+    this.authService.forgotPassword(email);
+
+    return 'Please! Check your email to change your password!';
   }
 }

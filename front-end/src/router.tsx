@@ -2,6 +2,7 @@ import { createBrowserRouter, Link } from "react-router-dom";
 import RegisterPage from "./application/auth-page/register/page";
 import LoginPage from "./application/auth-page/login/page";
 import ForgotPasswordPage from "./application/auth-page/forgot-password/page";
+import ChangePasswordPage from "./application/auth-page/change-password/page";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "forgot-password",
         element: <ForgotPasswordPage />,
+      },
+      {
+        path: "change-password",
+        element: <ChangePasswordPage />,
       },
     ],
   },

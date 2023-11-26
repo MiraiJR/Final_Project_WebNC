@@ -7,11 +7,9 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
-
-interface IFormInput {
-  email: string;
-  password: string;
-}
+import AuthService from "@/shared/services/AuthService";
+import JwtStorage from "@/shared/storages/JwtStorage";
+import { toast } from "react-toastify";
 
 const schemaValidation = yup
   .object({
@@ -35,12 +33,18 @@ const LoginForm = () => {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<IFormInput>({
+  } = useForm<SigninReq>({
     resolver: yupResolver(schemaValidation),
   });
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    // call api
-    console.log(data);
+  const onSubmit: SubmitHandler<SigninReq> = async (loginReqData) => {
+    try {
+      const { data } = await AuthService.sigin(loginReqData);
+
+      JwtStorage.setToken(data);
+      toast.success("Login successfully!");
+    } catch (error) {
+      toast.error("Internal server error");
+    }
   };
 
   return (

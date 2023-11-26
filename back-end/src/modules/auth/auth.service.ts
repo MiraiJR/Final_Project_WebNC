@@ -138,6 +138,18 @@ export class AuthService {
     }
   }
 
+  async forgotPassword(email: string) {
+    const matchedUser = await this.userService.findByEmail(email);
+
+    if (!matchedUser) {
+      throw new NotFoundException(`Cannot found user with email [${email}]`);
+    }
+
+    const token = this.asignForgotPasswordToken(matchedUser.id);
+
+    this.mailService.sendMailForgetPassword(email, token);
+  }
+
   signAccessToken(payload: number): string {
     return this.jwtService.sign(
       {
@@ -166,6 +178,18 @@ export class AuthService {
     return this.jwtService.sign(
       {
         user: payload,
+      },
+      {
+        secret: this.configService.get('JWT_ACTIVE_EMAIL_KEY'),
+        expiresIn: this.configService.get('JWT_ACTIVE_EMAIL_EXPIRED'),
+      },
+    );
+  }
+
+  asignForgotPasswordToken(userId: number): string {
+    return this.jwtService.sign(
+      {
+        user: userId,
       },
       {
         secret: this.configService.get('JWT_ACTIVE_EMAIL_KEY'),

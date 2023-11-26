@@ -3,6 +3,8 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
 import * as yup from "yup";
+import { toast } from "react-toastify";
+import AuthService from "@/shared/services/AuthService";
 
 interface IFormInput {
   email: string;
@@ -22,9 +24,17 @@ const ForgotPasswordForm = () => {
   } = useForm<IFormInput>({
     resolver: yupResolver(schemaValidation),
   });
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    // call api
-    console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = async (forgotPasswordReqData) => {
+    try {
+      const { data } = await AuthService.forgotPassowrd(
+        forgotPasswordReqData.email
+      );
+
+      toast.success(data);
+    } catch (error: any) {
+      console.log(error);
+      toast.error(error.message);
+    }
   };
 
   return (

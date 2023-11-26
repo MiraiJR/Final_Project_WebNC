@@ -1,17 +1,22 @@
+import AuthService from "@/shared/services/AuthService";
 import {
+  MAX_LENGTH_INPUT_STRING,
   MAX_LENGTH_PASSWORD,
+  MIN_LENGTH_INPUT_STRING,
   MIN_LENGTH_PASSWORD,
 } from "@/shared/utils/constant";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import * as yup from "yup";
 
 interface IFormInput {
   email: string;
   password: string;
   confirmPassword: string;
+  fullname: string;
 }
 
 const schemaValidation = yup
@@ -40,10 +45,22 @@ const schemaValidation = yup
         `Confirm password must be at least ${MAX_LENGTH_PASSWORD} characters long`
       )
       .oneOf([yup.ref("password"), ""], "Confirm password must match"),
+    fullname: yup
+      .string()
+      .required("Fullname is required")
+      .min(
+        MIN_LENGTH_INPUT_STRING,
+        `Confirm password must be at least ${MIN_LENGTH_INPUT_STRING} characters long`
+      )
+      .max(
+        MAX_LENGTH_INPUT_STRING,
+        `Confirm password must be at least ${MAX_LENGTH_INPUT_STRING} characters long`
+      ),
   })
   .required();
 
 const RegisterForm = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -51,9 +68,15 @@ const RegisterForm = () => {
   } = useForm<IFormInput>({
     resolver: yupResolver(schemaValidation),
   });
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    // call api
-    console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = async (registerReqData) => {
+    try {
+      const { data } = await AuthService.register({ ...registerReqData });
+
+      toast.success(data);
+      navigate("/auth/sign-in");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -63,6 +86,14 @@ const RegisterForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-5 my-10"
       >
+        <TextField
+          label="Full name"
+          variant="outlined"
+          {...register("fullname")}
+          className="w-[400px]"
+          error={errors.fullname ? true : false}
+          helperText={errors.fullname?.message}
+        />
         <TextField
           type="email"
           label="Email"

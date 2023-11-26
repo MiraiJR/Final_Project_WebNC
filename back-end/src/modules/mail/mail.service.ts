@@ -34,7 +34,7 @@ export class MailService {
     );
   }
 
-  async sendMailForgetPassword(email: string, content: string) {
+  async sendMailForgetPassword(email: string, token: string) {
     const title = 'FORGOT PASSWORD';
 
     this.Transporter.sendMail(
@@ -45,7 +45,7 @@ export class MailService {
         html: `
         <div>Hello bạn,</div>
         <div>Đổi mật khẩu theo link: </div>
-          <a href='${process.env.URL_CHANGEPASSWORD}?token=${content}' style='font-size: 30px; margin-left: 10px; color: red; text-align: center; padding: 10px;'>Nhấn vào link này để xác nhận đổi mật khẩu</a>
+          <a href='${process.env.URL_FE}/auth/change-password?token=${token}' style='font-size: 30px; margin-left: 10px; color: red; text-align: center; padding: 10px;'>Nhấn vào link này để xác nhận đổi mật khẩu</a>
         <div>Link này chỉ tồn tại trong vòng 5 phút. Vui lòng click vào để thực hiện đổi mật khẩu.</div>
         <div>
           <div style='text-align: center;'>MangaHay cảm ơn bạn đã sử dụng website.</div>
