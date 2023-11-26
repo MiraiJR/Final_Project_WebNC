@@ -1,25 +1,23 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
-import { Account } from '../account/account.entity';
+import { UserRole } from 'src/shared/types/EnumUserRole';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   email: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: false })
   fullname: string;
 
-  @OneToOne(() => Account, (account) => account.username)
-  @JoinColumn({ name: 'account_pk' })
-  account: Account;
+  @Column({ nullable: false })
+  password: string;
+
+  @Column({ nullable: true, name: 'access_token' })
+  accessToken: string;
+
+  @Column({ nullable: true, name: 'refresh_token' })
+  refreshToken: string;
 }
