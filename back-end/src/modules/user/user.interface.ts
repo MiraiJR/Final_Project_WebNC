@@ -1,8 +1,8 @@
-import { Account } from '../account/account.entity';
-
 export interface IUser {
   id?: number;
   email?: string;
-  fullname: string;
-  account: Account;
+  fullname?: string;
+  password?: string;
+  accessToken?: string;
+  refreshToken?: string;
 }

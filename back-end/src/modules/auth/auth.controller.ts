@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
@@ -11,8 +13,8 @@ import { LoginReqDTO } from './dto/request/LoginReq';
 import { RegisterReqDTO } from './dto/request/RegisterReq';
 import { AuthGuard } from 'src/shared/guards/AuthGuard';
 import UserDecorator from 'src/shared/decorators/user.decorator';
-import { AccountRespDTO } from '../account/dto/response/AccountResp';
 import { RefreshTokenReqDTO } from './dto/request/RefreshTokenReq';
+import { AccountRespDTO } from './dto/response/AccountRespDTO';
 
 @Controller('/auth')
 export class AuthController {
@@ -33,16 +35,7 @@ export class AuthController {
   ): Promise<string> {
     await this.authService.register(registerReqDto);
 
-    return 'Register successfully!';
-  }
-
-  @UseGuards(AuthGuard)
-  @Post('/logout')
-  @HttpCode(HttpStatus.OK)
-  async handleLogout(@UserDecorator() username: string): Promise<string> {
-    await this.authService.logout(username);
-
-    return 'Logout successfully!';
+    return 'Please! Check your email to verify your account!';
   }
 
   @Post('/refresh-token')
@@ -53,5 +46,13 @@ export class AuthController {
     const accountResp = await this.authService.refreshToken(dataReq);
 
     return accountResp;
+  }
+
+  @Get('/verify-email')
+  @HttpCode(HttpStatus.OK)
+  async handleVerifyEmail(@Query('token') token: string) {
+    await this.authService.verifyEmailToCreateUser(token);
+
+    return 'Verify email successfully!';
   }
 }
