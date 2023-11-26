@@ -3,6 +3,7 @@ import RegisterPage from "./application/auth-page/register/page";
 import LoginPage from "./application/auth-page/login/page";
 import ForgotPasswordPage from "./application/auth-page/forgot-password/page";
 import ChangePasswordPage from "./application/auth-page/change-password/page";
+import AuthGuard from "./shared/components/guards/AuthGuard";
 
 const router = createBrowserRouter([
   {
@@ -23,19 +24,35 @@ const router = createBrowserRouter([
     children: [
       {
         path: "register",
-        element: <RegisterPage />,
+        element: (
+          <AuthGuard>
+            <RegisterPage />
+          </AuthGuard>
+        ),
       },
       {
         path: "sign-in",
-        element: <LoginPage />,
+        element: (
+          <AuthGuard>
+            <LoginPage />
+          </AuthGuard>
+        ),
       },
       {
         path: "forgot-password",
-        element: <ForgotPasswordPage />,
+        element: (
+          <AuthGuard>
+            <ForgotPasswordPage />
+          </AuthGuard>
+        ),
       },
       {
         path: "change-password",
-        element: <ChangePasswordPage />,
+        element: (
+          <AuthGuard>
+            <ChangePasswordPage />
+          </AuthGuard>
+        ),
       },
     ],
   },

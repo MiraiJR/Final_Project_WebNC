@@ -8,6 +8,8 @@ const AuthService = {
     axiosClient.post<string>(`/auth/forgot-password`, {
       email: data,
     }),
+  changePassword: (data: ChangePasswordReq) =>
+    axiosClient.post<string>(`/auth/change-password`, data),
 };
 
 export default AuthService;

@@ -6,6 +6,9 @@ import {
   MAX_LENGTH_PASSWORD,
   MIN_LENGTH_PASSWORD,
 } from "@/shared/utils/constant";
+import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import AuthService from "@/shared/services/AuthService";
 
 interface IFormInput {
   password: string;
@@ -41,6 +44,8 @@ const schemaValidation = yup
   .required();
 
 const ChangePasswordForm = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -48,9 +53,27 @@ const ChangePasswordForm = () => {
   } = useForm<IFormInput>({
     resolver: yupResolver(schemaValidation),
   });
-  const onSubmit: SubmitHandler<IFormInput> = (data) => {
-    // call api
-    console.log(data);
+  const onSubmit: SubmitHandler<IFormInput> = async (changePasswordReqData) => {
+    const urlParams = new URLSearchParams(location.search);
+    const token = urlParams.get("token");
+
+    if (!token || token === "") {
+      toast.error("Invalid token");
+      navigate("/auth/sign-in");
+      return;
+    }
+
+    try {
+      const { data } = await AuthService.changePassword({
+        ...changePasswordReqData,
+        token,
+      });
+
+      toast.success(data);
+      navigate("/auth/sign-in");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (

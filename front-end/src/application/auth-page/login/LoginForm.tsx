@@ -5,7 +5,7 @@ import {
 import { Button, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import AuthService from "@/shared/services/AuthService";
 import JwtStorage from "@/shared/storages/JwtStorage";
@@ -29,6 +29,7 @@ const schemaValidation = yup
   .required();
 
 const LoginForm = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -42,8 +43,9 @@ const LoginForm = () => {
 
       JwtStorage.setToken(data);
       toast.success("Login successfully!");
-    } catch (error) {
-      toast.error("Internal server error");
+      navigate("/");
+    } catch (error: any) {
+      toast.error(error.message);
     }
   };
 

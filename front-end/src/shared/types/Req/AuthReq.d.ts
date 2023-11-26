@@ -8,3 +8,8 @@ type RegisterReq = {
   password: string;
   fullname: string;
 };
+
+type ChangePasswordReq = {
+  token: string;
+  password: string;
+};
