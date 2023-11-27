@@ -1,10 +1,10 @@
-import { IsNotEmpty, Length } from 'class-validator';
+import { IsEmail, IsNotEmpty, Length } from 'class-validator';
 export class LoginReqDTO {
-  @IsNotEmpty({ message: 'Username cannot be empty!' })
-  @Length(4, 255, { message: 'Username has 4 characters at least' })
-  username: string;
+  @IsNotEmpty({ message: 'Email cannot be empty!' })
+  @IsEmail()
+  email: string;
 
   @IsNotEmpty({ message: 'Password cannot be empty' })
-  @Length(8, 255, { message: 'Password has 8 characters at least' })
+  @Length(8, 256, { message: 'Password has 8 characters at least' })
   password: string;
 }

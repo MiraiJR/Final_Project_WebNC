@@ -5,35 +5,35 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
-import { AccountService } from '../account/account.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginReqDTO } from './dto/request/LoginReq';
 import * as bcrypt from 'bcrypt';
 import { ConfigService } from '@nestjs/config';
-import { AccountRespDTO } from '../account/dto/response/AccountResp';
 import { RegisterReqDTO } from './dto/request/RegisterReq';
 import { SALT_HASH_PWD } from 'src/shared/configs/salt';
-import { Account } from '../account/account.entity';
 import { UserService } from '../user/user.service';
-import { User } from '../user/user.entity';
 import { RefreshTokenReqDTO } from './dto/request/RefreshTokenReq';
+import { AccountRespDTO } from './dto/response/AccountRespDTO';
+import { PayloadToken } from 'src/shared/types/PayloadToken';
+import { MailService } from '../mail/mail.service';
+import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private accountService: AccountService,
     private jwtService: JwtService,
     private configService: ConfigService,
     private userService: UserService,
+    private mailService: MailService,
   ) {}
 
   async login(loginReqDto: LoginReqDTO): Promise<AccountRespDTO> {
-    const matchedAccount = await this.accountService.findAccountByUsername(
-      loginReqDto.username,
+    const matchedAccount = await this.userService.findByEmail(
+      loginReqDto.email,
     );
 
     if (!matchedAccount) {
-      throw new BadRequestException('Username or password is wrong');
+      throw new BadRequestException('Email or password is wrong');
     }
 
     const isMatchedPassword = await bcrypt.compare(
@@ -42,18 +42,18 @@ export class AuthService {
     );
 
     if (!isMatchedPassword) {
-      throw new BadRequestException('Username or password is wrong');
+      throw new BadRequestException('Email or password is wrong');
     }
 
-    const accessToken = this.signAccessToken(matchedAccount.username);
-    const refreshToken = this.signRefreshToken(matchedAccount.username);
+    const accessToken = this.signAccessToken(matchedAccount.id);
+    const refreshToken = this.signRefreshToken(matchedAccount.id);
 
     const accountResp: AccountRespDTO = {
       accessToken,
       refreshToken,
     };
 
-    await this.accountService.updateAccount({
+    await this.userService.updateUser({
       ...matchedAccount,
       accessToken,
       refreshToken,
@@ -63,49 +63,25 @@ export class AuthService {
   }
 
   async register(registerReqDto: RegisterReqDTO): Promise<void> {
-    const isExistedUsername = await this.accountService.findAccountByUsername(
-      registerReqDto.username,
+    const isExistedEmail = await this.userService.findByEmail(
+      registerReqDto.email,
     );
 
-    if (isExistedUsername) {
-      throw new BadRequestException('Username is existed!');
+    if (isExistedEmail) {
+      throw new BadRequestException('Email is existed!');
     }
 
     const salt = await SALT_HASH_PWD;
     const password = await bcrypt.hash(registerReqDto.password, salt);
 
-    let newAccount: Account = {
-      username: registerReqDto.username,
+    const payloadToken: PayloadToken = {
+      ...registerReqDto,
       password,
-      refreshToken: null,
-      accessToken: null,
     };
 
-    newAccount = await this.accountService.createAccount(newAccount);
+    const token = this.signActiveMailToken(payloadToken);
 
-    await this.userService.createUser({
-      email: null,
-      fullname: `user_${new Date().getTime()}`,
-      account: newAccount,
-    });
-  }
-
-  async logout(username: string): Promise<void> {
-    const matchedAccount = await this.accountService.findAccountByUsername(
-      username,
-    );
-
-    if (!matchedAccount) {
-      throw new NotFoundException('Account not found');
-    }
-
-    const updatedAccount: Account = {
-      ...matchedAccount,
-      accessToken: null,
-      refreshToken: null,
-    };
-
-    await this.accountService.updateAccount(updatedAccount);
+    this.mailService.sendMailVerifyEmail(registerReqDto.email, token);
   }
 
   async refreshToken(dataReq: RefreshTokenReqDTO): Promise<AccountRespDTO> {
@@ -116,23 +92,22 @@ export class AuthService {
         secret: this.configService.get<string>('JWT_REFRESH_KEY'),
       });
 
-      const username = payload.user;
-      const matchedAccount = await this.accountService.findAccountByUsername(
-        username,
-      );
+      const userId = payload.user;
+      const matchedAccount = await this.userService.findById(userId);
+
       if (!matchedAccount) {
         throw new NotFoundException('Account not found');
       }
 
-      const accessToken = this.signAccessToken(matchedAccount.username);
-      const refreshToken = this.signRefreshToken(matchedAccount.username);
+      const accessToken = this.signAccessToken(matchedAccount.id);
+      const refreshToken = this.signRefreshToken(matchedAccount.id);
 
       const accountResp: AccountRespDTO = {
         accessToken,
         refreshToken,
       };
 
-      await this.accountService.updateAccount({
+      await this.userService.updateUser({
         ...matchedAccount,
         accessToken,
         refreshToken,
@@ -144,7 +119,61 @@ export class AuthService {
     }
   }
 
-  signAccessToken(payload: string): string {
+  async verifyEmailToCreateUser(token: string): Promise<void> {
+    try {
+      const { user } = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_ACTIVE_EMAIL_KEY'),
+      });
+
+      const isExistedEmail = await this.userService.findByEmail(user.email);
+
+      if (isExistedEmail) {
+        throw new BadRequestException('Email is existed!');
+      }
+
+      await this.userService.createUser({
+        ...user,
+      });
+    } catch (error) {
+      throw new ForbiddenException('Token is not valid!');
+    }
+  }
+
+  async forgotPassword(email: string) {
+    const matchedUser = await this.userService.findByEmail(email);
+
+    if (!matchedUser) {
+      throw new NotFoundException(`Cannot found user with email [${email}]`);
+    }
+
+    const token = this.asignForgotPasswordToken(matchedUser.id);
+
+    this.mailService.sendMailForgetPassword(email, token);
+  }
+
+  async changePassword(dataReq: ChangePasswordReqDTO) {
+    const { password, token } = dataReq;
+
+    try {
+      const { userId } = await this.jwtService.verifyAsync(token, {
+        secret: this.configService.get<string>('JWT_FORGOT_PASSWORD_KEY'),
+      });
+
+      const matchedUser = await this.userService.findById(userId);
+
+      const salt = await SALT_HASH_PWD;
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      await this.userService.updateUser({
+        ...matchedUser,
+        password: hashedPassword,
+      });
+    } catch (error) {
+      throw new ForbiddenException('Token is not valid!');
+    }
+  }
+
+  signAccessToken(payload: number): string {
     return this.jwtService.sign(
       {
         user: payload,
@@ -156,7 +185,7 @@ export class AuthService {
     );
   }
 
-  signRefreshToken(payload: string): string {
+  signRefreshToken(payload: number): string {
     return this.jwtService.sign(
       {
         user: payload,
@@ -164,6 +193,30 @@ export class AuthService {
       {
         secret: this.configService.get('JWT_REFRESH_KEY'),
         expiresIn: this.configService.get('JWT_REFRESH_EXPIRED'),
+      },
+    );
+  }
+
+  signActiveMailToken(payload: PayloadToken): string {
+    return this.jwtService.sign(
+      {
+        user: payload,
+      },
+      {
+        secret: this.configService.get('JWT_ACTIVE_EMAIL_KEY'),
+        expiresIn: this.configService.get('JWT_ACTIVE_EMAIL_EXPIRED'),
+      },
+    );
+  }
+
+  asignForgotPasswordToken(userId: number): string {
+    return this.jwtService.sign(
+      {
+        userId,
+      },
+      {
+        secret: this.configService.get('JWT_FORGOT_PASSWORD_KEY'),
+        expiresIn: this.configService.get('JWT_FORGOT_PASSWORD_EXPIRED'),
       },
     );
   }
