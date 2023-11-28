@@ -4,16 +4,12 @@ import LoginPage from "./application/auth-page/login/page";
 import ForgotPasswordPage from "./application/auth-page/forgot-password/page";
 import ChangePasswordPage from "./application/auth-page/change-password/page";
 import AuthGuard from "./shared/components/guards/AuthGuard";
+import HomePage from "./application/home-page/page";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <div>
-        <h1>Hello World</h1>
-        <Link to="about">About Us</Link>
-      </div>
-    ),
+    element: <HomePage />,
   },
   {
     path: "about",
