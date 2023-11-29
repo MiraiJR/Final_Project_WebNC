@@ -12,4 +12,18 @@ export class ClassUserRepository extends Repository<ClassUser> {
   ) {
     super(repository.target, repository.manager, repository.queryRunner);
   }
+
+  async findUserByClassId(classId: string) : Promise<ClassUser[]>{
+    return await this.find({
+      where: { classId },
+      relations: ['user'],
+    });
+  }
+
+  async findClassesByUserId(userId: number): Promise<ClassUser[]>{
+   return await this.find({
+      where: { userId },
+      relations: ['classroom', 'classroom.creator'],
+  });
+  }
 }

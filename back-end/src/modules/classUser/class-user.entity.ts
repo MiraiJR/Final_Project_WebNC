@@ -5,7 +5,6 @@ import { User } from "../user/user.entity";
 
 @Entity('class_user')
 export class ClassUser{
-
     @ManyToOne(()=>Class,{eager: true, nullable:false})
     @JoinColumn({name: 'classId'})
     classroom : Class

@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity,JoinColumn,JoinTable,ManyToMany,ManyToOne,OneToOne,PrimaryGeneratedColumn } from "typeorm";
+import { BeforeInsert, Column, CreateDateColumn, Entity,JoinColumn,ManyToOne,PrimaryGeneratedColumn } from "typeorm";
 import { v4 as uuidv4 } from 'uuid';
 import { User } from "../user/user.entity";
 
@@ -11,7 +11,10 @@ export class Class{
     @Column({nullable:false})
     title:string;
 
-    @ManyToOne(()=>User, user=>user.id,{nullable:false})
+    @CreateDateColumn()
+    created_at: Date
+
+    @ManyToOne(()=>User,{nullable:false,cascade: true })
     @JoinColumn()
     creator: User;
 

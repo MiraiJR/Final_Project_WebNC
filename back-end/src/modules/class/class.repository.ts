@@ -12,4 +12,14 @@ export class ClassRepository extends Repository<Class> {
   ) {
     super(repository.target, repository.manager, repository.queryRunner);
   }
+
+  async findClassByIdCode(idCode: string) : Promise<Class>{
+    return await this.findOne({
+      where: {
+          idCode,
+        },
+        relations:
+          ['creator']
+    })
+  }
 }

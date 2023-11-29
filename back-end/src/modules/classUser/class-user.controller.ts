@@ -11,10 +11,4 @@ export class ClassUserController{
         private readonly classUserService: ClassUserService,
         ) {}
 
-    
-    @Post('/join/:classCodeId')
-    @HttpCode(HttpStatus.CREATED)
-    async handleJoinClass(@Param('classCodeId') classCodeId : string, @UserId() userId: number): Promise<String>{
-        return this.classUserService.joinClass(classCodeId,userId);
-    }
 }

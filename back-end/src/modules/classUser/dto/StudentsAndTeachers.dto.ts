@@ -1,7 +1,7 @@
 
-import { UserDataRespDTO } from "./UserDataRes.dto";
+import { MemberDataRespDTO } from "./MemberDataRes.dto";
 
 export class StudentsAndTeachersTdo{
-    students: UserDataRespDTO[];
-    teachers: UserDataRespDTO[];
+    students: MemberDataRespDTO[];
+    teachers: MemberDataRespDTO[];
 }

@@ -6,31 +6,42 @@ import { Class } from "../class/class.entity";
 import { ClassResponseDto } from "../class/dto/class/ClassResponse.dto";
 import { UserRole } from "src/shared/types/EnumUserRole";
 import { User } from "../user/user.entity";
-import { UserDataRespDTO } from "./dto/UserDataRes.dto";
+import { MemberDataRespDTO } from "./dto/MemberDataRes.dto";
 import { StudentsAndTeachersTdo } from "./dto/StudentsAndTeachers.dto";
-
+import { JwtService } from "@nestjs/jwt";
+import { RoleToken } from "src/shared/types/RoleToken";
+import { ConfigService } from "@nestjs/config";
+import { forwardRef, Inject } from '@nestjs/common';
+import { ClassUser } from "./class-user.entity";
 @Injectable()
 export class ClassUserService{
+    
     constructor(
         private classUserRepository: ClassUserRepository,
-        private classService: ClassService,
+        //private classService: ClassService,
         private userService: UserService,
+        private jwtService: JwtService,
+        private configService: ConfigService,
         ) {}
 
-    async joinClass(classIdCode: string, userId: number): Promise<string>{
-        const classFound = await this.classService.findByIdCode(classIdCode);
-        if(!classFound){
-            throw new BadRequestException("Class Code is not exist")
-        }
+    async addMemberToClass(classroom: Class, userId: number, role: UserRole = UserRole.HS): Promise<string>{
         const user = await this.userService.findById(userId);
         if(!user){
             throw new BadRequestException("User not exist")
         }
 
-        const newClassUser = this.classUserRepository.create({classroom:classFound, user:user})
+        const newClassUser = this.classUserRepository.create({classroom:classroom, user:user, role})
         await this.classUserRepository.save(newClassUser); 
-        return "Join Class success";
+
+        //generate and return  token
+        const payload : RoleToken= {
+            userId : newClassUser.userId,
+            classCodeId: newClassUser.classId,
+            role: newClassUser.role,
+        } 
+        return await this.signRoleToken(payload);
     }
+
 
     async getClassesByUserId(userId: number): Promise<ClassResponseDto[]>{
         const user = await this.userService.findById(userId);
@@ -38,43 +49,83 @@ export class ClassUserService{
             throw new BadRequestException("User not exist")
         }
 
-        const classUsers = await this.classUserRepository.find({
-            where: { userId },
-            relations: ['classroom', 'classroom.creator'],
-        });
+        const classUsers = await this.classUserRepository.findClassesByUserId(userId);
         
         if (!classUsers || classUsers.length === 0) {
         return [];
         }
         
-        return classUsers.map((classUser) => this.mapToClassResponseDto(classUser.classroom));
+        return classUsers.map((classUser) => this.mapClassToClassResponseDto(classUser.classroom));
     }
 
-    private mapToClassResponseDto(classroom: Class): ClassResponseDto {
+    private mapClassToClassResponseDto(classroom: Class): ClassResponseDto {
         const { title, creator, idCode } = classroom;
-        return {
+        const ClassResponse: ClassResponseDto = {
             title,
             creatorId: creator.id,
             idCode,
-        };
+        }
+        return ClassResponse;
     }
 
     async getStudentsAndTeachersByClassId(classId: string): Promise<StudentsAndTeachersTdo> {
-        const classUsers = await this.classUserRepository.find({
-            where: { classId },
-            relations: ['user'],
-        });
-
-        const students = classUsers.filter((classUser) => classUser.role === UserRole.HS).map((classUser) => this.mapToUserDataRespDto(classUser.user));
-        const teachers = classUsers.filter((classUser) => classUser.role === UserRole.GV).map((classUser) => this.mapToUserDataRespDto(classUser.user));
+        const classUsers = await this.classUserRepository.findUserByClassId(classId);
+        const students = classUsers.filter((classUser) => classUser.role === UserRole.HS ||classUser.role ===UserRole.AD).map((classUser) => this.mapUserToMemberDataRespDto(classUser.user));
+        const teachers = classUsers.filter((classUser) => classUser.role === UserRole.GV).map((classUser) => this.mapUserToMemberDataRespDto(classUser.user));
 
         return { students, teachers };
     }
 
-    private mapToUserDataRespDto(user: User): UserDataRespDTO {
+    private mapUserToMemberDataRespDto(user: User): MemberDataRespDTO {
         const { email, fullname, id } = user;
-        return { email, fullname, id };
+        const MemberDataResp : MemberDataRespDTO = {
+            email, 
+            fullname, 
+            id
+        }
+        return MemberDataResp;
     }
 
-    
+    async isUserInClass(userId:number, classId:string){
+        const classUser = await this.classUserRepository.find({
+            where:{classId, userId}
+        })
+        console.log(classUser);
+        if(classUser){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    async generateRoleToken(userId,classId){
+        const classUser:ClassUser = await this.classUserRepository.findOne({
+            where:{classId, userId}
+        })
+
+        if(!classUser){
+            throw new BadRequestException("User not member of Class");
+        }
+
+        const payload: RoleToken = {
+            userId: classUser.userId,
+            classCodeId: classUser.classId,
+            role: classUser.role,
+        }
+
+        const roleToken = await this.signRoleToken(payload);
+        //Update refresh token to db
+        return roleToken;
+    }
+
+    signRoleToken(payload: RoleToken):string{
+        return this.jwtService.sign(
+            payload
+        ,
+        {
+          secret: this.configService.get('JWT_ACCESS_KEY'), 
+          expiresIn: this.configService.get('JWT_REFRESH_EXPIRED'),
+        },
+        )
+    }
 }
