@@ -1,4 +1,5 @@
 import Body from "./Body";
+import Footer from "./Footer";
 import Header from "./Header";
 
 const HomePage = () => {
@@ -9,6 +10,9 @@ const HomePage = () => {
       </div>
       <div className="my-20">
         <Body />
+      </div>
+      <div className="bg-indigo-900 text-white p-10">
+        <Footer />
       </div>
     </div>
   );
