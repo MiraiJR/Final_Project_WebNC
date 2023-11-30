@@ -1,0 +1,23 @@
+import { Module, forwardRef } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Class } from './class.entity';
+import { ClassService } from './class.service';
+import { ClassController } from './class.controller';
+import { ClassRepository } from './class.repository';
+import { UserModule } from '../user/user.module';
+import { AuthGuard } from 'src/shared/guards/AuthGuard';
+import { ClassUserModule } from '../classUser/class-user.module';
+import { RoleGuard } from 'src/shared/guards/RoleGuard';
+import { JwtModule, JwtService } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+
+
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Class]),UserModule,JwtModule,ConfigModule, forwardRef(()=>ClassUserModule )],
+  providers: [ClassService,ClassRepository,JwtService,ConfigService],
+  controllers: [ClassController],
+  exports: [ClassService]
+})
+export class ClassModule {}
