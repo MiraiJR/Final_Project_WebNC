@@ -4,6 +4,12 @@ import LoginPage from "./application/auth-page/login/page";
 import ForgotPasswordPage from "./application/auth-page/forgot-password/page";
 import ChangePasswordPage from "./application/auth-page/change-password/page";
 import AuthGuard from "./shared/components/guards/AuthGuard";
+import { useAuth0 } from "@auth0/auth0-react";
+const Profile = () => {
+  const { user, isAuthenticated } = useAuth0();
+  console.log(user);
+  return isAuthenticated && user && <p>{user.name}</p>;
+};
 
 const router = createBrowserRouter([
   {
@@ -12,6 +18,7 @@ const router = createBrowserRouter([
       <div>
         <h1>Hello World</h1>
         <Link to="about">About Us</Link>
+        <Profile></Profile>
       </div>
     ),
   },

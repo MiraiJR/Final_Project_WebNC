@@ -5,4 +5,5 @@ export interface IUser {
   password?: string;
   accessToken?: string;
   refreshToken?: string;
+  socialId?: string;
 }

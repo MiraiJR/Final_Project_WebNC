@@ -15,7 +15,8 @@ type ChangePasswordReq = {
 };
 
 type LoginSocialReq = {
-  email: string | undefined,
-  name: string,
+  email: string,
+  verifyEmail: boolean;
+  fullname: string,
   socialId: string,
 }

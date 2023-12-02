@@ -20,4 +20,7 @@ export class User {
 
   @Column({ nullable: true, name: 'refresh_token' })
   refreshToken: string;
+
+  @Column({ nullable: true })
+  socialId: string;
 }

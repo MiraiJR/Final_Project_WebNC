@@ -19,7 +19,9 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { ForgotPasswordReqDTO } from './dto/request/ForgotPasswordReq';
 import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
-
+import { LoginSocialReqDTO } from './dto/request/LoginSocialReq';
+import { IsHaveAccountReqDTO } from './dto/request/IsHaveAccountReq';
+import { RegisterWithSocialAccountReqDTO } from './dto/request/RegisterWithSocialAccountReq';
 @Controller('/auth')
 export class AuthController {
   constructor(
@@ -83,5 +85,29 @@ export class AuthController {
     await this.authService.changePassword(dataReq);
 
     return 'Change password successfully!';
+  }
+
+  @Post('/login-social')
+  @HttpCode(HttpStatus.CREATED)
+  async handleLoginSocial(@Body() dataReq: LoginSocialReqDTO): Promise<AccountRespDTO> {
+    const accountResp = await this.authService.loginSocial(dataReq);
+
+    return accountResp;  
+  }
+
+  @Post('/register-social')
+  @HttpCode(HttpStatus.CREATED)
+  async handleRegisterWithSocialAcount(@Body() dataReq: RegisterWithSocialAccountReqDTO): Promise<AccountRespDTO> {
+    const accountResp = await this.authService.registerWithSocialAcount(dataReq);
+
+    return accountResp;  
+  }
+
+  @Post('/is-have-account')
+  @HttpCode(HttpStatus.OK)
+  async checkAccountExit(@Body() dataReq: IsHaveAccountReqDTO): Promise<boolean> {
+    console.log("is have account");
+    const isHaveAccount = await this.authService.isHaveAccount(dataReq);
+    return isHaveAccount;
   }
 }

@@ -28,6 +28,14 @@ export class UserService {
     });
   }
 
+  async findBySocialId(socialId: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: {
+        socialId: socialId ,
+      },
+    });
+  }
+
   async updateUser(user: IUser): Promise<User> {
     return this.userRepository.save(user);
   }

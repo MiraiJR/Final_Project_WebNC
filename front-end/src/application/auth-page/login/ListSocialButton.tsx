@@ -12,11 +12,24 @@ import { emailContext } from "./page";
 
 const sendUserDataToServer = async (userData: LoginSocialReq) => {
   try {
-    const { data } = await AuthService.loginSocial(userData);
+    const { data } = await AuthService.registerWithSocialAcount(userData);
     JwtStorage.setToken(data);
     toast.success("Login successfully!");
   } catch (error: any) {
     toast.error(error.message);
+  }
+};
+
+const checkExitAccountForThisSocialAccount = async (
+  socialId: string
+): Promise<boolean> => {
+  try {
+    const { data } = await AuthService.isHaveAccount(socialId);
+    toast.success("Check exit account successfully!");
+    return data;
+  } catch (error: any) {
+    toast.error(error.message);
+    return false;
   }
 };
 
@@ -27,30 +40,86 @@ const ListSocialButton = () => {
   const { isAuthenticated, user } = useAuth0();
   console.log(user?.nickname);
 
-  useEffect(() => {
-    console.log("useEffect called");
-    if (isAuthenticated && user && user.email === undefined) {
-      console.log("doesn't have email");
-      dispatch({ type: "TOGGLE_FORM" });
-    }
-  }, [isAuthenticated, user, dispatch, state.email]);
+  // useEffect(() => {
+  //   if (isAuthenticated && user) {
+  //     checkExitAccountForThisSocialAccount(user.sub!).then((isExit) => {
+  //       if (user.email === undefined && state.email === "") {
+  //         console.log("doesn't have email");
+  //         if (!isExit) {
+  //           dispatch({ type: "TOGGLE_FORM" });
+  //         }
+  //       }
+  //       if (user.email !== undefined || state.email !== "") {
+  //         console.log("verifyEmail");
+  //         const data: LoginSocialReq = {
+  //           email: user.email !== undefined ? user.email : state.email,
+  //           verifyEmail: user.email !== undefined ? true : false,
+  //           fullname: user.name!,
+  //           socialId: user.sub!,
+  //         };
+  //         sendUserDataToServer(data);
+  //         navigate("/");
+  //       }
+  //     });
+  //   }
+  // }, [isAuthenticated, user, dispatch, state.email]);
 
   useEffect(() => {
-    if (
-      isAuthenticated &&
-      user &&
-      (user.email !== undefined || state.email !== "")
-    ) {
-      console.log("verifyEmail");
-      const data: LoginSocialReq = {
-        email: state.email,
-        name: user.name!,
-        socialId: user.sub!,
-      };
-      sendUserDataToServer(data);
-      navigate("/");
+    if (isAuthenticated && user) {
+      checkExitAccountForThisSocialAccount(user.sub!).then(async (isExit) => {
+        if (isExit) {
+          try {
+            const { data } = await AuthService.loginSocial(user.sub!);
+            JwtStorage.setToken(data);
+            toast.success("Login successfully!");
+            navigate("/");
+          } catch (error: any) {
+            toast.error(error.message);
+          }
+        } else {
+          if (user.email === undefined && state.email === "") {
+            console.log("doesn't have email");
+
+            dispatch({ type: "TOGGLE_FORM" });
+          }
+          if (user.email !== undefined || state.email !== "") {
+            const data: LoginSocialReq = {
+              email: user.email !== undefined ? user.email : state.email,
+              verifyEmail: user.email !== undefined ? true : false,
+              fullname: user.name!,
+              socialId: user.sub!,
+            };
+            sendUserDataToServer(data);
+            navigate("/");
+          }
+        }
+      });
     }
-  }, [isAuthenticated, user, state.email]);
+  }, [isAuthenticated, user, dispatch, state.email]);
+  //   console.log("useEffect called");
+  //   if (isAuthenticated && user && user.email === undefined) {
+  //     console.log("doesn't have email");
+  //     dispatch({ type: "TOGGLE_FORM" });
+  //   }
+  // }, [isAuthenticated, user, dispatch, state.email]);
+
+  // useEffect(() => {
+  //   if (
+  //     isAuthenticated &&
+  //     user &&
+  //     (user.email !== undefined || state.email !== "")
+  //   ) {
+  //     console.log("verifyEmail");
+  //     const data: LoginSocialReq = {
+  //       email: user.email !== undefined ? user.email : state.email,
+  //       verifyEmail: user.email !== undefined ? true : false,
+  //       fullname: user.name!,
+  //       socialId: user.sub!,
+  //     };
+  //     sendUserDataToServer(data);
+  //     navigate("/");
+  //   }
+  // }, [isAuthenticated, user, state.email]);
 
   return (
     <>

@@ -15,9 +15,12 @@ import { UserService } from '../user/user.service';
 import { RefreshTokenReqDTO } from './dto/request/RefreshTokenReq';
 import { AccountRespDTO } from './dto/response/AccountRespDTO';
 import { PayloadToken } from 'src/shared/types/PayloadToken';
+import { SocialPayloadToken } from 'src/shared/types/SocialPayloadToken';
 import { MailService } from '../mail/mail.service';
 import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
-
+import { LoginSocialReqDTO } from './dto/request/LoginSocialReq';
+import { IsHaveAccountReqDTO } from './dto/request/IsHaveAccountReq';
+import {RegisterWithSocialAccountReqDTO} from './dto/request/RegisterWithSocialAccountReq'
 @Injectable()
 export class AuthService {
   constructor(
@@ -78,10 +81,68 @@ export class AuthService {
       ...registerReqDto,
       password,
     };
-
+    
     const token = this.signActiveMailToken(payloadToken);
 
     this.mailService.sendMailVerifyEmail(registerReqDto.email, token);
+  }
+  
+  async loginSocial(LoginSocialReq: LoginSocialReqDTO): Promise<AccountRespDTO>{
+    const isExistedAccount = await this.userService.findBySocialId(
+      LoginSocialReq.socialId,
+    );
+    const accessToken = this.signAccessToken(isExistedAccount.id);
+    const refreshToken = this.signRefreshToken(isExistedAccount.id);
+    const accountResp: AccountRespDTO = {
+      accessToken,
+      refreshToken,
+    };
+    await this.userService.updateUser({
+      ...isExistedAccount,
+      accessToken,
+      refreshToken,
+    });
+    return accountResp;
+  }
+
+  async registerWithSocialAcount(RegisterWithSocialAccountReq: RegisterWithSocialAccountReqDTO){
+    const isExistedAccount = await this.userService.findBySocialId(
+      RegisterWithSocialAccountReq.socialId,
+    );
+    if (isExistedAccount) {
+      throw new BadRequestException('Account is existed!');
+    }
+   
+    if ( RegisterWithSocialAccountReq.verifyEmail === true){
+      await this.userService.createUser({
+        ...RegisterWithSocialAccountReq,
+      });
+      return await this.loginSocial({
+        socialId: RegisterWithSocialAccountReq.socialId,
+      });
+    }else {
+      console.log("email doesn't verify");
+      
+      const socialPayloadToken: SocialPayloadToken = {
+        ...RegisterWithSocialAccountReq,
+      };
+      const token = this.signActiveMailToken(socialPayloadToken);
+
+    this.mailService.sendMailVerifyEmail(RegisterWithSocialAccountReq.email, token);
+
+    }
+  }
+
+  async isHaveAccount(IsHaveAccountReq: IsHaveAccountReqDTO): Promise<boolean>{
+     
+    const isExistedAccount = await this.userService.findBySocialId(
+      IsHaveAccountReq.socialId,
+    );
+    if (isExistedAccount) {
+      return true;
+    }else{
+      return false;
+    }
   }
 
   async refreshToken(dataReq: RefreshTokenReqDTO): Promise<AccountRespDTO> {
@@ -197,7 +258,7 @@ export class AuthService {
     );
   }
 
-  signActiveMailToken(payload: PayloadToken): string {
+  signActiveMailToken(payload: PayloadToken | SocialPayloadToken): string {
     return this.jwtService.sign(
       {
         user: payload,
