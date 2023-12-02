@@ -10,6 +10,7 @@ const AuthService = {
     }),
   changePassword: (data: ChangePasswordReq) =>
     axiosClient.post<string>(`/auth/change-password`, data),
+  loginSocial: (data: LoginSocialReq) => axiosClient.post<AuthToken>(`/auth/login-social`, data),
 };
 
 export default AuthService;
