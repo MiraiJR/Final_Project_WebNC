@@ -1,10 +1,11 @@
-import { createBrowserRouter, Link } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import RegisterPage from "./application/auth-page/register/page";
 import LoginPage from "./application/auth-page/login/page";
 import ForgotPasswordPage from "./application/auth-page/forgot-password/page";
 import ChangePasswordPage from "./application/auth-page/change-password/page";
 import AuthGuard from "./shared/components/guards/AuthGuard";
 import Root from "./application/root/Root";
+import ClassList from "./application/class-page/ClassList";
 
 const router = createBrowserRouter([
   {
@@ -12,6 +13,9 @@ const router = createBrowserRouter([
     element: (
       <Root></Root>
     ),
+    children: [
+      { index: true, element: <ClassList /> },
+    ],
   },
   {
     path: "about",
