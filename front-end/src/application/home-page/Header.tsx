@@ -1,9 +1,33 @@
 import logo from "@/shared/assets/logo.png";
 import person from "@/shared/assets/header-pic.png";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
+import Cookies from "universal-cookie";
+import { Button } from "@mui/material";
+
+const LogoutButton = () => {
+  const { logout } = useAuth0();
+  const handleOnClick = () => {
+    const cookies = new Cookies(null, { path: "/" });
+
+    cookies.remove("accessToken", { path: "/", expires: new Date(0) });
+    cookies.remove("refreshToken", { path: "/", expires: new Date(0) });
+
+    logout({ logoutParams: { returnTo: window.location.origin } });
+  };
+  return (
+    <button
+      className="h-fit bg-violet-700 text-white rounded-lg px-4 py-3 text-base"
+      onClick={handleOnClick}
+    >
+      Log Out
+    </button>
+  );
+};
 
 const Header = () => {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth0();
 
   return (
     <div className="container mx-auto">
@@ -21,18 +45,24 @@ const Header = () => {
           </ul>
 
           <div className="flex flex-row gap-4 items-center">
-            <button
-              className="h-fit bg-white text-black rounded-lg px-4 py-3 text-base"
-              onClick={() => navigate("/auth/sign-in")}
-            >
-              Login
-            </button>
-            <button
-              className="h-fit bg-violet-700 text-white rounded-lg px-4 py-3 text-base"
-              onClick={() => navigate("/auth/register")}
-            >
-              Sign up
-            </button>
+            {isAuthenticated && user ? (
+              <LogoutButton />
+            ) : (
+              <>
+                <button
+                  className="h-fit bg-white text-black rounded-lg px-4 py-3 text-base"
+                  onClick={() => navigate("/auth/sign-in")}
+                >
+                  Sign in
+                </button>
+                <button
+                  className="h-fit bg-violet-700 text-white rounded-lg px-4 py-3 text-base"
+                  onClick={() => navigate("/auth/register")}
+                >
+                  Register
+                </button>
+              </>
+            )}
           </div>
         </div>
       </nav>
