@@ -21,6 +21,9 @@ export class User {
   @Column({ nullable: true, name: 'refresh_token' })
   refreshToken: string;
 
-  @Column({ nullable: true })
-  socialId: string;
+  @Column({ nullable: true, name: 'facebook_id' })
+  facebookId: string;
+
+  @Column({ nullable: true, name: 'google_id' })
+  googleId: string;
 }

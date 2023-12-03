@@ -15,12 +15,12 @@ type ChangePasswordReq = {
 };
 
 type RegisterWithSocialAcount = {
-  email: string,
-  verifyEmail: boolean;
-  fullname: string,
-  socialId: string,
-}
+  email: string | null;
+  fullname: string;
+  socialId: string;
+  socialType: string;
+};
 
 type IdSocialAcount = {
-  socialId: string,
-}
+  socialId: string;
+};

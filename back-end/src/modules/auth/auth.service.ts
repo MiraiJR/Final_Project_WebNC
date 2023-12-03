@@ -19,8 +19,7 @@ import { SocialPayloadToken } from 'src/shared/types/SocialPayloadToken';
 import { MailService } from '../mail/mail.service';
 import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
 import { LoginSocialReqDTO } from './dto/request/LoginSocialReq';
-import { IsHaveAccountReqDTO } from './dto/request/IsHaveAccountReq';
-import {RegisterWithSocialAccountReqDTO} from './dto/request/RegisterWithSocialAccountReq'
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -36,6 +35,10 @@ export class AuthService {
     );
 
     if (!matchedAccount) {
+      throw new BadRequestException('Email or password is wrong');
+    }
+
+    if (matchedAccount && !matchedAccount.password) {
       throw new BadRequestException('Email or password is wrong');
     }
 
@@ -81,69 +84,89 @@ export class AuthService {
       ...registerReqDto,
       password,
     };
-    
+
     const token = this.signActiveMailToken(payloadToken);
 
     this.mailService.sendMailVerifyEmail(registerReqDto.email, token);
   }
-  
-  async loginSocial(LoginSocialReq: LoginSocialReqDTO): Promise<AccountRespDTO>{
-    const isExistedAccount = await this.userService.findBySocialId(
-      LoginSocialReq.socialId,
+
+  async loginSocial(reqData: LoginSocialReqDTO): Promise<AccountRespDTO> {
+    const { socialId, email, fullname, socialType } = reqData;
+
+    // check email
+    const matchedUser = await this.userService.findBySocialId(
+      socialType,
+      socialId,
     );
-    const accessToken = this.signAccessToken(isExistedAccount.id);
-    const refreshToken = this.signRefreshToken(isExistedAccount.id);
+
+    if (!email && !matchedUser && socialType === 'facebook') {
+      throw new BadRequestException('NEW_ACCOUNT_NOT_FOUND_EMAIL');
+    }
+
+    if (!matchedUser) {
+      const isUsedMail = await this.userService.findByEmail(email);
+
+      if (isUsedMail) {
+        throw new BadRequestException('Email is used!');
+      }
+
+      if (socialType === 'google-oauth2') {
+        const newUser = await this.userService.createUser({
+          fullname,
+          googleId: socialId,
+          email,
+        });
+
+        const accessToken = this.signAccessToken(newUser.id);
+        const refreshToken = this.signRefreshToken(newUser.id);
+
+        const accountResp: AccountRespDTO = {
+          accessToken,
+          refreshToken,
+        };
+
+        await this.userService.updateUser({
+          ...newUser,
+          accessToken,
+          refreshToken,
+        });
+
+        return accountResp;
+      }
+
+      //create new
+      const payloadToken: SocialPayloadToken = {
+        ...reqData,
+      };
+
+      const token = this.signActiveMailToken(payloadToken);
+
+      this.mailService.sendMailVerifyEmail(email, token);
+      throw null;
+    }
+
+    if (matchedUser.email === email) {
+      await this.userService.updateUser({
+        ...matchedUser,
+        googleId: socialId,
+      });
+    }
+
+    const accessToken = this.signAccessToken(matchedUser.id);
+    const refreshToken = this.signRefreshToken(matchedUser.id);
+
     const accountResp: AccountRespDTO = {
       accessToken,
       refreshToken,
     };
+
     await this.userService.updateUser({
-      ...isExistedAccount,
+      ...matchedUser,
       accessToken,
       refreshToken,
     });
+
     return accountResp;
-  }
-
-  async registerWithSocialAcount(RegisterWithSocialAccountReq: RegisterWithSocialAccountReqDTO){
-    const isExistedAccount = await this.userService.findBySocialId(
-      RegisterWithSocialAccountReq.socialId,
-    );
-    if (isExistedAccount) {
-      throw new BadRequestException('Account is existed!');
-    }
-    console.log(RegisterWithSocialAccountReq);
-    if ( RegisterWithSocialAccountReq.verifyEmail === true){
-      const user = await this.userService.createUser({
-        ...RegisterWithSocialAccountReq,
-      });
-      console.log(user);
-      return await this.loginSocial({
-        socialId: RegisterWithSocialAccountReq.socialId,
-      });
-    }else {
-      console.log("email doesn't verify");
-      
-      const socialPayloadToken: SocialPayloadToken = {
-        ...RegisterWithSocialAccountReq,
-      };
-      const token = this.signActiveMailToken(socialPayloadToken);
-
-    this.mailService.sendMailVerifyEmail(RegisterWithSocialAccountReq.email, token);
-
-    }
-  }
-
-  async isHaveAccount(IsHaveAccountReq: IsHaveAccountReqDTO): Promise<boolean>{
-     
-    const isExistedAccount = await this.userService.findBySocialId(
-      IsHaveAccountReq.socialId,
-    );
-    if (isExistedAccount) {
-      return true;
-    }else{
-      return false;
-    }
   }
 
   async refreshToken(dataReq: RefreshTokenReqDTO): Promise<AccountRespDTO> {

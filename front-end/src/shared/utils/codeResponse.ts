@@ -1,0 +1,3 @@
+export const CodeResponse = {
+  NEW_ACCOUNT_NOT_FOUND_EMAIL: "NEW_ACCOUNT_NOT_FOUND_EMAIL",
+};

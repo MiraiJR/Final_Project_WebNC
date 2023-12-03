@@ -28,12 +28,23 @@ export class UserService {
     });
   }
 
-  async findBySocialId(socialId: string): Promise<User> {
-    return this.userRepository.findOne({
-      where: {
-        socialId: socialId ,
-      },
-    });
+  async findBySocialId(socialType: string, socialId: string): Promise<User> {
+    switch (socialType) {
+      case 'facebook':
+        return this.userRepository.findOne({
+          where: {
+            facebookId: socialId,
+          },
+        });
+      case 'google-oauth2':
+        return this.userRepository.findOne({
+          where: {
+            googleId: socialId,
+          },
+        });
+      default:
+        break;
+    }
   }
 
   async updateUser(user: IUser): Promise<User> {

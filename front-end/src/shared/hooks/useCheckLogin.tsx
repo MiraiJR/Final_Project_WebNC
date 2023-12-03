@@ -6,14 +6,11 @@ const useCheckLogin = () => {
 
   useEffect(() => {
     if (
-      JwtStorage.getToken()?.accessToken !== undefined &&
-      JwtStorage.getToken()?.refreshToken !== undefined
+      JwtStorage.getToken()?.accessToken &&
+      JwtStorage.getToken()?.refreshToken
     ) {
-      console.log(JwtStorage.getToken()?.accessToken);
-      console.log("login");
       setLoggedIn(true);
     } else {
-      console.log("not login");
       setLoggedIn(false);
     }
   }, []);

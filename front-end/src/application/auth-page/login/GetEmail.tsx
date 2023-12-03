@@ -3,15 +3,12 @@ import { useState, useContext } from "react";
 import { emailContext } from "./page";
 
 const GetEmail = () => {
-  const { state, dispatch } = useContext(emailContext)!;
+  const { dispatch } = useContext(emailContext)!;
   const [email, setEmail] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // I want to pass the email value to the parent component
-    console.log("submitted");
     dispatch({ type: "SET_EMAIL", payload: email });
-    console.log(state.email);
   };
 
   return (
