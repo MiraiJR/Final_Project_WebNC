@@ -11,7 +11,7 @@ import { Helper } from "@/shared/utils/heper";
 const FacebookButton = () => {
   const navigate = useNavigate();
   const { loginWithPopup, user, isAuthenticated } = useAuth0();
-  const { state, dispatch } = useContext(authContext)!;
+  const { dispatch } = useContext(authContext)!;
 
   const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
     try {

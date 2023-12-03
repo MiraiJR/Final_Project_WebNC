@@ -3,7 +3,6 @@ import person from "@/shared/assets/header-pic.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import Cookies from "universal-cookie";
-import { Button } from "@mui/material";
 
 const LogoutButton = () => {
   const { logout } = useAuth0();
