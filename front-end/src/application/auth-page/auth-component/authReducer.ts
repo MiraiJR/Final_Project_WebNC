@@ -4,7 +4,6 @@ export interface AuthState {
     email: string | null;
     isVerify: boolean;
   }
-  
   export type AuthAction =
     | { type: "TOGGLE_FORM" }
     | { type: "SET_EMAIL"; payload: string }

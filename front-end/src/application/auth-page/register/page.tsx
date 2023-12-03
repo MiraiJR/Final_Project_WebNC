@@ -1,33 +1,22 @@
-import { createContext, useReducer } from "react";
+import { useContext } from "react";
 import RegisterForm from "./RegisterForm";
 import GetEmail from "../auth-component/GetEmail";
 import WaitingVerifyEmail from "../auth-component/WaitingVerifyEmail";
+import { authContext } from "@/shared/components/providers/AuthProvider";
 import {
   authReducer,
   AuthAction,
   AuthState,
 } from "../auth-component/authReducer";
-
-interface EmailContextProps {
+interface AuthContextProps {
   state: AuthState;
   dispatch: React.Dispatch<AuthAction>;
 }
-
-export const emailContext = createContext<EmailContextProps | undefined>(
-  undefined
-);
-
-const RegisterPage = () => {
-  const initialState: AuthState = {
-    isEmail: true,
-    email: null,
-    isVerify: false,
-  };
-
-  const [state, dispatch] = useReducer(authReducer, initialState);
+const RegisterPage: React.FC = () => {
+  const { state, dispatch } = useContext<AuthContextProps>(authContext)!;
 
   return (
-    <emailContext.Provider value={{ state, dispatch }}>
+    <>
       {state.isEmail ? (
         <RegisterForm />
       ) : state.email === null && !state.isVerify ? (
@@ -35,7 +24,7 @@ const RegisterPage = () => {
       ) : (
         <WaitingVerifyEmail />
       )}
-    </emailContext.Provider>
+    </>
   );
 };
 
