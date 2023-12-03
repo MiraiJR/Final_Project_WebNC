@@ -1,7 +1,7 @@
 // authReducer.ts
 export interface AuthState {
     isEmail: boolean;
-    email: string;
+    email: string | null;
     isVerify: boolean;
   }
   

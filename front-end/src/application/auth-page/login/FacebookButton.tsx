@@ -1,8 +1,59 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
+import AuthService from "@/shared/services/AuthService";
+import JwtStorage from "@/shared/storages/JwtStorage";
+import { toast } from "react-toastify";
+import { useContext } from "react";
+import { CodeResponse } from "@/shared/utils/codeResponse";
+import { emailContext } from "./page";
 
 const FacebookButton = () => {
-  const { loginWithPopup } = useAuth0();
+  const navigate = useNavigate();
+  const { loginWithPopup, user, isAuthenticated } = useAuth0();
+  const { state, dispatch } = useContext(emailContext)!;
 
+  const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
+    try {
+      console.log("data user from fb button: ", user);
+      const { data } = await AuthService.loginSocial(dataReq);
+      console.log("data: ", data);
+      if (data === null) {
+        console.log("wait for verify your email");
+        dispatch({ type: "CHECK_VERIFY" });
+      }
+
+      toast.success("Login successfully!");
+      JwtStorage.setToken(data);
+      navigate("/");
+    } catch (error: any) {
+      if (
+        error.statusCode === 400 &&
+        error.message === CodeResponse.NEW_ACCOUNT_NOT_FOUND_EMAIL
+      ) {
+        console.log("moi nhap email address");
+        dispatch({ type: "TOGGLE_FORM" });
+        console.log(state);
+        return;
+      }
+
+      toast.error(error.message);
+    }
+  };
+
+  if (
+    isAuthenticated &&
+    user &&
+    user.sub!.split("|")[0].trim() === "facebook"
+  ) {
+    const dataReq: RegisterWithSocialAcount = {
+      email: user.email ?? null,
+      fullname: user.name!,
+      socialId: user.sub!.split("|")[1].trim(),
+      socialType: user.sub!.split("|")[0].trim(),
+    };
+    console.log(dataReq);
+    loginSocial(dataReq);
+  }
   return (
     <button
       className="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded

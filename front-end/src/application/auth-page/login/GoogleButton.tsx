@@ -1,8 +1,40 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { useNavigate } from "react-router-dom";
+import AuthService from "@/shared/services/AuthService";
+import JwtStorage from "@/shared/storages/JwtStorage";
+import { toast } from "react-toastify";
 
 const GoogleButton = () => {
-  const { loginWithPopup } = useAuth0();
+  const navigate = useNavigate();
+  const { loginWithPopup, user, isAuthenticated } = useAuth0();
 
+  const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
+    try {
+      console.log("data user from gg button: ", user);
+      const { data } = await AuthService.loginSocial(dataReq);
+      console.log("data: ", data);
+      toast.success("Login successfully!");
+      JwtStorage.setToken(data);
+      navigate("/");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
+
+  if (
+    isAuthenticated &&
+    user &&
+    user.sub!.split("|")[0].trim() === "google-oauth2"
+  ) {
+    const dataReq: RegisterWithSocialAcount = {
+      email: user.email!,
+      fullname: user.name!,
+      socialId: user.sub!.split("|")[1].trim(),
+      socialType: user.sub!.split("|")[0].trim(),
+    };
+    console.log(dataReq);
+    loginSocial(dataReq);
+  }
   return (
     <button
       className="flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded 
