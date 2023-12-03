@@ -11,7 +11,7 @@ const AuthService = {
   changePassword: (data: ChangePasswordReq) =>
     axiosClient.post<string>(`/auth/change-password`, data),
   loginSocial: (data: RegisterWithSocialAcount) =>
-    axiosClient.post<AuthToken>(`/auth/login/social`, data),
+    axiosClient.post<AuthToken | CodeResp>(`/auth/login/social`, data),
   registerWithSocialAcount: (data: RegisterWithSocialAcount) =>
     axiosClient.post<AuthToken>(`/auth/register-social`, data),
   isHaveAccount: (data: IdSocialAcount) =>

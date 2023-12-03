@@ -20,6 +20,7 @@ import { Response } from 'express';
 import { ForgotPasswordReqDTO } from './dto/request/ForgotPasswordReq';
 import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
 import { LoginSocialReqDTO } from './dto/request/LoginSocialReq';
+import { CodeRespDTO } from './dto/response/CodeResponseDTO';
 
 @Controller('/auth')
 export class AuthController {
@@ -90,7 +91,7 @@ export class AuthController {
   @HttpCode(HttpStatus.CREATED)
   async handleLoginSocial(
     @Body() dataReq: LoginSocialReqDTO,
-  ): Promise<AccountRespDTO> {
+  ): Promise<AccountRespDTO | CodeRespDTO> {
     return this.authService.loginSocial(dataReq);
   }
 }

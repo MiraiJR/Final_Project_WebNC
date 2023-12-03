@@ -10,8 +10,8 @@ import { useNavigate } from "react-router-dom";
 import AuthService from "@/shared/services/AuthService";
 import JwtStorage from "@/shared/storages/JwtStorage";
 import { toast } from "react-toastify";
-import { useContext } from "react";
 import { CodeResponse } from "@/shared/utils/codeResponse";
+import { Helper } from "@/shared/utils/heper";
 
 interface EmailContextProps {
   state: AuthState;
@@ -38,24 +38,28 @@ const LoginPage = () => {
     const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
       try {
         const { data } = await AuthService.loginSocial(dataReq);
-        console.log("data: ", data);
-        if (data === null) {
-          console.log("wait for verify your email");
+
+        console.log(data);
+        if (
+          Helper.isCodeResp(data) &&
+          data.code === CodeResponse.NEW_ACCOUNT_VERIFY_EMAIL
+        ) {
           dispatch({ type: "CHECK_VERIFY" });
+          return;
         }
 
-        toast.success("Login successfully!");
-        JwtStorage.setToken(data);
-        navigate("/");
-      } catch (error: any) {
         if (
-          error.statusCode === 400 &&
-          error.message === CodeResponse.NEW_ACCOUNT_NOT_FOUND_EMAIL
+          Helper.isCodeResp(data) &&
+          data.code === CodeResponse.NEW_ACCOUNT_NOT_FOUND_EMAIL
         ) {
           dispatch({ type: "TOGGLE_FORM" });
           return;
         }
 
+        toast.success("Login successfully!");
+        JwtStorage.setToken(data as AuthToken);
+        navigate("/");
+      } catch (error: any) {
         toast.error(error.message);
       }
     };
@@ -71,6 +75,7 @@ const LoginPage = () => {
       loginSocial(dataReq);
     }
   }, [isAuthenticated, user, dispatch, state.email]);
+
   return (
     <emailContext.Provider value={{ state, dispatch }}>
       {state.isEmail ? (

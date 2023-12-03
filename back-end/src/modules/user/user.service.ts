@@ -3,6 +3,7 @@ import { UserRepository } from './user.repository';
 import { IUser } from './user.interface';
 import { UserRespDTO } from './dto/response/UserResp';
 import { User } from './user.entity';
+import { SocialType } from 'src/shared/types/EnumSocialType';
 
 @Injectable()
 export class UserService {
@@ -30,13 +31,13 @@ export class UserService {
 
   async findBySocialId(socialType: string, socialId: string): Promise<User> {
     switch (socialType) {
-      case 'facebook':
+      case SocialType.FACEBOOK:
         return this.userRepository.findOne({
           where: {
             facebookId: socialId,
           },
         });
-      case 'google-oauth2':
+      case SocialType.GOOGLE:
         return this.userRepository.findOne({
           where: {
             googleId: socialId,
