@@ -6,6 +6,8 @@ import JwtStorage from "@/shared/storages/JwtStorage";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import WaitingVerifyEmail from "./WaitingVerifyEmail";
+import { Helper } from "@/shared/utils/heper";
+import { CodeResponse } from "@/shared/utils/codeResponse";
 
 const GetEmail = () => {
   const [email, setEmail] = useState("");
@@ -19,13 +21,17 @@ const GetEmail = () => {
     const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
       try {
         const { data } = await AuthService.loginSocial(dataReq);
-        console.log("data: ", data);
-        if (data === null) {
-          console.log("wait for verify your email");
+
+        if (
+          Helper.isCodeResp(data) &&
+          data.code === CodeResponse.NEW_ACCOUNT_VERIFY_EMAIL
+        ) {
           setIsWaiting(!isWaiting);
+          return;
         }
+
         toast.success("Login successfully!");
-        JwtStorage.setToken(data);
+        JwtStorage.setToken(data as AuthToken);
         navigate("/");
       } catch (error: any) {
         toast.error(error.message);

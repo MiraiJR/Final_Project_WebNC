@@ -19,6 +19,8 @@ import { SocialPayloadToken } from 'src/shared/types/SocialPayloadToken';
 import { MailService } from '../mail/mail.service';
 import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
 import { LoginSocialReqDTO } from './dto/request/LoginSocialReq';
+import { CodeRespDTO } from './dto/response/CodeResponseDTO';
+import { SocialType } from 'src/shared/types/EnumSocialType';
 
 @Injectable()
 export class AuthService {
@@ -90,7 +92,9 @@ export class AuthService {
     this.mailService.sendMailVerifyEmail(registerReqDto.email, token);
   }
 
-  async loginSocial(reqData: LoginSocialReqDTO): Promise<AccountRespDTO> {
+  async loginSocial(
+    reqData: LoginSocialReqDTO,
+  ): Promise<AccountRespDTO | CodeRespDTO> {
     const { socialId, email, fullname, socialType } = reqData;
 
     // check email
@@ -98,9 +102,13 @@ export class AuthService {
       socialType,
       socialId,
     );
-    console.log("match user: " , matchedUser);
-    if (!email && !matchedUser && socialType === 'facebook') {
-      throw new BadRequestException('NEW_ACCOUNT_NOT_FOUND_EMAIL');
+
+    if (!email && !matchedUser && socialType === SocialType.FACEBOOK) {
+      const codeResp: CodeRespDTO = {
+        code: 'NEW_ACCOUNT_NOT_FOUND_EMAIL',
+      };
+
+      return codeResp;
     }
 
     if (!matchedUser) {
@@ -110,7 +118,7 @@ export class AuthService {
         throw new BadRequestException('Email is used!');
       }
 
-      if (socialType === 'google-oauth2') {
+      if (socialType === SocialType.GOOGLE) {
         const newUser = await this.userService.createUser({
           fullname,
           googleId: socialId,
@@ -142,7 +150,11 @@ export class AuthService {
       const token = this.signActiveMailToken(payloadToken);
 
       this.mailService.sendMailVerifyEmail(email, token);
-      throw null;
+      const codeResp: CodeRespDTO = {
+        code: 'NEW_ACCOUNT_VERIFY_EMAIL',
+      };
+
+      return codeResp;
     }
 
     if (matchedUser.email === email) {
@@ -214,6 +226,22 @@ export class AuthService {
 
       if (isExistedEmail) {
         throw new BadRequestException('Email is existed!');
+      }
+
+      if (user.socialType && user.socialType === SocialType.FACEBOOK) {
+        await this.userService.createUser({
+          ...user,
+          facebookId: user.socialId,
+        });
+        return;
+      }
+
+      if (user.socialType && user.socialType === SocialType.GOOGLE) {
+        await this.userService.createUser({
+          ...user,
+          googleId: user.socialId,
+        });
+        return;
       }
 
       await this.userService.createUser({

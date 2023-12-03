@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useContext } from "react";
 import { CodeResponse } from "@/shared/utils/codeResponse";
 import { authContext } from "@/shared/components/providers/AuthProvider";
+import { Helper } from "@/shared/utils/heper";
 
 const FacebookButton = () => {
   const navigate = useNavigate();
@@ -16,14 +17,17 @@ const FacebookButton = () => {
     try {
       console.log("data user from fb button: ", user);
       const { data } = await AuthService.loginSocial(dataReq);
-      console.log("data: ", data);
-      if (data === null) {
-        console.log("wait for verify your email");
-        dispatch({ type: "CHECK_VERIFY" });
+
+      if (
+        Helper.isCodeResp(data) &&
+        data.code === CodeResponse.NEW_ACCOUNT_NOT_FOUND_EMAIL
+      ) {
+        dispatch({ type: "TOGGLE_FORM" });
+        return;
       }
 
       toast.success("Login successfully!");
-      JwtStorage.setToken(data);
+      JwtStorage.setToken(data as AuthToken);
       navigate("/");
     } catch (error: any) {
       if (

@@ -10,11 +10,10 @@ const GoogleButton = () => {
 
   const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
     try {
-      console.log("data user from gg button: ", user);
       const { data } = await AuthService.loginSocial(dataReq);
-      console.log("data: ", data);
+
       toast.success("Login successfully!");
-      JwtStorage.setToken(data);
+      JwtStorage.setToken(data as AuthToken);
       navigate("/");
     } catch (error: any) {
       toast.error(error.message);
