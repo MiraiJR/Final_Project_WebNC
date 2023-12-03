@@ -28,10 +28,10 @@ const checkExitAccountForThisSocialAccount = async (
       socialId: socialId,
     };
     const { data } = await AuthService.isHaveAccount(checkExitAccountReq);
-    toast.success("Check exit account successfully!");
+    // toast.success("Check exit account successfully!");
     return data;
   } catch (error: any) {
-    toast.error(error.message);
+    // toast.error(error.message);
     return false;
   }
 };

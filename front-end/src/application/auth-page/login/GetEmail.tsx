@@ -23,6 +23,7 @@ const GetEmail = () => {
           label="Email"
           variant="outlined"
           className="w-[400px]"
+          placeholder="Enter your email to verify your account"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
