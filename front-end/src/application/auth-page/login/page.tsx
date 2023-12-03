@@ -1,6 +1,7 @@
 import { createContext, useReducer } from "react";
 import LoginForm from "./LoginForm";
 import GetEmail from "./GetEmail";
+import WaitingVerifyEmail from "./WaitingVerifyEmail";
 import { authReducer, AuthAction, AuthState } from "./authReducer";
 
 interface EmailContextProps {
@@ -21,7 +22,13 @@ const LoginPage = () => {
   const [state, dispatch] = useReducer(authReducer, initialState);
   return (
     <emailContext.Provider value={{ state, dispatch }}>
-      {state.isEmail ? <LoginForm /> : <GetEmail />}
+      {state.isEmail ? (
+        <LoginForm />
+      ) : state.email === "" ? (
+        <GetEmail />
+      ) : (
+        <WaitingVerifyEmail />
+      )}
     </emailContext.Provider>
   );
 };

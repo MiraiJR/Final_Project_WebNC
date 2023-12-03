@@ -19,7 +19,6 @@ export interface AuthState {
         return {
           ...state,
           email: action.payload,
-          isEmail: true,
         };
       default:
         return state;
