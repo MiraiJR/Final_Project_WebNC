@@ -2,11 +2,13 @@
 export interface AuthState {
     isEmail: boolean;
     email: string;
+    isVerify: boolean;
   }
   
   export type AuthAction =
     | { type: "TOGGLE_FORM" }
-    | { type: "SET_EMAIL"; payload: string };
+    | { type: "SET_EMAIL"; payload: string }
+    | { type: "CHECK_VERIFY"};
   
   export const authReducer = (state: AuthState, action: AuthAction): AuthState => {
     switch (action.type) {
@@ -20,6 +22,11 @@ export interface AuthState {
           ...state,
           email: action.payload,
         };
+        case "CHECK_VERIFY":
+          return {
+            ...state,
+            isVerify: false,
+          };  
       default:
         return state;
     }

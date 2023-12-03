@@ -1,13 +1,14 @@
 import { Button, TextField } from "@mui/material";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { emailContext } from "./page";
 
 const GetEmail = () => {
-  const { dispatch } = useContext(emailContext)!;
+  const { state, dispatch } = useContext(emailContext)!;
   const [email, setEmail] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(email);
     dispatch({ type: "SET_EMAIL", payload: email });
   };
 

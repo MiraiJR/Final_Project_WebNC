@@ -98,7 +98,7 @@ export class AuthService {
       socialType,
       socialId,
     );
-
+    console.log("match user: " , matchedUser);
     if (!email && !matchedUser && socialType === 'facebook') {
       throw new BadRequestException('NEW_ACCOUNT_NOT_FOUND_EMAIL');
     }
