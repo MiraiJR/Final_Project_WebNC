@@ -5,12 +5,12 @@ import JwtStorage from "@/shared/storages/JwtStorage";
 import { toast } from "react-toastify";
 import { useContext } from "react";
 import { CodeResponse } from "@/shared/utils/codeResponse";
-import { emailContext } from "../login/page";
+import { authContext } from "@/shared/components/providers/AuthProvider";
 
 const FacebookButton = () => {
   const navigate = useNavigate();
   const { loginWithPopup, user, isAuthenticated } = useAuth0();
-  const { state, dispatch } = useContext(emailContext)!;
+  const { state, dispatch } = useContext(authContext)!;
 
   const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
     try {
