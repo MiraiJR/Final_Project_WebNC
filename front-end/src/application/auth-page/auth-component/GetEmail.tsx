@@ -17,7 +17,6 @@ const GetEmail = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(email);
     const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
       try {
         const { data } = await AuthService.loginSocial(dataReq);
@@ -45,7 +44,6 @@ const GetEmail = () => {
         socialId: user.sub!.split("|")[1].trim(),
         socialType: user.sub!.split("|")[0].trim(),
       };
-      console.log(dataReq);
       loginSocial(dataReq);
     }
   };

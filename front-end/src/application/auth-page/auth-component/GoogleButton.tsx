@@ -31,7 +31,6 @@ const GoogleButton = () => {
       socialId: user.sub!.split("|")[1].trim(),
       socialType: user.sub!.split("|")[0].trim(),
     };
-    console.log(dataReq);
     loginSocial(dataReq);
   }
   return (

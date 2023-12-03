@@ -15,7 +15,6 @@ const FacebookButton = () => {
 
   const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
     try {
-      console.log("data user from fb button: ", user);
       const { data } = await AuthService.loginSocial(dataReq);
 
       if (
@@ -34,9 +33,7 @@ const FacebookButton = () => {
         error.statusCode === 400 &&
         error.message === CodeResponse.NEW_ACCOUNT_NOT_FOUND_EMAIL
       ) {
-        console.log("moi nhap email address");
         dispatch({ type: "TOGGLE_FORM" });
-        console.log(state);
         return;
       }
 
@@ -55,7 +52,6 @@ const FacebookButton = () => {
       socialId: user.sub!.split("|")[1].trim(),
       socialType: user.sub!.split("|")[0].trim(),
     };
-    console.log(dataReq);
     loginSocial(dataReq);
   }
   return (
