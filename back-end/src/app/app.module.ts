@@ -7,6 +7,8 @@ import { ClassUserModule } from 'src/modules/classUser/class-user.module';
 import { MailModule } from 'src/modules/mail/mail.module';
 import { UserModule } from 'src/modules/user/user.module';
 
+const isSsl = process.env.NODE_ENV === 'production' ? true : false;
+
 @Module({
   imports: [
     UserModule,
@@ -27,6 +29,7 @@ import { UserModule } from 'src/modules/user/user.module';
         database: configService.get('DATABASE_NAME'),
         synchronize: true,
         autoLoadEntities: true,
+        ssl: isSsl,
       }),
     }),
   ],
