@@ -112,11 +112,12 @@ export class AuthService {
     if (isExistedAccount) {
       throw new BadRequestException('Account is existed!');
     }
-   
+    console.log(RegisterWithSocialAccountReq);
     if ( RegisterWithSocialAccountReq.verifyEmail === true){
-      await this.userService.createUser({
+      const user = await this.userService.createUser({
         ...RegisterWithSocialAccountReq,
       });
+      console.log(user);
       return await this.loginSocial({
         socialId: RegisterWithSocialAccountReq.socialId,
       });

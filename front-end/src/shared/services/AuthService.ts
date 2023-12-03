@@ -10,9 +10,9 @@ const AuthService = {
     }),
   changePassword: (data: ChangePasswordReq) =>
     axiosClient.post<string>(`/auth/change-password`, data),
-  loginSocial: (data: string) => axiosClient.post<AuthToken>(`/auth/login-social`, data),
-  registerWithSocialAcount: (data: LoginSocialReq) => axiosClient.post<AuthToken>(`/auth/register-social`, data),
-  isHaveAccount: (data: string) => axiosClient.post<boolean>(`/auth/is-have-account`, data),
+  loginSocial: (data: IdSocialAcount) => axiosClient.post<AuthToken>(`/auth/login-social`, data),
+  registerWithSocialAcount: (data: RegisterWithSocialAcount) => axiosClient.post<AuthToken>(`/auth/register-social`, data),
+  isHaveAccount: (data: IdSocialAcount) => axiosClient.post<boolean>(`/auth/is-have-account`, data),
 };
 
 export default AuthService;

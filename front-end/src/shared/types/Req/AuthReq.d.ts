@@ -14,9 +14,13 @@ type ChangePasswordReq = {
   password: string;
 };
 
-type LoginSocialReq = {
+type RegisterWithSocialAcount = {
   email: string,
   verifyEmail: boolean;
   fullname: string,
+  socialId: string,
+}
+
+type IdSocialAcount = {
   socialId: string,
 }

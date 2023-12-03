@@ -10,7 +10,7 @@ import FacebookButton from "./FacebookButton";
 import { useContext } from "react";
 import { emailContext } from "./page";
 
-const sendUserDataToServer = async (userData: LoginSocialReq) => {
+const sendUserDataToServer = async (userData: RegisterWithSocialAcount) => {
   try {
     const { data } = await AuthService.registerWithSocialAcount(userData);
     JwtStorage.setToken(data);
@@ -24,7 +24,10 @@ const checkExitAccountForThisSocialAccount = async (
   socialId: string
 ): Promise<boolean> => {
   try {
-    const { data } = await AuthService.isHaveAccount(socialId);
+    const checkExitAccountReq: IdSocialAcount = {
+      socialId: socialId,
+    };
+    const { data } = await AuthService.isHaveAccount(checkExitAccountReq);
     toast.success("Check exit account successfully!");
     return data;
   } catch (error: any) {
@@ -67,9 +70,13 @@ const ListSocialButton = () => {
   useEffect(() => {
     if (isAuthenticated && user) {
       checkExitAccountForThisSocialAccount(user.sub!).then(async (isExit) => {
+        console.log("State of account: ", isExit);
         if (isExit) {
           try {
-            const { data } = await AuthService.loginSocial(user.sub!);
+            const loginSocialReq: IdSocialAcount = {
+              socialId: user.sub!,
+            };
+            const { data } = await AuthService.loginSocial(loginSocialReq);
             JwtStorage.setToken(data);
             toast.success("Login successfully!");
             navigate("/");
@@ -83,12 +90,13 @@ const ListSocialButton = () => {
             dispatch({ type: "TOGGLE_FORM" });
           }
           if (user.email !== undefined || state.email !== "") {
-            const data: LoginSocialReq = {
+            const data: RegisterWithSocialAcount = {
               email: user.email !== undefined ? user.email : state.email,
               verifyEmail: user.email !== undefined ? true : false,
               fullname: user.name!,
               socialId: user.sub!,
             };
+            console.log(data);
             sendUserDataToServer(data);
             navigate("/");
           }

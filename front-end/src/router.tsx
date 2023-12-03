@@ -10,6 +10,18 @@ const Profile = () => {
   console.log(user);
   return isAuthenticated && user && <p>{user.name}</p>;
 };
+const LogoutButton = () => {
+  const { logout } = useAuth0();
+  return (
+    <button
+      onClick={() =>
+        logout({ logoutParams: { returnTo: window.location.origin } })
+      }
+    >
+      Log Out
+    </button>
+  );
+};
 
 const router = createBrowserRouter([
   {
@@ -19,6 +31,7 @@ const router = createBrowserRouter([
         <h1>Hello World</h1>
         <Link to="about">About Us</Link>
         <Profile></Profile>
+        <LogoutButton></LogoutButton>
       </div>
     ),
   },
