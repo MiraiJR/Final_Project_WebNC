@@ -98,7 +98,9 @@ const ListSocialButton = () => {
             };
             console.log(data);
             sendUserDataToServer(data);
-            navigate("/");
+            if (user.email !== undefined) {
+              navigate("/");
+            }
           }
         }
       });
