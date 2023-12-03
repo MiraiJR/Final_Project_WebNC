@@ -11,6 +11,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import * as yup from "yup";
+import ListSocialButton from "../auth-component/ListSocialButton";
 
 interface IFormInput {
   email: string;
@@ -133,6 +134,12 @@ const RegisterForm = () => {
           Sign In
         </Link>
       </div>
+      <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
+        <p className="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">
+          Hoặc
+        </p>
+      </div>
+      <ListSocialButton></ListSocialButton>
     </div>
   );
 };

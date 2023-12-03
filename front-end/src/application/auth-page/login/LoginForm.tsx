@@ -10,7 +10,7 @@ import * as yup from "yup";
 import AuthService from "@/shared/services/AuthService";
 import JwtStorage from "@/shared/storages/JwtStorage";
 import { toast } from "react-toastify";
-import ListSocialButton from "./ListSocialButton";
+import ListSocialButton from "../auth-component/ListSocialButton";
 
 const schemaValidation = yup
   .object({
