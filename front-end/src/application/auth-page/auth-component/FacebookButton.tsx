@@ -5,7 +5,7 @@ import JwtStorage from "@/shared/storages/JwtStorage";
 import { toast } from "react-toastify";
 import { useContext } from "react";
 import { CodeResponse } from "@/shared/utils/codeResponse";
-import { emailContext } from "./page";
+import { emailContext } from "../login/page";
 
 const FacebookButton = () => {
   const navigate = useNavigate();

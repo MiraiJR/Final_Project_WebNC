@@ -1,8 +1,12 @@
 import { createContext, useReducer } from "react";
 import LoginForm from "./LoginForm";
-import GetEmail from "./GetEmail";
-import WaitingVerifyEmail from "./WaitingVerifyEmail";
-import { authReducer, AuthAction, AuthState } from "./authReducer";
+import GetEmail from "../auth-component/GetEmail";
+import WaitingVerifyEmail from "../auth-component/WaitingVerifyEmail";
+import {
+  authReducer,
+  AuthAction,
+  AuthState,
+} from "../auth-component/authReducer";
 
 interface EmailContextProps {
   state: AuthState;
