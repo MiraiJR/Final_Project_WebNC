@@ -19,6 +19,8 @@ import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { ForgotPasswordReqDTO } from './dto/request/ForgotPasswordReq';
 import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
+import { LoginSocialReqDTO } from './dto/request/LoginSocialReq';
+import { CodeRespDTO } from './dto/response/CodeResponseDTO';
 
 @Controller('/auth')
 export class AuthController {
@@ -83,5 +85,13 @@ export class AuthController {
     await this.authService.changePassword(dataReq);
 
     return 'Change password successfully!';
+  }
+
+  @Post('/login/social')
+  @HttpCode(HttpStatus.CREATED)
+  async handleLoginSocial(
+    @Body() dataReq: LoginSocialReqDTO,
+  ): Promise<AccountRespDTO | CodeRespDTO> {
+    return this.authService.loginSocial(dataReq);
   }
 }

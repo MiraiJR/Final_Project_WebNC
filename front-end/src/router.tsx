@@ -6,6 +6,38 @@ import ChangePasswordPage from "./application/auth-page/change-password/page";
 import AuthGuard from "./shared/components/guards/AuthGuard";
 import HomePage from "./application/home-page/page";
 
+import { useAuth0 } from "@auth0/auth0-react";
+import Cookies from "universal-cookie";
+import { Button } from "@mui/material";
+const LogoutButton = () => {
+  const { user, isAuthenticated } = useAuth0();
+  const { logout } = useAuth0();
+  const handleOnClick = () => {
+    const cookies = new Cookies(null, { path: "/" });
+
+    cookies.remove("accessToken", { path: "/", expires: new Date(0) });
+    cookies.remove("refreshToken", { path: "/", expires: new Date(0) });
+
+    logout({ logoutParams: { returnTo: window.location.origin } });
+  };
+  return (
+    <>
+      {isAuthenticated && user && (
+        <Button
+          className="fixed top-4 right-4"
+          variant="contained"
+          color="primary"
+          onClick={handleOnClick}
+        >
+          Log Out
+        </Button>
+      )}
+    </>
+  );
+};
+
+
+
 const router = createBrowserRouter([
   {
     path: "/",

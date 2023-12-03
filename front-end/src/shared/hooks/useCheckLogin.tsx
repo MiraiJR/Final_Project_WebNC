@@ -7,7 +7,7 @@ const useCheckLogin = () => {
   useEffect(() => {
     if (
       JwtStorage.getToken()?.accessToken &&
-      JwtStorage.getToken()?.accessToken
+      JwtStorage.getToken()?.refreshToken
     ) {
       setLoggedIn(true);
     } else {
