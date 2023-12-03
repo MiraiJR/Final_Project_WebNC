@@ -4,14 +4,11 @@ import LoginPage from "./application/auth-page/login/page";
 import ForgotPasswordPage from "./application/auth-page/forgot-password/page";
 import ChangePasswordPage from "./application/auth-page/change-password/page";
 import AuthGuard from "./shared/components/guards/AuthGuard";
+import HomePage from "./application/home-page/page";
+
 import { useAuth0 } from "@auth0/auth0-react";
 import Cookies from "universal-cookie";
-const Profile = () => {
-  const { user, isAuthenticated } = useAuth0();
-  return isAuthenticated && user && <p>{user.name}</p>;
-};
 import { Button } from "@mui/material";
-
 const LogoutButton = () => {
   const { user, isAuthenticated } = useAuth0();
   const { logout } = useAuth0();
@@ -39,17 +36,12 @@ const LogoutButton = () => {
   );
 };
 
+
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: (
-      <div>
-        <h1>Hello World</h1>
-        <Link to="about">About Us</Link>
-        <Profile></Profile>
-        <LogoutButton></LogoutButton>
-      </div>
-    ),
+    element: <HomePage />,
   },
   {
     path: "about",
