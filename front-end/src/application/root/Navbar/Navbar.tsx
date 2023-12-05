@@ -9,6 +9,7 @@ import { AlignJustify, Plus } from 'lucide-react';
 import UserMenu from './UserMenu';
 import AddClassMenu from './AddClassMenu';
 import NotificationList from './NotificationList';
+import { MAIN_COLOR } from '@/shared/utils/constant';
 
 interface NavbarProps{
   onToggleMenuClick : Function
@@ -22,7 +23,11 @@ export default function Navbar({onToggleMenuClick}: NavbarProps) {
   return (
       <AppBar 
         position="fixed"
-        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        elevation={0}
+        sx={{ 
+          bgcolor : MAIN_COLOR,
+          color :'black',
+          zIndex: (theme) => theme.zIndex.drawer + 1 }}
         >
         <Toolbar>
           <IconButton

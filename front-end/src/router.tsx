@@ -6,6 +6,7 @@ import ChangePasswordPage from "./application/auth-page/change-password/page";
 import AuthGuard from "./shared/components/guards/AuthGuard";
 import Root from "./application/root/Root";
 import ClassList from "./application/class-page/ClassList";
+import ClassDetail from "./application/class-detail/ClassDetail";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,21 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <ClassList /> },
+      {
+        path: ':classID',
+        element: <ClassDetail></ClassDetail>,
+        children :[
+          {
+            path: 'feed'
+          },
+          {
+            path:'list'
+          },
+          {
+            path:'grade'
+          }
+        ]
+      }
     ],
   },
   {

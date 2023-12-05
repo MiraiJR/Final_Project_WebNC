@@ -8,7 +8,8 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Divide } from 'lucide-react';
-import { Divider } from '@mui/material';
+import { CardHeader, Divider } from '@mui/material';
+import { MAIN_COLOR } from '@/shared/utils/constant';
 
 const bull = (
   <Box
@@ -21,16 +22,17 @@ const bull = (
 
 export default function ClassCard() {
   return (
-    <Card sx={{ width: 300, height: 250}} className='m-5'>
-      <CardContent>
+    <Card sx={{ width: 300, height: 250,borderRadius: '16px'}} className='m-5' variant='outlined'>
+      <CardContent sx={{height:75, backgroundColor: MAIN_COLOR, color: 'black'}} >
         <Typography variant="h5" component="div" noWrap>
-          Web Nâng cao
+            Web Nâng cao
         </Typography>
-        <Typography sx={{ mb: 1.5 }} color="text.secondary" noWrap>
+        <Typography sx={{ mb: 1.5 }}  noWrap>
           Nguyễn Huy Khánh
         </Typography>
-        <Divider></Divider>
-        <Typography variant="body2" sx={{height:100}}>
+      </CardContent>
+      <CardContent>
+        <Typography variant="body2" sx={{height:75}}>
           well meaning and kindly.
           <br />
           {'"a benevolent smile"'}
