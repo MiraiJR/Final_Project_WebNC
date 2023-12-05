@@ -4,12 +4,35 @@ import LoginPage from "./application/auth-page/login/page";
 import ForgotPasswordPage from "./application/auth-page/forgot-password/page";
 import ChangePasswordPage from "./application/auth-page/change-password/page";
 import AuthGuard from "./shared/components/guards/AuthGuard";
-import HomePage from "./application/home-page/page";
+import Root from "./application/root/Root";
+import ClassList from "./application/class-page/ClassList";
+import ClassDetail from "./application/class-detail/ClassDetail";
+import ClassFeed from "./application/class-detail/class-detail-feed/ClassFeed";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <HomePage />,
+    path: "/class",
+    element: (
+      <Root></Root>
+    ),
+    children: [
+      { index: true, element: <ClassList /> },
+      {
+        path: ':classID',
+        element: <ClassDetail></ClassDetail>,
+        children :[
+          { index: true, 
+            element: <ClassFeed></ClassFeed>
+          },
+          {
+            path:'list'
+          },
+          {
+            path:'grade',
+          }
+        ]
+      }
+    ],
   },
   {
     path: "about",
