@@ -16,6 +16,7 @@ export default function ClassFeed(){
                     <p className='text-xl'>abc def ghz</p>
                 </div>
             </Box>
+            
         </Box>
     )
 }
