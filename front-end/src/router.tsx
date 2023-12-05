@@ -7,6 +7,7 @@ import AuthGuard from "./shared/components/guards/AuthGuard";
 import Root from "./application/root/Root";
 import ClassList from "./application/class-page/ClassList";
 import ClassDetail from "./application/class-detail/ClassDetail";
+import ClassFeed from "./application/class-detail/class-detail-feed/ClassFeed";
 
 const router = createBrowserRouter([
   {
@@ -20,9 +21,8 @@ const router = createBrowserRouter([
         path: ':classID',
         element: <ClassDetail></ClassDetail>,
         children :[
-          { index: false},
-          {
-            path: 'feed'
+          { index: true, 
+            element: <ClassFeed></ClassFeed>
           },
           {
             path:'list'

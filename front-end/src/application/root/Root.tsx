@@ -2,7 +2,6 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import CssBaseline from '@mui/material/CssBaseline';
 import Drawer from '@mui/material/Drawer';
-import Typography from '@mui/material/Typography';
 import Navbar from './Navbar/Navbar';
 import { DrawerHeader } from './StyledDrawerHeader';
 import Sidebar from './Sidebar/Sidebar';

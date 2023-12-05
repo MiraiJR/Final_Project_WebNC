@@ -19,10 +19,13 @@ export default function ClassDetail() {
     let {pathname} = useLocation();
     const pathnameSplit = pathname.split('/');
     function initValue () : string{
+        if(pathnameSplit.length <4){
+            return TagValue.Feed;
+        }
         if(isStringInEnum(pathnameSplit[3])){
             return pathnameSplit[3];
         }else{
-            return ("");
+            return "";
         }
     }
 
@@ -37,11 +40,11 @@ export default function ClassDetail() {
     return (
         <Box>
             <Tabs onChange={handleChange} value={value} >
-                <Tab value={TagValue.Feed} label="Feed"  component={Link} to={link+`/${TagValue.Feed}`}/>
-                <Tab value={TagValue.List} label="List" component={Link} to={link+`/${TagValue.List}`}/>
+                <Tab value={TagValue.Feed} label="Feed"  component={Link} to={link}/>
+                <Tab value={TagValue.List} label="Member" component={Link} to={link+`/${TagValue.List}`}/>
                 <Tab value={TagValue.Grade} label="Grade"  component={Link} to={link+`/${TagValue.Grade}`}/>
             </Tabs>
-            <Box>
+            <Box margin='20px' display="flex" justifyContent="center" >
                 <Outlet></Outlet>
             </Box>
         </Box>
