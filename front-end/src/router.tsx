@@ -8,8 +8,13 @@ import Root from "./application/root/Root";
 import ClassList from "./application/class-page/ClassList";
 import ClassDetail from "./application/class-detail/ClassDetail";
 import ClassFeed from "./application/class-detail/class-detail-feed/ClassFeed";
+import HomePage from "./application/home-page/page";
 
 const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <HomePage></HomePage>
+  },
   {
     path: "/class",
     element: (
