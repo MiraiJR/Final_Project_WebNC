@@ -20,6 +20,7 @@ const router = createBrowserRouter([
         path: ':classID',
         element: <ClassDetail></ClassDetail>,
         children :[
+          { index: false},
           {
             path: 'feed'
           },
