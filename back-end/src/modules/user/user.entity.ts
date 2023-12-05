@@ -12,7 +12,7 @@ export class User {
   @Column({ nullable: false })
   fullname: string;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   password: string;
 
   @Column({ nullable: true, name: 'access_token' })
@@ -20,4 +20,10 @@ export class User {
 
   @Column({ nullable: true, name: 'refresh_token' })
   refreshToken: string;
+
+  @Column({ nullable: true, name: 'facebook_id' })
+  facebookId: string;
+
+  @Column({ nullable: true, name: 'google_id' })
+  googleId: string;
 }

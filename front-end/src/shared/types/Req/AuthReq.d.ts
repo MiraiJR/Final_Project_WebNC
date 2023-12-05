@@ -13,3 +13,14 @@ type ChangePasswordReq = {
   token: string;
   password: string;
 };
+
+type RegisterWithSocialAcount = {
+  email: string | null;
+  fullname: string;
+  socialId: string;
+  socialType: string;
+};
+
+type IdSocialAcount = {
+  socialId: string;
+};

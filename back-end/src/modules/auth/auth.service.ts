@@ -15,8 +15,12 @@ import { UserService } from '../user/user.service';
 import { RefreshTokenReqDTO } from './dto/request/RefreshTokenReq';
 import { AccountRespDTO } from './dto/response/AccountRespDTO';
 import { PayloadToken } from 'src/shared/types/PayloadToken';
+import { SocialPayloadToken } from 'src/shared/types/SocialPayloadToken';
 import { MailService } from '../mail/mail.service';
 import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
+import { LoginSocialReqDTO } from './dto/request/LoginSocialReq';
+import { CodeRespDTO } from './dto/response/CodeResponseDTO';
+import { SocialType } from 'src/shared/types/EnumSocialType';
 
 @Injectable()
 export class AuthService {
@@ -33,6 +37,10 @@ export class AuthService {
     );
 
     if (!matchedAccount) {
+      throw new BadRequestException('Email or password is wrong');
+    }
+
+    if (matchedAccount && !matchedAccount.password) {
       throw new BadRequestException('Email or password is wrong');
     }
 
@@ -84,6 +92,95 @@ export class AuthService {
     this.mailService.sendMailVerifyEmail(registerReqDto.email, token);
   }
 
+  async loginSocial(
+    reqData: LoginSocialReqDTO,
+  ): Promise<AccountRespDTO | CodeRespDTO> {
+    const { socialId, email, fullname, socialType } = reqData;
+
+    // check email
+    const matchedUser = await this.userService.findBySocialId(
+      socialType,
+      socialId,
+    );
+
+    if (!email && !matchedUser && socialType === SocialType.FACEBOOK) {
+      const codeResp: CodeRespDTO = {
+        code: 'NEW_ACCOUNT_NOT_FOUND_EMAIL',
+      };
+
+      return codeResp;
+    }
+
+    if (!matchedUser) {
+      const isUsedMail = await this.userService.findByEmail(email);
+
+      if (isUsedMail) {
+        throw new BadRequestException('Email is used!');
+      }
+
+      if (socialType === SocialType.GOOGLE) {
+        const newUser = await this.userService.createUser({
+          fullname,
+          googleId: socialId,
+          email,
+        });
+
+        const accessToken = this.signAccessToken(newUser.id);
+        const refreshToken = this.signRefreshToken(newUser.id);
+
+        const accountResp: AccountRespDTO = {
+          accessToken,
+          refreshToken,
+        };
+
+        await this.userService.updateUser({
+          ...newUser,
+          accessToken,
+          refreshToken,
+        });
+
+        return accountResp;
+      }
+
+      //create new
+      const payloadToken: SocialPayloadToken = {
+        ...reqData,
+      };
+
+      const token = this.signActiveMailToken(payloadToken);
+
+      this.mailService.sendMailVerifyEmail(email, token);
+      const codeResp: CodeRespDTO = {
+        code: 'NEW_ACCOUNT_VERIFY_EMAIL',
+      };
+
+      return codeResp;
+    }
+
+    if (matchedUser.email === email) {
+      await this.userService.updateUser({
+        ...matchedUser,
+        googleId: socialId,
+      });
+    }
+
+    const accessToken = this.signAccessToken(matchedUser.id);
+    const refreshToken = this.signRefreshToken(matchedUser.id);
+
+    const accountResp: AccountRespDTO = {
+      accessToken,
+      refreshToken,
+    };
+
+    await this.userService.updateUser({
+      ...matchedUser,
+      accessToken,
+      refreshToken,
+    });
+
+    return accountResp;
+  }
+
   async refreshToken(dataReq: RefreshTokenReqDTO): Promise<AccountRespDTO> {
     const { token } = dataReq;
 
@@ -129,6 +226,22 @@ export class AuthService {
 
       if (isExistedEmail) {
         throw new BadRequestException('Email is existed!');
+      }
+
+      if (user.socialType && user.socialType === SocialType.FACEBOOK) {
+        await this.userService.createUser({
+          ...user,
+          facebookId: user.socialId,
+        });
+        return;
+      }
+
+      if (user.socialType && user.socialType === SocialType.GOOGLE) {
+        await this.userService.createUser({
+          ...user,
+          googleId: user.socialId,
+        });
+        return;
       }
 
       await this.userService.createUser({
@@ -197,7 +310,7 @@ export class AuthService {
     );
   }
 
-  signActiveMailToken(payload: PayloadToken): string {
+  signActiveMailToken(payload: PayloadToken | SocialPayloadToken): string {
     return this.jwtService.sign(
       {
         user: payload,
