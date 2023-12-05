@@ -8,6 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import { AlignJustify, Plus } from 'lucide-react';
 import UserMenu from './UserMenu';
 import AddClassMenu from './AddClassMenu';
+import NotificationList from './NotificationList';
 
 interface NavbarProps{
   onToggleMenuClick : Function
@@ -39,6 +40,9 @@ export default function Navbar({onToggleMenuClick}: NavbarProps) {
           </Typography>
             <div>
               <AddClassMenu/>
+            </div>
+            <div>
+              <NotificationList></NotificationList>
             </div>
             <div>
               <UserMenu/>
