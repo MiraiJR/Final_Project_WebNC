@@ -33,7 +33,7 @@ export default function JoinClassFormDialog({open,onClose}:CreateClassFormDialog
 
     return(
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Create new class</DialogTitle>
+            <DialogTitle>Join class</DialogTitle>
             <DialogContent sx={{minWidth: '500px', marginLeft: '20px'}}>
                 <TextField
                     {...register("code",{

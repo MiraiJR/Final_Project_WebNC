@@ -9,6 +9,7 @@ import ClassList from "./application/class-page/ClassList";
 import ClassDetail from "./application/class-detail/ClassDetail";
 import ClassFeed from "./application/class-detail/class-detail-feed/ClassFeed";
 import HomePage from "./application/home-page/page";
+import { createClassAction } from "./application/root/Navbar/ClassFormDialog/CreateClassFormDialog";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
       <Root></Root>
     ),
     loader: rootLoader,
+    action: createClassAction,
     children: [
       { index: true, element: <ClassList /> },
       {
@@ -31,7 +33,7 @@ const router = createBrowserRouter([
             element: <ClassFeed></ClassFeed>
           },
           {
-            path:'list'
+            path:'list',
           },
           {
             path:'grade',

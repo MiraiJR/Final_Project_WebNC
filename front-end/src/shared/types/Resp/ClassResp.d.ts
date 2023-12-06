@@ -9,4 +9,13 @@ type ClassRespData = {
     };
     idCode: string;
     role: UserRole;
+    description: string;
+}
+
+type ClassDetailResp = {
+    title: string;
+    creatorId: number;
+    idCode: string;
+    roleToken: string;
+    description: string;
 }

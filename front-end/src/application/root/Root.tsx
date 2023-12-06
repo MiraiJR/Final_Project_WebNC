@@ -84,6 +84,7 @@ function Root() {
 export default Root;
 
 export async function loader():Promise<LoaderData|Response> {
+  console.log("Loader +1");
   try{
     const userData = (await UserService.getMe()).data;
     const classList = (await ClassService.getClassList()).data;

@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import {  Divider } from '@mui/material';
 import { MAIN_COLOR } from '@/shared/utils/constant';
 import { ClassRespData } from '@/shared/types/Resp/ClassResp';
+import { Link } from 'react-router-dom';
 
 interface ClassCardProps {
   classData : ClassRespData
@@ -26,14 +27,12 @@ export default function ClassCard( {classData}:ClassCardProps) {
       </CardContent>
       <CardContent>
         <Typography variant="body2" sx={{height:75}}>
-          well meaning and kindly.
-          <br />
-          {'"a benevolent smile"'}
+          {classData.description}
         </Typography>
       </CardContent>
       <Divider></Divider>
       <CardActions>
-        <Button size="small">Go to Class</Button>
+        <Link to={`/class/${classData.idCode}`}><Button size="small">Go to Class</Button></Link>
       </CardActions>
     </Card>
   );
