@@ -8,13 +8,18 @@ import Sidebar from './Sidebar/Sidebar';
 import { MiniDrawer } from './StyledMiniDrawer';
 import { DRAWERWIDTH } from '@/shared/utils/constant';
 import useCheckSmallScreen from '@/shared/hooks/useCheckSmallScreen';
-import { Outlet, redirect, useLoaderData } from 'react-router-dom';
+import { Outlet, redirect, useLoaderData, useOutlet, useOutletContext } from 'react-router-dom';
 import UserService from '@/shared/services/UserService';
 import { CodeResponse } from '@/shared/utils/codeResponse';
 import ClassService from '@/shared/services/ClassService';
 import { ClassRespData } from '@/shared/types/Resp/ClassResp';
 
 interface LoaderData{
+  userData: UserRespData,
+  classList: ClassRespData[],
+}
+
+type RootContextType = {
   userData: UserRespData,
   classList: ClassRespData[],
 }
@@ -70,7 +75,7 @@ function Root() {
         sx={{ flexGrow: 1, p: 3 }}
       >
         <DrawerHeader></DrawerHeader>
-        <Outlet></Outlet>
+        <Outlet context={{userData,classList}}></Outlet>
       </Box>
     </Box>
   );
@@ -78,7 +83,7 @@ function Root() {
 
 export default Root;
 
-export async function loader():Promise<LoaderData|Response|null> {
+export async function loader():Promise<LoaderData|Response> {
   try{
     const userData = (await UserService.getMe()).data;
     const classList = (await ClassService.getClassList()).data;
@@ -87,7 +92,14 @@ export async function loader():Promise<LoaderData|Response|null> {
     if(e.message == CodeResponse.UNAUTHORIZED){
       return redirect('/');
     }
-    console.error('Error in loader:', e);
-    return null;
+    throw new Error(e);
   }
+}
+
+export function useUser(): UserRespData{
+  return useOutletContext<RootContextType>().userData;
+}
+
+export function useClassList(): ClassRespData[]{
+  return useOutletContext<RootContextType>().classList;
 }
