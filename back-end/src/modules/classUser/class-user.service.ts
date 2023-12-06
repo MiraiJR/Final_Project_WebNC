@@ -55,15 +55,16 @@ export class ClassUserService{
         return [];
         }
         
-        return classUsers.map((classUser) => this.mapClassToClassResponseDto(classUser.classroom));
+        return classUsers.map((classUser) => this.mapClassToClassResponseDto(classUser));
     }
 
-    private mapClassToClassResponseDto(classroom: Class): ClassResponseDto {
-        const { title, creator, idCode } = classroom;
+    private mapClassToClassResponseDto(classUser: ClassUser): ClassResponseDto {
+        const { title, creator, idCode } = classUser.classroom;
         const ClassResponse: ClassResponseDto = {
             title,
             creatorId: creator.id,
             idCode,
+            role:classUser.role,
         }
         return ClassResponse;
     }
