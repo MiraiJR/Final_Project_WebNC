@@ -10,6 +10,7 @@ import ClassDetail from "./application/class-detail/ClassDetail";
 import ClassFeed from "./application/class-detail/class-detail-feed/ClassFeed";
 import HomePage from "./application/home-page/page";
 import { createClassAction } from "./application/root/Navbar/ClassFormDialog/CreateClassFormDialog";
+import { joinClassAction } from "./application/root/Navbar/ClassFormDialog/JoinClassFormDialog";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
         ]
       }
     ],
+  },
+  {
+    path: '/join/:classID',
+    action : joinClassAction,
   },
   {
     path: "about",

@@ -23,7 +23,7 @@ interface Inputs{
 
 export default function CreateClassFormDialog({open,onClose}:CreateClassFormDialogProps){
     const submit = useSubmit();
-    const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
+    const { register, handleSubmit, formState: { errors },reset } = useForm<Inputs>({
         mode: 'onSubmit',
         reValidateMode: 'onChange',
         defaultValues: {},
@@ -38,6 +38,7 @@ export default function CreateClassFormDialog({open,onClose}:CreateClassFormDial
         });
 
         submit(formData,{method : 'post', action: '/class'})
+        reset(data)
         onClose();
     }
 
