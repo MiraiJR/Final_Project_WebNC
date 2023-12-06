@@ -14,7 +14,11 @@ type ClassRespData = {
 
 type ClassDetailResp = {
     title: string;
-    creatorId: number;
+    creator: {
+        id: number,
+        fullname: string,
+        email: string,
+    };
     idCode: string;
     roleToken: string;
     description: string;

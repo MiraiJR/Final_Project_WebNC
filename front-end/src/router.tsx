@@ -6,7 +6,7 @@ import ChangePasswordPage from "./application/auth-page/change-password/page";
 import AuthGuard from "./shared/components/guards/AuthGuard";
 import Root,{ loader as rootLoader } from "./application/root/Root";
 import ClassList from "./application/class-page/ClassList";
-import ClassDetail from "./application/class-detail/ClassDetail";
+import ClassDetail, { classDetailLoader } from "./application/class-detail/ClassDetail";
 import ClassFeed from "./application/class-detail/class-detail-feed/ClassFeed";
 import HomePage from "./application/home-page/page";
 import { createClassAction } from "./application/root/Navbar/ClassFormDialog/CreateClassFormDialog";
@@ -29,6 +29,7 @@ const router = createBrowserRouter([
       {
         path: ':classID',
         element: <ClassDetail></ClassDetail>,
+        loader: classDetailLoader,
         children :[
           { index: true, 
             element: <ClassFeed></ClassFeed>
