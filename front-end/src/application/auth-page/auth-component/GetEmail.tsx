@@ -31,7 +31,7 @@ const GetEmail = () => {
 
         toast.success("Login successfully!");
         JwtStorage.setToken(data as AuthToken);
-        navigate("/");
+        navigate("/class");
       } catch (error: any) {
         toast.error(error.message);
       }

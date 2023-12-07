@@ -27,7 +27,7 @@ const FacebookButton = () => {
 
       toast.success("Login successfully!");
       JwtStorage.setToken(data as AuthToken);
-      navigate("/");
+      navigate("/class");
     } catch (error: any) {
       if (
         error.statusCode === 400 &&
