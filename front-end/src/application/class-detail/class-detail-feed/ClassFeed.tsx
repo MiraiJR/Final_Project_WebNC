@@ -1,6 +1,7 @@
 import { MAIN_COLOR } from "@/shared/utils/constant";
 import Box from "@mui/material/Box";
 import GradeStructure from "./GradeStructure";
+import GradeReview from "./GradeReview";
 
 export default function ClassFeed() {
   return (
@@ -39,10 +40,7 @@ export default function ClassFeed() {
           className="relative"
           bgcolor={MAIN_COLOR}
         >
-          <div className=" bottom-4 left-4">
-            <p className="text-4xl">WEB NÂNG CAO</p>
-            <p className="text-xl">abc def ghz</p>
-          </div>
+          <GradeReview />
         </Box>
       </div>
     </Box>
