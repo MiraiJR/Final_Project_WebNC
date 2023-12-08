@@ -17,7 +17,7 @@ interface TableData {
 
 const GradeStructure = () => {
   const [isEdit, setIsEdit] = useState(false);
-  const [rows, setRows] = useState<TableData[]>([]);
+  const [rows, setRows] = useState<TableData[] | undefined>([]);
   console.log("re-render with grade structure: " + JSON.stringify(rows));
   useEffect(() => {
     const data = [
@@ -28,35 +28,39 @@ const GradeStructure = () => {
         grade: 100,
       },
     ];
+    // const data = undefined;
     setRows(data);
   }, []);
-  const UIrows = rows.map((row) => ({ ...row }));
+  let UIrows: TableData[] = [];
+  if (rows) {
+    UIrows = rows.map((row) => ({ ...row }));
+  }
   console.log(rows);
 
   const handleSaveButton = () => {
     const temp = UIrows.map((row) => ({ ...row }));
-    temp[temp.length - 1].grade =
-      temp.reduce((acc, cur) => acc + cur.grade, 0) -
-      UIrows[rows.length - 1].grade;
+    const totalRow = temp.find((row) => row.name === "Total");
+    if (totalRow) {
+      totalRow.grade =
+        temp.reduce((acc, cur) => acc + cur.grade, 0) - totalRow.grade;
+    } else {
+      temp.push({
+        name: "Total",
+        grade: temp.reduce((acc, cur) => acc + cur.grade, 0),
+      });
+    }
     setRows([...temp]);
-    // setRows([
-    //   { name: "Midterm2", grade: 40 },
-    //   { name: "Final", grade: 70 },
-    //   {
-    //     name: "Total",
-    //     grade: 500,
-    //   },
-    // ]);
     // send new structure to backend
     // Todo:
 
-    //set state to not edit
+    // set state to not edit
     setIsEdit(false);
   };
 
   const handleDragEnd = (e: any) => {
     if (!e.destination) return;
-    let tempData = Array.from(rows);
+    if (e.destination.index === UIrows.length - 1) return;
+    let tempData = Array.from(UIrows);
     let [source_data] = tempData.splice(e.source.index, 1);
     tempData.splice(e.destination.index, 0, source_data);
     setRows(tempData);
@@ -65,7 +69,7 @@ const GradeStructure = () => {
     <>
       <p className=" text-base m-2 font-bold">Grade Structure</p>
       {rows === undefined ? (
-        <>
+        <div className="flex flex-col justify-center items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -83,7 +87,7 @@ const GradeStructure = () => {
             <line x1="12" x2="12.01" y1="16" y2="16" />
           </svg>
           <p className="text-4xl m-2">Grade Structure is empty</p>
-        </>
+        </div>
       ) : (
         <DragDropContext onDragEnd={handleDragEnd}>
           <TableContainer>
@@ -107,10 +111,16 @@ const GradeStructure = () => {
                     {rows &&
                       UIrows.map((row, index) => (
                         <Draggable
-                          key={row.name}
+                          key={`${row.name}-${row.grade}`}
                           draggableId={row.name}
                           index={index}
-                          isDragDisabled={!isEdit}
+                          isDragDisabled={
+                            isEdit
+                              ? row.name === "Total"
+                                ? true
+                                : false
+                              : true
+                          }
                         >
                           {(provider) => (
                             <TableRow
