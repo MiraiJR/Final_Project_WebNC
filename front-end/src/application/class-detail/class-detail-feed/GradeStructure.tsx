@@ -18,7 +18,6 @@ interface TableData {
 const GradeStructure = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [rows, setRows] = useState<TableData[] | undefined>([]);
-  console.log("re-render with grade structure: " + JSON.stringify(rows));
   useEffect(() => {
     const data = [
       { name: "Midterm", grade: 40 },
@@ -35,8 +34,6 @@ const GradeStructure = () => {
   if (rows) {
     UIrows = rows.map((row) => ({ ...row }));
   }
-  console.log(rows);
-
   const handleSaveButton = () => {
     const temp = UIrows.map((row) => ({ ...row }));
     const totalRow = temp.find((row) => row.name === "Total");
@@ -124,7 +121,7 @@ const GradeStructure = () => {
                         >
                           {(provider) => (
                             <TableRow
-                              key={row.name}
+                              key={`${row.name}-${row.grade}`}
                               sx={{
                                 "&:last-child td, &:last-child th": {
                                   border: 0,
@@ -146,7 +143,7 @@ const GradeStructure = () => {
                                         : false
                                       : true
                                   }
-                                  id="outlined-disabled"
+                                  id={`${row.name}-${row.grade}-name`}
                                   className={
                                     row.name === "Total" ? "font-bold" : ""
                                   }
@@ -168,7 +165,7 @@ const GradeStructure = () => {
                                         : false
                                       : true
                                   }
-                                  id="outlined-disabled"
+                                  id={`${row.name}-${row.grade}-grade`}
                                   className={
                                     row.name === "Total"
                                       ? "font-bold text-right"

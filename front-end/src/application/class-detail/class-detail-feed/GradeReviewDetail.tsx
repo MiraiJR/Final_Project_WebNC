@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import avatar from "../../../shared/assets/student-minhhoa.png";
 import { useEffect, useState } from "react";
+import UpdateGradeDialog from "./UpdateGradeDialog";
 interface StudentRequest {
   studentName: string;
   gradeComposition: string;
@@ -28,6 +29,7 @@ interface Props {
 const GradeReviewDetail = ({ info }: Props) => {
   const [userComment, setUserComment] = useState("");
   const [comments, setComments] = useState<Comment[] | undefined>();
+  const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
     const data = [
       {
@@ -87,11 +89,11 @@ const GradeReviewDetail = ({ info }: Props) => {
         <ListItem>
           <ListItemText primary={`Expected Grade: ${info.expectGrade}`} />
         </ListItem>
-        <ListItem divider={true}>
+        <ListItem>
           <ListItemText primary={`Explaination: ${info.explaination}`} />
         </ListItem>
         <div className="flex justify-end mt-2 ">
-          <Button variant="contained">
+          <Button variant="contained" onClick={() => setIsOpen(true)}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="24"
@@ -179,6 +181,7 @@ const GradeReviewDetail = ({ info }: Props) => {
           </Button>
         </div>
       </div>
+      <UpdateGradeDialog open={isOpen} onClose={() => setIsOpen(false)} />
     </>
   );
 };
