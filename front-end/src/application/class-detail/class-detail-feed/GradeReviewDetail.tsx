@@ -1,8 +1,6 @@
 import {
   List,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
   ListItemText,
   Divider,
   TextField,
@@ -92,29 +90,27 @@ const GradeReviewDetail = ({ info }: Props) => {
         <ListItem divider={true}>
           <ListItemText primary={`Explaination: ${info.explaination}`} />
         </ListItem>
-        <ListItem alignItems="center">
-          <ListItemButton>
-            <ListItemIcon>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="lucide lucide-pencil-line"
-              >
-                <path d="M12 20h9" />
-                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
-                <path d="m15 5 3 3" />
-              </svg>
-            </ListItemIcon>
-            <ListItemText primary="Update Grade" />
-          </ListItemButton>
-        </ListItem>
+        <div className="flex justify-end mt-2 ">
+          <Button variant="contained">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="lucide lucide-pencil-line mr-2"
+            >
+              <path d="M12 20h9" />
+              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+              <path d="m15 5 3 3" />
+            </svg>
+            Update Grade
+          </Button>
+        </div>
       </List>
       <Divider />
       <div className="flex flex-col ">
