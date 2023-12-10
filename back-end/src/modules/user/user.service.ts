@@ -51,4 +51,16 @@ export class UserService {
   async updateUser(user: IUser): Promise<User> {
     return this.userRepository.save(user);
   }
+
+  async getMe(userID: number): Promise<UserRespDTO> {
+    const me = await this.findById(userID);
+
+    const meResp: UserRespDTO = {
+      email: me.email,
+      fullname: me.fullname,
+      studentId: me.studentId,
+    };
+
+    return meResp;
+  }
 }

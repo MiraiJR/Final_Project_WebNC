@@ -2,24 +2,26 @@ import { MAIN_COLOR } from "@/shared/utils/constant";
 import Box from "@mui/material/Box";
 import GradeStructure from "./GradeStructure";
 import GradeReview from "./GradeReview";
+import { useClassDetail } from "../ClassDetail";
+import InviteCodeAndLinkBox from "./InviteCodeAndLinkBox";
 
 export default function ClassFeed() {
+  const classDetail = useClassDetail();
   return (
-    <Box width="100%" maxWidth="1000px" className="flex flex-col">
+    <Box width="100%" maxWidth="1000px" className="flex flex-col space-y-4">
       <Box
         width="100%"
         height="150px"
         borderRadius="10px"
         padding="10px"
-        margin="10px 0"
         className="relative"
         bgcolor={MAIN_COLOR}
       >
         <div className="absolute bottom-4 left-4">
-          <p className="text-4xl">WEB NÂNG CAO</p>
-          <p className="text-xl">abc def ghz</p>
+          <p className="text-base font-bold uppercase">{classDetail.title}</p>
         </div>
       </Box>
+
       <div className="flex flex-row">
         <Box
           width="40%"
@@ -43,6 +45,13 @@ export default function ClassFeed() {
           <GradeReview />
         </Box>
       </div>
+      <Box className="flex flex-col">
+        <Box>
+          <InviteCodeAndLinkBox
+            classId={classDetail.idCode}
+          ></InviteCodeAndLinkBox>
+        </Box>
+      </Box>
     </Box>
   );
 }

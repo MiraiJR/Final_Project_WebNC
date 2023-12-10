@@ -26,4 +26,7 @@ export class User {
 
   @Column({ nullable: true, name: 'google_id' })
   googleId: string;
+
+  @Column({nullable:true})
+  studentId: string;
 }
