@@ -58,6 +58,7 @@ export class UserService {
     const meResp: UserRespDTO = {
       email: me.email,
       fullname: me.fullname,
+      studentId: me.studentId,
     };
 
     return meResp;

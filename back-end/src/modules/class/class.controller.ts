@@ -44,7 +44,6 @@ export class ClassController {
     //accept mail
     @Get('/acceptInvite')
     async handAccpetLinkInvite(@UserId() userId:number , @Query() query){
-        console.log(query);
         return await this.classService.handleAcceptLinkInvite(query.token,userId);
     }
 

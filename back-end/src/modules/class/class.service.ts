@@ -49,6 +49,12 @@ export class ClassService {
     }
 
     async joinClassAsStudent(classIdCode: string, userId: number) : Promise<ClassDetailResponseDto>{
+        const role: UserRole = await this.classUserService.findRole(classIdCode,userId);
+        if(role ){
+            return this.getDetailClass(classIdCode,userId);
+        }
+        
+
         const classroom: Class  = await this.findByIdCode(classIdCode);
         if(!classroom){
             throw new BadRequestException("Class code not exist")

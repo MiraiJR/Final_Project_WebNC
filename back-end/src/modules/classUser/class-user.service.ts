@@ -79,11 +79,12 @@ export class ClassUserService{
     }
 
     private mapUserToMemberDataRespDto(user: User): MemberDataRespDTO {
-        const { email, fullname, id } = user;
+        const { email, fullname, id,studentId } = user;
         const MemberDataResp : MemberDataRespDTO = {
             email, 
             fullname, 
-            id
+            id,
+            studentId,
         }
         return MemberDataResp;
     }
@@ -92,7 +93,6 @@ export class ClassUserService{
         const classUser = await this.classUserRepository.find({
             where:{classId, userId}
         })
-        console.log(classUser);
         if(classUser){
             return true;
         }else{
