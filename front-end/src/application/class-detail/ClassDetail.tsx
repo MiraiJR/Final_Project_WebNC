@@ -1,11 +1,12 @@
 import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import { Link, LoaderFunction, Outlet, useLoaderData, useLocation, useOutletContext, useParams } from 'react-router-dom';
+import { Link, Outlet, useLoaderData, useLocation, useOutletContext, useParams } from 'react-router-dom';
 import { useState } from 'react';
 import ClassService from '@/shared/services/ClassService';
 import { ClassDetailResp } from '@/shared/types/Resp/ClassResp';
 import { toast } from 'react-toastify';
+import RoleTokenStorage from '@/shared/storages/RoleTokenStorage';
 
 enum TagValue {
     Feed = 'feed',
@@ -29,8 +30,9 @@ export default function ClassDetail() {
     const classDetail : ClassDetail = useLoaderData() as ClassDetail
     let {pathname} = useLocation();
     const pathnameSplit = pathname.split('/');
+    
     function initValue () : string{
-        if(pathnameSplit.length <4){
+        if(pathnameSplit.length <= 3){
             return TagValue.Feed;
         }
         if(isStringInEnum(pathnameSplit[3])){
@@ -64,10 +66,10 @@ export default function ClassDetail() {
 }
 
 export async function classDetailLoader  ({params}:any) : Promise<ClassDetail> {
-    console.log(1);
     try{
         const classDetailResp : ClassDetailResp  = (await ClassService.getClassDetail(params.classID)).data;
-        console.log(1)
+        RoleTokenStorage.deleteToken();
+        RoleTokenStorage.setToken(classDetailResp.roleToken);
         const classDetail : ClassDetail = classDetailResp as ClassDetail;
         return classDetail;
     }catch(e:any){

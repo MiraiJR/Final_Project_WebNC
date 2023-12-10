@@ -14,12 +14,20 @@ type ClassRespData = {
 
 type ClassDetailResp = {
     title: string;
-    creator: {
-        id: number,
-        fullname: string,
-        email: string,
-    };
+    creatorId: number;
     idCode: string;
     roleToken: string;
     description: string;
+    role: UserRole
+}
+
+type ClassMemberResp = {
+    email: string;
+    fullname: string;
+    id: number;
+}
+
+type ClassMembersListResp = {
+    students: ClassMemberResp[];
+    teachers: ClassMemberResp[];
 }

@@ -8,7 +8,7 @@ import Sidebar from './Sidebar/Sidebar';
 import { MiniDrawer } from './StyledMiniDrawer';
 import { DRAWERWIDTH } from '@/shared/utils/constant';
 import useCheckSmallScreen from '@/shared/hooks/useCheckSmallScreen';
-import { Outlet, redirect, useLoaderData, useOutlet, useOutletContext } from 'react-router-dom';
+import { Outlet, redirect, useLoaderData, useOutletContext } from 'react-router-dom';
 import UserService from '@/shared/services/UserService';
 import { CodeResponse } from '@/shared/utils/codeResponse';
 import ClassService from '@/shared/services/ClassService';

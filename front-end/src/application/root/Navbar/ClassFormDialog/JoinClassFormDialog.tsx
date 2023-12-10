@@ -80,6 +80,7 @@ export const joinClassAction : ActionFunction = async ({request}) =>{
     console.log(classID);
     try{
         const response : ClassDetailResp = (await ClassService.joinClass(classID)).data;
+        toast.success('Join Class Success');
         return redirect(`/class/${response.idCode}`);
     }catch(e:any){
         toast.error(e.message);

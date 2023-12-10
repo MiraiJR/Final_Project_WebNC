@@ -11,7 +11,7 @@ const JwtStorage = () => {
 
     if (
       Cookies.get("accessToken") &&
-      inMemoryToken === null &&
+      inMemoryToken === null && 
       Cookies.get("refreshToken")
     ) {
       inMemoryToken = {

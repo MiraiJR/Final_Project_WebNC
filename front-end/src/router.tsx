@@ -11,6 +11,9 @@ import ClassFeed from "./application/class-detail/class-detail-feed/ClassFeed";
 import HomePage from "./application/home-page/page";
 import { createClassAction } from "./application/root/Navbar/ClassFormDialog/CreateClassFormDialog";
 import { joinClassAction } from "./application/root/Navbar/ClassFormDialog/JoinClassFormDialog";
+import MemberList, { memberListLoader } from "./application/class-detail/class-detail-memberList/MemberList";
+import { joinClassLoader } from "./application/join-page/JoinPage";
+import AcceptInvitingDialog from "./application/join-page/AcceptInvitePage";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +39,8 @@ const router = createBrowserRouter([
           },
           {
             path:'list',
+            element : <MemberList></MemberList>,
+            loader: memberListLoader,
           },
           {
             path:'grade',
@@ -47,6 +52,16 @@ const router = createBrowserRouter([
   {
     path: '/join/:classID',
     action : joinClassAction,
+    loader: joinClassLoader,
+  },
+  {
+    path: '/acceptInvite',
+    element: <Root></Root>,
+    loader: rootLoader,
+    children :[
+      { index: true, 
+        element: <AcceptInvitingDialog></AcceptInvitingDialog>
+      },]
   },
   {
     path: "about",

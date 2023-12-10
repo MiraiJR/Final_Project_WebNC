@@ -9,6 +9,7 @@ import { LogOut, Settings } from 'lucide-react';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import { Helper } from '@/shared/utils/heper';
 
 interface UserMenuProps{
   fullname: string,
@@ -24,12 +25,6 @@ export default function UserMenu({fullname}: UserMenuProps){
     const handleClose = () => {
         setAnchorEl(null);
     };
-    const getFullNameIcon = (fullname:string)=>{
-        const words = fullname.split(' ');
-        const lastName = words[words.length - 1];
-        const firstLetter = lastName.charAt(0);
-        return firstLetter;
-    }
 
     return(
         <>
@@ -43,7 +38,7 @@ export default function UserMenu({fullname}: UserMenuProps){
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
             >
-                <Avatar sx={{ width: 32, height: 32 }}>{getFullNameIcon(fullname)}</Avatar>
+                <Avatar sx={{ width: 32, height: 32 }}>{Helper.getFullNameIcon(fullname)}</Avatar>
             </IconButton>
             </Tooltip>
         </Box>
