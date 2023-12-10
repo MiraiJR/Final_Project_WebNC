@@ -4,7 +4,6 @@ import IconButton from '@mui/material/IconButton';
 import MenuItem from '@mui/material/MenuItem';
 import Menu from '@mui/material/Menu';
 import { Plus } from 'lucide-react';
-import Dialog from '@mui/material/Dialog';
 import CreateClassFormDialog from './ClassFormDialog/CreateClassFormDialog';
 import JoinClassFormDialog from './ClassFormDialog/JoinClassFormDialog';
 

@@ -10,12 +10,14 @@ import UserMenu from './UserMenu';
 import AddClassMenu from './AddClassMenu';
 import NotificationList from './NotificationList';
 import { MAIN_COLOR } from '@/shared/utils/constant';
+import { Link } from 'react-router-dom';
 
 interface NavbarProps{
-  onToggleMenuClick : Function
+  onToggleMenuClick : Function,
+  userData : UserRespData,
 }
 
-export default function Navbar({onToggleMenuClick}: NavbarProps) {
+export default function Navbar({onToggleMenuClick,userData}: NavbarProps) {
   const handleToggleMenuClick = ()=>{
     onToggleMenuClick();
   }
@@ -41,7 +43,7 @@ export default function Navbar({onToggleMenuClick}: NavbarProps) {
             <AlignJustify />
           </IconButton>
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Classroom
+            <Link to='/class'>Classroom</Link>
           </Typography>
             <div>
               <AddClassMenu/>
@@ -50,9 +52,10 @@ export default function Navbar({onToggleMenuClick}: NavbarProps) {
               <NotificationList></NotificationList>
             </div>
             <div>
-              <UserMenu/>
+              <UserMenu fullname={userData.fullname}/>
             </div>
         </Toolbar>
       </AppBar>
   );
 }
+

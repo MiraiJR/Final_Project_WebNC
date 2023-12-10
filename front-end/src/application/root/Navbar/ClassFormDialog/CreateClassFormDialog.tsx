@@ -5,6 +5,11 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useForm } from "react-hook-form";
+import { redirect, useSubmit } from 'react-router-dom';
+import type { ActionFunction } from "react-router";
+import ClassService from '@/shared/services/ClassService';
+import { toast } from "react-toastify";
+import { ClassDetailResp } from '@/shared/types/Resp/ClassResp';
 
 interface CreateClassFormDialogProps{
     open: boolean,
@@ -17,7 +22,8 @@ interface Inputs{
 }
 
 export default function CreateClassFormDialog({open,onClose}:CreateClassFormDialogProps){
-    const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
+    const submit = useSubmit();
+    const { register, handleSubmit, formState: { errors },reset } = useForm<Inputs>({
         mode: 'onSubmit',
         reValidateMode: 'onChange',
         defaultValues: {},
@@ -25,10 +31,15 @@ export default function CreateClassFormDialog({open,onClose}:CreateClassFormDial
         criteriaMode: "firstError",
     })
 
-    const onSubmit = (data:Inputs) => {
-        console.log(data);  // { name: ... }
+    const onSubmit =  (data:Inputs) => {
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
 
-        
+        submit(formData,{method : 'post', action: '/class'})
+        reset(data)
+        onClose();
     }
 
 
@@ -64,7 +75,20 @@ export default function CreateClassFormDialog({open,onClose}:CreateClassFormDial
             <DialogActions>
                 <Button onClick={onClose}>Cancel</Button>
                 <Button onClick={handleSubmit(onSubmit)}>Create</Button>
-            </DialogActions>
+        </DialogActions>
         </Dialog>
     )
+}
+
+
+export const createClassAction : ActionFunction= async({request}) => {
+    const formData = await request.formData();
+    const data:CreateClassReq = Object.fromEntries(formData) as CreateClassReq;
+    try{
+        const response : ClassDetailResp = (await ClassService.createClass(data)).data;
+        return redirect(`/class/${response.idCode}`);
+    }catch(e:any){
+        toast.error(e.message);
+    }
+    
 }

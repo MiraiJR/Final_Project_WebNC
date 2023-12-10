@@ -6,15 +6,17 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import Divider from '@mui/material/Divider';
 import React from 'react';
 import { LogOut, Settings } from 'lucide-react';
-import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
+import { Helper } from '@/shared/utils/heper';
+
+interface UserMenuProps{
+  fullname: string,
+}
 
 
-
-
-export default function UserMenu(){
+export default function UserMenu({fullname}: UserMenuProps){
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -36,7 +38,7 @@ export default function UserMenu(){
                 aria-haspopup="true"
                 aria-expanded={open ? 'true' : undefined}
             >
-                <Avatar sx={{ width: 32, height: 32 }}>H</Avatar>
+                <Avatar sx={{ width: 32, height: 32 }}>{Helper.getFullNameIcon(fullname)}</Avatar>
             </IconButton>
             </Tooltip>
         </Box>

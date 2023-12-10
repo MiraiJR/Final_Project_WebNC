@@ -8,11 +8,25 @@ import Sidebar from './Sidebar/Sidebar';
 import { MiniDrawer } from './StyledMiniDrawer';
 import { DRAWERWIDTH } from '@/shared/utils/constant';
 import useCheckSmallScreen from '@/shared/hooks/useCheckSmallScreen';
-import { Outlet } from 'react-router-dom';
+import { Outlet, redirect, useLoaderData, useOutletContext } from 'react-router-dom';
+import UserService from '@/shared/services/UserService';
+import { CodeResponse } from '@/shared/utils/codeResponse';
+import ClassService from '@/shared/services/ClassService';
+import { ClassRespData } from '@/shared/types/Resp/ClassResp';
+
+interface LoaderData{
+  userData: UserRespData,
+  classList: ClassRespData[],
+}
+
+type RootContextType = {
+  userData: UserRespData,
+  classList: ClassRespData[],
+}
 
 const drawerWidth = DRAWERWIDTH;
-
-export default function Root() {
+function Root() {
+  const {userData,classList} =  useLoaderData() as LoaderData;
   const [mobileOpen, setMobileOpen] = React.useState(true);
   const [sidebarExpand, setSidebarExpand] = React.useState(false);
   const isSmallScreen = useCheckSmallScreen();
@@ -26,10 +40,12 @@ export default function Root() {
   };
 
 
+
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <Navbar onToggleMenuClick={handleDrawerToggle}/>
+      <Navbar onToggleMenuClick={handleDrawerToggle} userData={userData}/>
  
       <Drawer
         variant="temporary"
@@ -43,7 +59,7 @@ export default function Root() {
           '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
         }}
       >
-        <Sidebar isExpand={true} expandToOpen={()=>setSidebarExpand(true)}></Sidebar>
+        <Sidebar isExpand={true} expandToOpen={()=>setSidebarExpand(true)} classList={classList}></Sidebar>
       </Drawer>
       <MiniDrawer
         variant="permanent"
@@ -52,7 +68,7 @@ export default function Root() {
         }}
         open={sidebarExpand}
       >
-        <Sidebar isExpand={sidebarExpand} expandToOpen={()=>setSidebarExpand(true)}></Sidebar>
+        <Sidebar isExpand={sidebarExpand} expandToOpen={()=>setSidebarExpand(true)} classList={classList}></Sidebar>
       </MiniDrawer>
 
       
@@ -61,8 +77,31 @@ export default function Root() {
         sx={{ flexGrow: 1, p: 3 }}
       >
         <DrawerHeader></DrawerHeader>
-        <Outlet></Outlet>
+        <Outlet context={{userData,classList}}></Outlet>
       </Box>
     </Box>
   );
+}
+
+export default Root;
+
+export async function loader():Promise<LoaderData|Response> {
+  try{
+    const userData = (await UserService.getMe()).data;
+    const classList = (await ClassService.getClassList()).data;
+    return {userData,classList};
+  }catch(e: any){
+    if(e.message == CodeResponse.UNAUTHORIZED){
+      return redirect('/');
+    }
+    throw new Error(e);
+  }
+}
+
+export function useUser(): UserRespData{
+  return useOutletContext<RootContextType>().userData;
+}
+
+export function useClassList(): ClassRespData[]{
+  return useOutletContext<RootContextType>().classList;
 }
