@@ -56,12 +56,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/acceptInvite',
-    element: <Root></Root>,
-    loader: rootLoader,
-    children :[
-      { index: true, 
-        element: <AcceptInvitingDialog></AcceptInvitingDialog>
-      },]
+    element: <AcceptInvitingDialog></AcceptInvitingDialog>,
   },
   {
     path: "about",

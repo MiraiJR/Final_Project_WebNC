@@ -25,6 +25,7 @@ type ClassMemberResp = {
     email: string;
     fullname: string;
     id: number;
+    studentId: string;
 }
 
 type ClassMembersListResp = {

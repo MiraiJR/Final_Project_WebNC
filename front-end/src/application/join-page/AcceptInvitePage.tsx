@@ -8,6 +8,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { redirect, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import ClassService from '@/shared/services/ClassService';
+import JwtStorage from '@/shared/storages/JwtStorage';
+import AuthService from '@/shared/services/AuthService';
 
 
 
@@ -16,6 +18,9 @@ export default function AcceptInvitingDialog(){
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const token:string = searchParams.get("token") as string
+    if(JwtStorage.getToken()?.accessToken==""){
+        navigate ('/auth/sign-in?next='+window.location.pathname +'?token='+token);
+    }
     if(token==null){
         toast.error('Accept link not valid')
         navigate('/class');
@@ -25,8 +30,9 @@ export default function AcceptInvitingDialog(){
     }
 
     const swithAccountHandle = ()=>{
+        JwtStorage.deleteToken();
         //logout
-        navigate('/auth/sign-in');
+        navigate ('/auth/sign-in?next='+window.location.pathname +'?token='+token);
     }
 
     const joinHandle = async ()=>{

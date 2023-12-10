@@ -7,7 +7,7 @@ import { toast } from 'react-toastify';
 
 export async function joinClassLoader({params}:any) {
     if(JwtStorage.getToken()?.accessToken==""){
-        redirect ('/login')
+        redirect ('/auth/sign-in?next='+window.location.pathname);
     }
 
     try{
