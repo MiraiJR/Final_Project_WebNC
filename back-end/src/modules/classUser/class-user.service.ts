@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { ClassUserRepository } from "./class-user.repository";
-import { ClassService } from "../class/class.service";
 import { UserService } from "src/modules/user/user.service";
 import { Class } from "../class/class.entity";
 import { ClassResponseDto } from "../class/dto/class/ClassResponse.dto";
@@ -11,8 +10,8 @@ import { StudentsAndTeachersTdo } from "./dto/StudentsAndTeachers.dto";
 import { JwtService } from "@nestjs/jwt";
 import { RoleToken } from "src/shared/types/RoleToken";
 import { ConfigService } from "@nestjs/config";
-import { forwardRef, Inject } from '@nestjs/common';
 import { ClassUser } from "./class-user.entity";
+import { InviteToken } from "src/shared/types/InviteToken";
 @Injectable()
 export class ClassUserService{
     
@@ -59,11 +58,13 @@ export class ClassUserService{
     }
 
     private mapClassToClassResponseDto(classUser: ClassUser): ClassResponseDto {
-        const { title, creator, idCode } = classUser.classroom;
+        const { title, creator, idCode,description } = classUser.classroom;
+
         const ClassResponse: ClassResponseDto = {
             title,
-            creatorId: creator.id,
+            creator: {id: creator.id,fullname: creator.fullname, email: creator.email},
             idCode,
+            description,
             role:classUser.role,
         }
         return ClassResponse;
@@ -71,8 +72,8 @@ export class ClassUserService{
 
     async getStudentsAndTeachersByClassId(classId: string): Promise<StudentsAndTeachersTdo> {
         const classUsers = await this.classUserRepository.findUserByClassId(classId);
-        const students = classUsers.filter((classUser) => classUser.role === UserRole.HS ||classUser.role ===UserRole.AD).map((classUser) => this.mapUserToMemberDataRespDto(classUser.user));
-        const teachers = classUsers.filter((classUser) => classUser.role === UserRole.GV).map((classUser) => this.mapUserToMemberDataRespDto(classUser.user));
+        const students = classUsers.filter((classUser) => classUser.role === UserRole.HS ).map((classUser) => this.mapUserToMemberDataRespDto(classUser.user));
+        const teachers = classUsers.filter((classUser) => classUser.role === UserRole.GV ||classUser.role ===UserRole.AD).map((classUser) => this.mapUserToMemberDataRespDto(classUser.user));
 
         return { students, teachers };
     }
@@ -128,5 +129,41 @@ export class ClassUserService{
           expiresIn: this.configService.get('JWT_REFRESH_EXPIRED'),
         },
         )
+    }
+
+    signInviteToke(payload : InviteToken):string{
+        return this.jwtService.sign(
+            payload
+        ,
+        {
+            secret: this.configService.get('JWT_INVITE_KEY'), 
+            expiresIn: this.configService.get('JWT_INVITE_KEY_EXPIRED'),
+        }
+        )
+    }
+
+    async verifyInviteToken(token: string, userId:number){
+        try{
+            const payload : InviteToken = await this.jwtService.verifyAsync(token, {
+                secret: this.configService.get<string>('JWT_INVITE_KEY'),
+            });
+    
+            const user = await this.userService.findById(userId);
+            if(user.email != payload.email){
+                throw new Error("Please use the account registered with the email address to which the invitation was sent. ")
+            }
+           return payload;
+        }catch(e){
+            console.log(e);
+            throw new BadRequestException(e.message)
+        }
+        
+    }
+
+    async findRole(classId: string, userId: number) : Promise<UserRole>{
+        const classUser:ClassUser = await this.classUserRepository.findOne({
+            where:{classId, userId}
+        })
+        return classUser.role;
     }
 }

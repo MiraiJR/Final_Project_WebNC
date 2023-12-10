@@ -1,4 +1,4 @@
-import { Body, Controller,Get,HttpCode,HttpStatus,Param,Post, UseGuards } from '@nestjs/common';
+import { Body, Controller,Get,HttpCode,HttpStatus,Param,Post, Query, UseGuards } from '@nestjs/common';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/class/CreateClass.dto';
 import { Class } from './class.entity';
@@ -17,6 +17,8 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'process';
 import { Roles } from 'src/shared/decorators/roles.decorator';
+import { InviteMailReqDto } from './dto/class/InviteMailReq.dto';
+import { InviteToken } from 'src/shared/types/InviteToken';
 
 @Controller('class')
 @UseGuards(AuthGuard)
@@ -39,6 +41,13 @@ export class ClassController {
         return await this.classService.joinClassAsStudent(classCodeId,userId);
     }
 
+    //accept mail
+    @Get('/acceptInvite')
+    async handAccpetLinkInvite(@UserId() userId:number , @Query() query){
+        console.log(query);
+        return await this.classService.handleAcceptLinkInvite(query.token,userId);
+    }
+
     //Lấy ds Class của USER qua userid
     @Get('/all')
     async handleGetAllClassByUserID(@UserId() userId: number):Promise<ClassResponseDto[]>{
@@ -48,7 +57,7 @@ export class ClassController {
     //Lấy ds HS và giáo viên
     @UseGuards(RoleGuard)
     @Get('/:classIdCode/members')
-    @Roles([UserRole.HS])
+    @Roles([UserRole.HS, UserRole.GV, UserRole.AD])
     async handleGetListStudentsAndTeacher(@Param('classIdCode') classIdCode: string): Promise<StudentsAndTeachersTdo>{
         return await this.classUserService.getStudentsAndTeachersByClassId(classIdCode);
     }
@@ -58,5 +67,11 @@ export class ClassController {
         return this.classService.getDetailClass(classIdCode,userId);
     }
 
+    @UseGuards(RoleGuard)
+    @Post('/:classIdCode/inviteMail')
+    @Roles([UserRole.GV, UserRole.AD])
+    async handleSendInviteMail(@Param('classIdCode') classIdCode: string,@Body() data : InviteMailReqDto ){
+        return await this.classService.sendInviteEmail(data.emails,classIdCode,data.role);
+    }
 
 }

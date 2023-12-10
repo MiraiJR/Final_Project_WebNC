@@ -10,12 +10,13 @@ import { ClassUserModule } from '../classUser/class-user.module';
 import { RoleGuard } from 'src/shared/guards/RoleGuard';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailModule } from '../mail/mail.module';
 
 
 
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Class]),UserModule,JwtModule,ConfigModule, forwardRef(()=>ClassUserModule )],
+  imports: [TypeOrmModule.forFeature([Class]),UserModule,JwtModule,MailModule,ConfigModule, forwardRef(()=>ClassUserModule )],
   providers: [ClassService,ClassRepository,JwtService,ConfigService],
   controllers: [ClassController],
   exports: [ClassService]

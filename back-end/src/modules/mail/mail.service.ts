@@ -1,5 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import * as Nodemailer from 'nodemailer';
+import { Class } from '../class/class.entity';
+import { UserRole } from 'src/shared/types/EnumUserRole';
 
 @Injectable()
 export class MailService {
@@ -60,4 +62,44 @@ export class MailService {
       },
     );
   }
+
+  async sendMailInvite(email: string, classInfo : Class,role:UserRole, token: string){
+    const title = 'Invite To Class';
+    let roleText;
+    if(role==UserRole.HS){
+      roleText="Student";
+    }else{
+      roleText = "Teacher";
+    }
+  
+    this.Transporter.sendMail(
+      {
+        from: 'Classroom-<noreply>',
+        to: `${email}`,
+        subject: `${title.toUpperCase()}`,
+        html: `
+        <div>
+          <h1>Hello !</h1>
+          <p>You have received an invitation to join a new class as ${roleText}.</p>
+          <p>Class details: </p>
+          <ul>
+            <li><strong>Class Name:</strong> ${classInfo.title}</li>
+            <li><strong>Creator:</strong> ${classInfo.creator.fullname}</li>
+          </ul>
+          <p>Hãy truy cập vào đường link sau để xác nhận lời mời.</p>
+          <a href='${process.env.URL_FE}/acceptInvite?token=${token}'>Nhấn vào đường link này</a>
+          <p>Cảm ơn bạn!</p>
+        </div>
+        `
+      },
+      function (error: any) {
+        if (error) {
+          throw new BadRequestException(
+            `${email} khÔng hợp lệ vui lòng thử lại`,
+          );
+        }
+      },
+    )
+  }
 }
+
