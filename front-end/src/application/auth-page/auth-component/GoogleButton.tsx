@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import AuthService from "@/shared/services/AuthService";
 import JwtStorage from "@/shared/storages/JwtStorage";
 import { toast } from "react-toastify";
+import Cookies from "universal-cookie";
 
 const GoogleButton = () => {
   const navigate = useNavigate();
   const { loginWithPopup, user, isAuthenticated } = useAuth0();
-
+  const cookies = new Cookies(null, { path: "/" });
   const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
     try {
       const { data } = await AuthService.loginSocial(dataReq);
@@ -23,7 +24,8 @@ const GoogleButton = () => {
   if (
     isAuthenticated &&
     user &&
-    user.sub!.split("|")[0].trim() === "google-oauth2"
+    user.sub!.split("|")[0].trim() === "google-oauth2" &&
+    cookies.get("accessToken") === undefined
   ) {
     const dataReq: RegisterWithSocialAcount = {
       email: user.email!,
