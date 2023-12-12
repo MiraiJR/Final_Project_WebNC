@@ -43,7 +43,7 @@ function Root() {
 
 
   return (
-    <Box sx={{ display: 'flex', overflowY: 'auto' }}>
+    <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <Navbar onToggleMenuClick={handleDrawerToggle} userData={userData}/>
  
@@ -64,7 +64,7 @@ function Root() {
       <MiniDrawer
         variant="permanent"
         sx={{
-          display: { xs: 'none', sm: 'block' },
+          display: { xs: 'none', sm: 'block' }
         }}
         open={sidebarExpand}
       >
@@ -76,7 +76,8 @@ function Root() {
         component="main"
         sx={{ 
           flexGrow: 1, p: 3,
-          
+          overflowY: "scroll",
+          maxHeight: 'calc(100vh - 64px)',
         }}
       >
         <DrawerHeader></DrawerHeader>
