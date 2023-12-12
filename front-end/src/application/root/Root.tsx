@@ -43,7 +43,7 @@ function Root() {
 
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex', overflowY: 'auto' }}>
       <CssBaseline />
       <Navbar onToggleMenuClick={handleDrawerToggle} userData={userData}/>
  
@@ -74,7 +74,10 @@ function Root() {
       
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3 }}
+        sx={{ 
+          flexGrow: 1, p: 3,
+          
+        }}
       >
         <DrawerHeader></DrawerHeader>
         <Outlet context={{userData,classList}}></Outlet>

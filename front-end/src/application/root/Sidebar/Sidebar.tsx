@@ -27,6 +27,7 @@ export default function({isExpand,expandToOpen,classList}: SidebarProps){
     useEffect(()=>{
       if(!isExpand){
         SetTeacherOpen(false);
+        SetStudentOpen(false);
       }
     },[isExpand])
 
