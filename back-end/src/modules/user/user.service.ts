@@ -63,4 +63,27 @@ export class UserService {
 
     return meResp;
   }
+
+  async findByStudentId(studentId: string): Promise<UserRespDTO> {
+    const matchedStudent = await this.userRepository.findOne({
+      where: {
+        studentId,
+      },
+    });
+
+    if (!matchedStudent) {
+      throw new NotFoundException(
+        `Student with id ${studentId} not found in class!`,
+      );
+    }
+
+    const matchedStudentResp: UserRespDTO = {
+      email: matchedStudent.email,
+      fullname: matchedStudent.fullname,
+      studentId: matchedStudent.studentId,
+      id: matchedStudent.id,
+    };
+
+    return matchedStudentResp;
+  }
 }

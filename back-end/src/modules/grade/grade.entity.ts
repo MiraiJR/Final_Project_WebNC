@@ -6,14 +6,14 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
-import { GradeStructure } from '../classGradeStructure/gradeStructure.entity';
+import { GradeStructure } from '../grade-structure/grade-structure.entity';
 
 @Entity('grades')
 export class Grade {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ default: false, name: 'is_finalized' })
+  @Column({ default: false })
   isFinalized: boolean;
 
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0.0 })
@@ -25,10 +25,17 @@ export class Grade {
   })
   @JoinTable()
   gradeStructure: GradeStructure;
+
   @ManyToOne(() => User, {
     eager: true,
     nullable: false,
   })
   @JoinTable()
   student: User;
+
+  @Column()
+  gradeStructureId: number;
+
+  @Column()
+  studentId: number;
 }

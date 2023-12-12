@@ -1,22 +1,21 @@
 import {
   Column,
   Entity,
-  JoinColumn,
+  JoinTable,
   ManyToOne,
-  PrimaryColumn,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Class } from '../class/class.entity';
-@Entity('class_grade_structure')
+@Entity('grade-structures')
 export class GradeStructure {
-  // @ManyToOne(()=>Class,{eager: true, nullable:false})
-  // @JoinColumn({name: 'classId'})
-  // classroom : Class
+  @ManyToOne(() => Class, { lazy: true, nullable: false })
+  @JoinTable()
+  class: Class;
 
   @PrimaryGeneratedColumn()
   id: number;
 
-  @PrimaryColumn()
+  @Column({ name: 'classIdCode' })
   classId: string;
 
   @Column({ nullable: false })

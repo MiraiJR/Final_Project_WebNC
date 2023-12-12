@@ -7,9 +7,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { GradeStructure } from './gradeStructure.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([GradeStructure, GradeStructureRepository]),forwardRef(()=> ClassModule),],
-    providers: [GradeStructureService , GradeStructureRepository ],
-    controllers: [GradeStructureController],
-    exports: [GradeStructureService], 
-}) 
+  imports: [
+    TypeOrmModule.forFeature([GradeStructure, GradeStructureRepository]),
+    forwardRef(() => ClassModule),
+  ],
+  providers: [GradeStructureService, GradeStructureRepository],
+  controllers: [GradeStructureController],
+  exports: [GradeStructureService],
+})
 export class GradeStructureModule {}
