@@ -1,4 +1,4 @@
-import { Body, Controller,Get,HttpCode,HttpStatus,Param,Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller,Get,HttpCode,HttpStatus,Param,Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/class/CreateClass.dto';
 import { Class } from './class.entity';
@@ -19,6 +19,9 @@ import { config } from 'process';
 import { Roles } from 'src/shared/decorators/roles.decorator';
 import { InviteMailReqDto } from './dto/class/InviteMailReq.dto';
 import { InviteToken } from 'src/shared/types/InviteToken';
+import { GradeStructure } from '../classGradeStructure/gradeStructure.entity';
+import {GradeStructureService } from '../classGradeStructure/gradeStructure.service';
+import { GradeStructureRespDTO } from '../classGradeStructure/dto/response/GradeStructureResp';
 
 @Controller('class')
 @UseGuards(AuthGuard)
@@ -26,6 +29,7 @@ export class ClassController {
     constructor(
         private readonly classService: ClassService,
         private readonly classUserService: ClassUserService,
+        private readonly classGradeStructureService: GradeStructureService
         ) {}
 
     @Post('/create')
@@ -71,6 +75,23 @@ export class ClassController {
     @Roles([UserRole.GV, UserRole.AD])
     async handleSendInviteMail(@Param('classIdCode') classIdCode: string,@Body() data : InviteMailReqDto ){
         return await this.classService.sendInviteEmail(data.emails,classIdCode,data.role);
+    }
+
+    @Get('/:classIdCode/gradeStructure')
+    async handleGetGradeStructure(@Param('classIdCode') classIdCode: string): Promise<GradeStructureRespDTO>{
+        return await this.classGradeStructureService.getGradeStructureByClassId(classIdCode);
+    }
+
+    @Post('/:classIdCode/gradeStructure')
+    async handlePostGradeStructure(@Param('classIdCode') classIdCode: string, 
+    // @Body() gradeStructureRespDTO: GradeStructureRespDTO,
+    @Req() req,): Promise<string>{
+        // console.log(req.body);
+        //  console.log(gradeStructureRespDTO); 
+         const gradeStructureRespDTO = req.body;
+        //  console.log(gradeStructureRespDTO);
+        await this.classGradeStructureService.updateGradeStructure(classIdCode , gradeStructureRespDTO);
+         return "Updated gradeStructure successfully"
     }
 
 }
