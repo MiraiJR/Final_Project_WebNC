@@ -64,7 +64,7 @@ function Root() {
       <MiniDrawer
         variant="permanent"
         sx={{
-          display: { xs: 'none', sm: 'block' },
+          display: { xs: 'none', sm: 'block' }
         }}
         open={sidebarExpand}
       >
@@ -74,7 +74,11 @@ function Root() {
       
       <Box
         component="main"
-        sx={{ flexGrow: 1, p: 3 }}
+        sx={{ 
+          flexGrow: 1, p: 3,
+          overflowY: "scroll",
+          maxHeight: 'calc(100vh - 64px)',
+        }}
       >
         <DrawerHeader></DrawerHeader>
         <Outlet context={{userData,classList}}></Outlet>

@@ -21,30 +21,30 @@ const GradeReview = () => {
   const [infoDetail, setInfoDetail] = useState<StudentRequest>();
   const [rows, setRows] = useState<StudentRequest[] | undefined>([]);
   useEffect(() => {
-    const data = [
-      {
-        studentName: "Nguyen Phuoc Hai",
-        gradeComposition: "Midterm",
-        currGrade: 40,
-        expectGrade: 60,
-        explaination: "abc",
-      },
-      {
-        studentName: "Truong Van Hao",
-        gradeComposition: "Final",
-        currGrade: 40,
-        expectGrade: 80,
-        explaination: "abc",
-      },
-      {
-        studentName: "Vo Minh Hieu",
-        gradeComposition: "Final",
-        currGrade: 40,
-        expectGrade: 100,
-        explaination: "abc",
-      },
-    ];
-    //const data = undefined;
+    // const data = [
+    //   {
+    //     studentName: "Nguyen Phuoc Hai",
+    //     gradeComposition: "Midterm",
+    //     currGrade: 40,
+    //     expectGrade: 60,
+    //     explaination: "abc",
+    //   },
+    //   {
+    //     studentName: "Truong Van Hao",
+    //     gradeComposition: "Final",
+    //     currGrade: 40,
+    //     expectGrade: 80,
+    //     explaination: "abc",
+    //   },
+    //   {
+    //     studentName: "Vo Minh Hieu",
+    //     gradeComposition: "Final",
+    //     currGrade: 40,
+    //     expectGrade: 100,
+    //     explaination: "abc",
+    //   },
+    // ];
+    const data = undefined;
     setRows(data);
   }, []);
   return (
