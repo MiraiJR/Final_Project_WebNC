@@ -19,15 +19,15 @@ const GradeStructure = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [rows, setRows] = useState<TableData[] | undefined>([]);
   useEffect(() => {
-    const data = [
-      { name: "Midterm", grade: 40 },
-      { name: "Final", grade: 60 },
-      {
-        name: "Total",
-        grade: 100,
-      },
-    ];
-    // const data = undefined;
+    // const data = [
+    //   { name: "Midterm", grade: 40 },
+    //   { name: "Final", grade: 60 },
+    //   {
+    //     name: "Total",
+    //     grade: 100,
+    //   },
+    // ];
+    const data = undefined;
     setRows(data);
   }, []);
   let UIrows: TableData[] = [];
