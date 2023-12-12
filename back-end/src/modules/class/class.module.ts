@@ -21,6 +21,7 @@ import { GradeStructureModule } from '../classGradeStructure/gradeStructure.modu
     MailModule,
     ConfigModule,
     forwardRef(() => ClassUserModule),
+    forwardRef(() => GradeStructureModule)
   ],
   providers: [ClassService, ClassRepository, JwtService, ConfigService],
   controllers: [ClassController],
