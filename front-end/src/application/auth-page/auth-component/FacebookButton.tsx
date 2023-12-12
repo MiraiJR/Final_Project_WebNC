@@ -7,11 +7,13 @@ import { useContext } from "react";
 import { CodeResponse } from "@/shared/utils/codeResponse";
 import { authContext } from "@/shared/components/providers/AuthProvider";
 import { Helper } from "@/shared/utils/heper";
+import Cookies from "universal-cookie";
 
 const FacebookButton = () => {
   const navigate = useNavigate();
   const { loginWithPopup, user, isAuthenticated } = useAuth0();
   const { dispatch } = useContext(authContext)!;
+  const cookies = new Cookies(null, { path: "/" });
 
   const loginSocial = async (dataReq: RegisterWithSocialAcount) => {
     try {
@@ -27,7 +29,7 @@ const FacebookButton = () => {
 
       toast.success("Login successfully!");
       JwtStorage.setToken(data as AuthToken);
-      navigate("/");
+      navigate("/class");
     } catch (error: any) {
       if (
         error.statusCode === 400 &&
@@ -44,7 +46,8 @@ const FacebookButton = () => {
   if (
     isAuthenticated &&
     user &&
-    user.sub!.split("|")[0].trim() === "facebook"
+    user.sub!.split("|")[0].trim() === "facebook" &&
+    cookies.get("accessToken") === undefined
   ) {
     const dataReq: RegisterWithSocialAcount = {
       email: user.email ?? null,
