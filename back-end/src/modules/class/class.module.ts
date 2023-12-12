@@ -12,13 +12,17 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailModule } from '../mail/mail.module';
 
-
-
-
 @Module({
-  imports: [TypeOrmModule.forFeature([Class]),UserModule,JwtModule,MailModule,ConfigModule, forwardRef(()=>ClassUserModule )],
-  providers: [ClassService,ClassRepository,JwtService,ConfigService],
+  imports: [
+    TypeOrmModule.forFeature([Class]),
+    UserModule,
+    JwtModule,
+    MailModule,
+    ConfigModule,
+    forwardRef(() => ClassUserModule),
+  ],
+  providers: [ClassService, ClassRepository, JwtService, ConfigService],
   controllers: [ClassController],
-  exports: [ClassService]
+  exports: [ClassService],
 })
 export class ClassModule {}
