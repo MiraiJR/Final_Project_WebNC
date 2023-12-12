@@ -32,3 +32,9 @@ type ClassMembersListResp = {
     students: ClassMemberResp[];
     teachers: ClassMemberResp[];
 }
+
+type GradeAssignmentResp = {
+    id: number;
+    name: string;
+    grade: number;}
+

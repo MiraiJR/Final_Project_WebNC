@@ -19,6 +19,8 @@ import { config } from 'process';
 import { Roles } from 'src/shared/decorators/roles.decorator';
 import { InviteMailReqDto } from './dto/class/InviteMailReq.dto';
 import { InviteToken } from 'src/shared/types/InviteToken';
+import { GradeStructure } from '../classGradeStructure/gradeStructure.entity';
+import {GradeStructureService } from '../classGradeStructure/gradeStructure.service';
 
 @Controller('class')
 @UseGuards(AuthGuard)
@@ -26,6 +28,7 @@ export class ClassController {
     constructor(
         private readonly classService: ClassService,
         private readonly classUserService: ClassUserService,
+        private readonly classGradeStructureService: GradeStructureService
         ) {}
 
     @Post('/create')
@@ -71,6 +74,11 @@ export class ClassController {
     @Roles([UserRole.GV, UserRole.AD])
     async handleSendInviteMail(@Param('classIdCode') classIdCode: string,@Body() data : InviteMailReqDto ){
         return await this.classService.sendInviteEmail(data.emails,classIdCode,data.role);
+    }
+
+    @Get('/:classIdCode/gradeStructure')
+    async handleGetGradeStructure(@Param('classIdCode') classIdCode: string): Promise<GradeStructure[]>{
+        return await this.classGradeStructureService.getGradeStructureByClassId(classIdCode);
     }
 
 }
