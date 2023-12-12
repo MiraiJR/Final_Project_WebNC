@@ -12,7 +12,10 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { useState, useEffect } from "react";
 import ClassService from "@/shared/services/ClassService";
 import { useClassDetail } from "../ClassDetail";
-import { GradeAssignmentResp } from "@/shared/types/Resp/ClassResp";
+import {
+  GradeAssignmentResp,
+  GradeStructureResp,
+} from "@/shared/types/Resp/ClassResp";
 import { toast } from "react-toastify";
 
 const GradeStructure = () => {
@@ -27,7 +30,10 @@ const GradeStructure = () => {
           classDetail.idCode
         );
         const data = response.data;
-        setAssignments(data);
+        console.log(data);
+        if (data) {
+          setAssignments(data.assignments);
+        }
       };
 
       fetchData();
@@ -40,24 +46,37 @@ const GradeStructure = () => {
     UIassignments = assignments.map((assignment) => ({ ...assignment }));
   }
   const handleSaveButton = async () => {
-    const temp = UIassignments.map((assignment) => ({ ...assignment }));
-    const totalRow = temp.find(
+    const newAssignment: GradeAssignmentResp[] = UIassignments.map(
+      (assignment) => ({
+        ...assignment,
+      })
+    );
+    const totalRow = newAssignment.find(
       (assignment) => assignment.nameAssignment === "Total"
     );
     if (totalRow) {
       totalRow.percentScore =
-        temp.reduce((acc, cur) => acc + cur.percentScore, 0) -
+        newAssignment.reduce((acc, cur) => acc + cur.percentScore, 0) -
         totalRow.percentScore;
     } else {
-      temp.push({
-        classId: classDetail.idCode,
+      newAssignment.push({
         nameAssignment: "Total",
-        percentScore: temp.reduce((acc, cur) => acc + cur.percentScore, 0),
+        percentScore: newAssignment.reduce(
+          (acc, cur) => acc + cur.percentScore,
+          0
+        ),
       });
     }
     // send new structure to backend
     // Todo:
-    await ClassService.updateGradeStructure(classDetail.idCode, temp);
+    const newGradeStructure: GradeStructureResp = {
+      assignments: newAssignment,
+    };
+    console.log(newGradeStructure);
+    await ClassService.updateGradeStructure(
+      classDetail.idCode,
+      newGradeStructure
+    );
     setIsSave(!isSave);
     toast.success("Grade structure updated successfully");
     // set state to not edit
@@ -75,7 +94,7 @@ const GradeStructure = () => {
   return (
     <>
       <p className=" text-base m-2 font-bold">Grade Structure</p>
-      {assignments?.length === 0 ? (
+      {assignments === undefined ? (
         <div className="flex flex-col justify-center items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -267,7 +286,6 @@ const GradeStructure = () => {
                 ...assignment,
               }));
               temp.splice(temp.length - 1, 0, {
-                classId: classDetail.idCode,
                 nameAssignment: `Assignment ${temp.length}`,
                 percentScore: 0,
               });

@@ -35,8 +35,18 @@ type ClassMembersListResp = {
 
 type GradeAssignmentResp = {
     id?: number;
-    classId: string;
     nameAssignment: string;
     percentScore: number;
 }
 
+type GradeStructureResp = {
+    assignments: GradeAssignmentResp[];}
+
+type StudentResp = {
+    id: number;
+    studentName: string;
+    gradeComposition: string;
+    currGrade: number;
+    expectGrade: number;
+    explaination: string;
+  }

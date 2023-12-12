@@ -1,4 +1,4 @@
-import { Body, Controller,Get,HttpCode,HttpStatus,Param,Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller,Get,HttpCode,HttpStatus,Param,Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/class/CreateClass.dto';
 import { Class } from './class.entity';
@@ -21,6 +21,7 @@ import { InviteMailReqDto } from './dto/class/InviteMailReq.dto';
 import { InviteToken } from 'src/shared/types/InviteToken';
 import { GradeStructure } from '../classGradeStructure/gradeStructure.entity';
 import {GradeStructureService } from '../classGradeStructure/gradeStructure.service';
+import { GradeStructureRespDTO } from '../classGradeStructure/dto/response/GradeStructureResp';
 
 @Controller('class')
 @UseGuards(AuthGuard)
@@ -77,13 +78,19 @@ export class ClassController {
     }
 
     @Get('/:classIdCode/gradeStructure')
-    async handleGetGradeStructure(@Param('classIdCode') classIdCode: string): Promise<GradeStructure[]>{
+    async handleGetGradeStructure(@Param('classIdCode') classIdCode: string): Promise<GradeStructureRespDTO>{
         return await this.classGradeStructureService.getGradeStructureByClassId(classIdCode);
     }
 
     @Post('/:classIdCode/gradeStructure')
-    async handlePostGradeStructure(@Param('classIdCode') classIdCode: string, @Body() data: GradeStructure[]): Promise<string>{
-         await this.classGradeStructureService.updateGradeStructure(classIdCode , data);
+    async handlePostGradeStructure(@Param('classIdCode') classIdCode: string, 
+    // @Body() gradeStructureRespDTO: GradeStructureRespDTO,
+    @Req() req,): Promise<string>{
+        // console.log(req.body);
+        //  console.log(gradeStructureRespDTO); 
+         const gradeStructureRespDTO = req.body;
+        //  console.log(gradeStructureRespDTO);
+        await this.classGradeStructureService.updateGradeStructure(classIdCode , gradeStructureRespDTO);
          return "Updated gradeStructure successfully"
     }
 
