@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
+import { GradeStructure } from '../classGradeStructure/gradeStructure.entity';
 
 @Entity('grades')
 export class Grade {
@@ -21,4 +22,8 @@ export class Grade {
 
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0.0 })
   score: number;
+
+  @ManyToOne(() => GradeStructure, { eager: true, nullable: false })
+  @JoinColumn({ name: 'grade_structure_id' })
+  gradeStructureId: number;
 }
