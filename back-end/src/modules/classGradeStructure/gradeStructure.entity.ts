@@ -2,9 +2,9 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn, PrimaryGeneratedC
 import { Class } from "../class/class.entity";
 @Entity('class_grade_structure')
 export class GradeStructure{
-    @ManyToOne(()=>Class,{eager: true, nullable:false})
-    @JoinColumn({name: 'classId'})
-    classroom : Class
+    // @ManyToOne(()=>Class,{eager: true, nullable:false})
+    // @JoinColumn({name: 'classId'})
+    // classroom : Class
 
     @PrimaryGeneratedColumn()
     id: number;
@@ -15,6 +15,6 @@ export class GradeStructure{
     @Column({ nullable: false })
     nameAssignment : string;
 
-    @Column({ nullable: false })
-    percentScore: string;
+    @Column({ nullable: true })
+    percentScore: number;
 }

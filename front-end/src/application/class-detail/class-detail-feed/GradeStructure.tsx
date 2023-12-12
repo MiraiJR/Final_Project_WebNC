@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 
 const GradeStructure = () => {
   const [isEdit, setIsEdit] = useState(false);
+  const [isSave, setIsSave] = useState(false);
   const [assignments, setAssignments] = useState<GradeAssignmentResp[]>();
   const classDetail = useClassDetail();
   useEffect(() => {
@@ -26,34 +27,39 @@ const GradeStructure = () => {
           classDetail.idCode
         );
         const data = response.data;
-        setAssignments(data.assignments);
+        setAssignments(data);
       };
 
       fetchData();
     } catch (error: any) {
       toast.error(error.message);
     }
-  }, []);
+  }, [isSave]);
   let UIassignments: GradeAssignmentResp[] = [];
   if (assignments) {
     UIassignments = assignments.map((assignment) => ({ ...assignment }));
   }
-  const handleSaveButton = () => {
+  const handleSaveButton = async () => {
     const temp = UIassignments.map((assignment) => ({ ...assignment }));
-    const totalRow = temp.find((assignment) => assignment.name === "Total");
+    const totalRow = temp.find(
+      (assignment) => assignment.nameAssignment === "Total"
+    );
     if (totalRow) {
-      totalRow.grade =
-        temp.reduce((acc, cur) => acc + cur.grade, 0) - totalRow.grade;
+      totalRow.percentScore =
+        temp.reduce((acc, cur) => acc + cur.percentScore, 0) -
+        totalRow.percentScore;
     } else {
       temp.push({
-        name: "Total",
-        grade: temp.reduce((acc, cur) => acc + cur.grade, 0),
+        classId: classDetail.idCode,
+        nameAssignment: "Total",
+        percentScore: temp.reduce((acc, cur) => acc + cur.percentScore, 0),
       });
     }
-    setAssignments([...temp]);
     // send new structure to backend
     // Todo:
-
+    await ClassService.updateGradeStructure(classDetail.idCode, temp);
+    setIsSave(!isSave);
+    toast.success("Grade structure updated successfully");
     // set state to not edit
     setIsEdit(false);
   };
@@ -69,7 +75,7 @@ const GradeStructure = () => {
   return (
     <>
       <p className=" text-base m-2 font-bold">Grade Structure</p>
-      {assignments === undefined ? (
+      {assignments?.length === 0 ? (
         <div className="flex flex-col justify-center items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -112,12 +118,12 @@ const GradeStructure = () => {
                     {assignments &&
                       UIassignments.map((assignment, index) => (
                         <Draggable
-                          key={`${assignment.name}-${assignment.grade}`}
-                          draggableId={assignment.name}
+                          key={`${assignment.nameAssignment}-${assignment.percentScore}`}
+                          draggableId={assignment.nameAssignment}
                           index={index}
                           isDragDisabled={
                             isEdit
-                              ? assignment.name === "Total"
+                              ? assignment.nameAssignment === "Total"
                                 ? true
                                 : false
                               : true
@@ -125,7 +131,7 @@ const GradeStructure = () => {
                         >
                           {(provider) => (
                             <TableRow
-                              key={`${assignment.name}-${assignment.grade}`}
+                              key={`${assignment.nameAssignment}-${assignment.percentScore}`}
                               sx={{
                                 "&:last-child td, &:last-child th": {
                                   border: 0,
@@ -142,23 +148,24 @@ const GradeStructure = () => {
                                 <TextField
                                   disabled={
                                     isEdit
-                                      ? assignment.name === "Total"
+                                      ? assignment.nameAssignment === "Total"
                                         ? true
                                         : false
                                       : true
                                   }
-                                  id={`${assignment.name}-${assignment.grade}-name`}
+                                  id={`${assignment.nameAssignment}-${assignment.percentScore}-name`}
                                   className={
-                                    assignment.name === "Total"
+                                    assignment.nameAssignment === "Total"
                                       ? "font-bold"
                                       : ""
                                   }
                                   variant="standard"
-                                  defaultValue={assignment.name}
+                                  defaultValue={assignment.nameAssignment}
                                   onChange={(
                                     event: React.ChangeEvent<HTMLInputElement>
                                   ) => {
-                                    assignment.name = event.target.value;
+                                    assignment.nameAssignment =
+                                      event.target.value;
                                   }}
                                 />
                               </TableCell>
@@ -166,29 +173,29 @@ const GradeStructure = () => {
                                 <TextField
                                   disabled={
                                     isEdit
-                                      ? assignment.name === "Total"
+                                      ? assignment.nameAssignment === "Total"
                                         ? true
                                         : false
                                       : true
                                   }
-                                  id={`${assignment.name}-${assignment.grade}-grade`}
+                                  id={`${assignment.nameAssignment}-${assignment.percentScore}-grade`}
                                   className={
-                                    assignment.name === "Total"
+                                    assignment.nameAssignment === "Total"
                                       ? "font-bold text-right"
                                       : "text-end"
                                   }
                                   variant="standard"
-                                  defaultValue={assignment.grade}
+                                  defaultValue={assignment.percentScore}
                                   onChange={(
                                     event: React.ChangeEvent<HTMLInputElement>
                                   ) => {
-                                    assignment.grade = Number(
+                                    assignment.percentScore = Number(
                                       event.target.value
                                     );
                                   }}
                                 />
                               </TableCell>
-                              {assignment.name !== "Total" ? (
+                              {assignment.nameAssignment !== "Total" ? (
                                 isEdit ? (
                                   <TableCell align="right">
                                     <Button
@@ -197,7 +204,8 @@ const GradeStructure = () => {
                                       size="small"
                                       hidden={
                                         isEdit
-                                          ? assignment.name === "Total"
+                                          ? assignment.nameAssignment ===
+                                            "Total"
                                             ? true
                                             : false
                                           : true
@@ -259,8 +267,9 @@ const GradeStructure = () => {
                 ...assignment,
               }));
               temp.splice(temp.length - 1, 0, {
-                name: `Assignment ${temp.length}`,
-                grade: 0,
+                classId: classDetail.idCode,
+                nameAssignment: `Assignment ${temp.length}`,
+                percentScore: 0,
               });
               setAssignments(temp);
             }}

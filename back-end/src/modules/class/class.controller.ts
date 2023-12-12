@@ -81,4 +81,10 @@ export class ClassController {
         return await this.classGradeStructureService.getGradeStructureByClassId(classIdCode);
     }
 
+    @Post('/:classIdCode/gradeStructure')
+    async handlePostGradeStructure(@Param('classIdCode') classIdCode: string, @Body() data: GradeStructure[]): Promise<string>{
+         await this.classGradeStructureService.updateGradeStructure(classIdCode , data);
+         return "Updated gradeStructure successfully"
+    }
+
 }
