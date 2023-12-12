@@ -10,6 +10,8 @@ import Box from '@mui/material/Box';
 import Tooltip from '@mui/material/Tooltip';
 import IconButton from '@mui/material/IconButton';
 import { Helper } from '@/shared/utils/heper';
+import { useNavigate } from 'react-router-dom';
+import JwtStorage from '@/shared/storages/JwtStorage';
 
 interface UserMenuProps{
   fullname: string,
@@ -17,6 +19,7 @@ interface UserMenuProps{
 
 
 export default function UserMenu({fullname}: UserMenuProps){
+    const navigate = useNavigate();
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -25,6 +28,11 @@ export default function UserMenu({fullname}: UserMenuProps){
     const handleClose = () => {
         setAnchorEl(null);
     };
+
+    const handleLogout = ()=>{
+      JwtStorage.deleteToken();
+      navigate('/auth/sign-in');
+    }
 
     return(
         <>
@@ -88,7 +96,7 @@ export default function UserMenu({fullname}: UserMenuProps){
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleLogout}>
           <ListItemIcon>
             <LogOut  fontSize="small" />
           </ListItemIcon>
