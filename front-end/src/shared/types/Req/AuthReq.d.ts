@@ -20,7 +20,3 @@ type RegisterWithSocialAcount = {
   socialId: string;
   socialType: string;
 };
-
-type IdSocialAcount = {
-  socialId: string;
-};

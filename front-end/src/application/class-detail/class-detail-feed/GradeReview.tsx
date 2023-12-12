@@ -1,0 +1,150 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import GradeReviewDetail from "./GradeReviewDetail";
+
+interface StudentRequest {
+  studentName: string;
+  gradeComposition: string;
+  currGrade: number;
+  expectGrade: number;
+  explaination: string;
+}
+const GradeReview = () => {
+  const [infoDetail, setInfoDetail] = useState<StudentRequest>();
+  const [rows, setRows] = useState<StudentRequest[] | undefined>([]);
+  useEffect(() => {
+    // const data = [
+    //   {
+    //     studentName: "Nguyen Phuoc Hai",
+    //     gradeComposition: "Midterm",
+    //     currGrade: 40,
+    //     expectGrade: 60,
+    //     explaination: "abc",
+    //   },
+    //   {
+    //     studentName: "Truong Van Hao",
+    //     gradeComposition: "Final",
+    //     currGrade: 40,
+    //     expectGrade: 80,
+    //     explaination: "abc",
+    //   },
+    //   {
+    //     studentName: "Vo Minh Hieu",
+    //     gradeComposition: "Final",
+    //     currGrade: 40,
+    //     expectGrade: 100,
+    //     explaination: "abc",
+    //   },
+    // ];
+    const data = undefined;
+    setRows(data);
+  }, []);
+  return (
+    <>
+      {infoDetail ? (
+        <GradeReviewDetail info={infoDetail} />
+      ) : (
+        <>
+          <p className=" text-base m-2 font-bold">Grade Review</p>
+          {rows === undefined ? (
+            <div className="flex flex-col justify-center items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-alert-octagon"
+              >
+                <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2" />
+                <line x1="12" x2="12" y1="8" y2="12" />
+                <line x1="12" x2="12.01" y1="16" y2="16" />
+              </svg>
+              <p className="text-4xl m-2">Grade Review is empty</p>
+            </div>
+          ) : (
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>
+                      <p className="font-bold">Student</p>
+                    </TableCell>
+                    <TableCell>
+                      <p className="font-bold">Grade Composition</p>
+                    </TableCell>
+                    <TableCell align="right">
+                      <p className="font-bold">Current Grade</p>
+                    </TableCell>
+                    <TableCell align="right">
+                      <p className="font-bold">Expected Grade</p>
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rows.map((row, index) => (
+                    <TableRow
+                      key={index}
+                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                    >
+                      <TableCell component="th" scope="row">
+                        <p className="font-bold">{row.studentName}</p>
+                      </TableCell>
+                      <TableCell>
+                        <p className="font-bold">{row.gradeComposition}</p>
+                      </TableCell>
+                      <TableCell align="right">
+                        <p className="font-bold">{row.currGrade}</p>
+                      </TableCell>
+                      <TableCell align="right">
+                        <p className="font-bold">{row.expectGrade}</p>
+                      </TableCell>
+                      <TableCell align="right">
+                        <Button
+                          variant="contained"
+                          onClick={() => {
+                            setInfoDetail(row);
+                          }}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className="lucide lucide-eye"
+                          >
+                            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                          View Detail
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </>
+      )}
+    </>
+  );
+};
+export default GradeReview;

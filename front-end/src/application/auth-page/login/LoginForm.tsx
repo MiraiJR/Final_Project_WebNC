@@ -5,7 +5,7 @@ import {
 import { Button, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import * as yup from "yup";
 import AuthService from "@/shared/services/AuthService";
 import JwtStorage from "@/shared/storages/JwtStorage";
@@ -31,6 +31,9 @@ const schemaValidation = yup
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const next:string = searchParams.get("next") as string
+  console.log(next);
   const {
     register,
     handleSubmit,
@@ -44,7 +47,11 @@ const LoginForm = () => {
 
       JwtStorage.setToken(data);
       toast.success("Login successfully!");
-      navigate("/");
+      if(next){
+        
+        navigate(next);
+      }
+      navigate("/class");
     } catch (error: any) {
       toast.error(error.message);
     }

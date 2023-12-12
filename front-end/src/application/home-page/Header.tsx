@@ -26,7 +26,9 @@ const LogoutButton = () => {
 
 const Header = () => {
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth0();
+  const cookies = new Cookies(null, { path: "/" });
+  const accessToken = cookies.get("accessToken");
+  const refreshToken = cookies.get("refreshToken");
 
   return (
     <div className="container mx-auto">
@@ -44,7 +46,7 @@ const Header = () => {
           </ul>
 
           <div className="flex flex-row gap-4 items-center">
-            {isAuthenticated && user ? (
+            {accessToken && refreshToken ? (
               <LogoutButton />
             ) : (
               <>
