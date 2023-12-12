@@ -1,7 +1,7 @@
 import {
   Column,
   Entity,
-  JoinColumn,
+  JoinTable,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -13,17 +13,22 @@ export class Grade {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, { eager: true, nullable: false })
-  @JoinColumn({ name: 'student_id' })
-  studentId: string;
-
   @Column({ default: false, name: 'is_finalized' })
   isFinalized: boolean;
 
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0.0 })
   score: number;
 
-  @ManyToOne(() => GradeStructure, { eager: true, nullable: false })
-  @JoinColumn({ name: 'grade_structure_id' })
-  gradeStructureId: number;
+  @ManyToOne(() => GradeStructure, {
+    eager: true,
+    nullable: false,
+  })
+  @JoinTable()
+  gradeStructure: GradeStructure;
+  @ManyToOne(() => User, {
+    eager: true,
+    nullable: false,
+  })
+  @JoinTable()
+  student: User;
 }

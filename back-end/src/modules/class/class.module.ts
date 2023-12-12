@@ -20,6 +20,7 @@ import { GradeStructureModule } from '../classGradeStructure/gradeStructure.modu
     JwtModule,
     MailModule,
     ConfigModule,
+    GradeStructureModule,
     forwardRef(() => ClassUserModule),
   ],
   providers: [ClassService, ClassRepository, JwtService, ConfigService],

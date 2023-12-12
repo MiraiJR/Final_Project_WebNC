@@ -5,6 +5,7 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { ClassModule } from 'src/modules/class/class.module';
 import { GradeStructureModule } from 'src/modules/classGradeStructure/gradeStructure.module';
 import { ClassUserModule } from 'src/modules/classUser/class-user.module';
+import { GradeModule } from 'src/modules/grade/grade.module';
 import { MailModule } from 'src/modules/mail/mail.module';
 import { UserModule } from 'src/modules/user/user.module';
 
@@ -16,6 +17,7 @@ import { UserModule } from 'src/modules/user/user.module';
     ClassModule,
     ClassUserModule,
     GradeStructureModule,
+    GradeModule,
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true, cache: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
