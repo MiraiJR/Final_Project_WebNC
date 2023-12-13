@@ -12,30 +12,21 @@ import {
 } from '@nestjs/common';
 import { ClassService } from './class.service';
 import { CreateClassDto } from './dto/class/CreateClass.dto';
-import { Class } from './class.entity';
-
-import { User } from '../user/user.entity';
 import { UserId } from 'src/shared/decorators/userid.decorator';
 import { AuthGuard } from 'src/shared/guards/AuthGuard';
-import { ClassRepository } from './class.repository';
 import { ClassResponseDto } from './dto/class/ClassResponse.dto';
 import { ClassUserService } from '../classUser/class-user.service';
 import { StudentsAndTeachersTdo } from '../classUser/dto/StudentsAndTeachers.dto';
 import { ClassDetailResponseDto } from './dto/class/ClassDetailResponse.dto';
 import { RoleGuard } from 'src/shared/guards/RoleGuard';
 import { UserRole } from 'src/shared/types/EnumUserRole';
-import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { config } from 'process';
 import { Roles } from 'src/shared/decorators/roles.decorator';
 import { InviteMailReqDto } from './dto/class/InviteMailReq.dto';
-import { InviteToken } from 'src/shared/types/InviteToken';
-import { GradeStructure } from '../classGradeStructure/gradeStructure.entity';
-import { GradeStructureService } from '../classGradeStructure/gradeStructure.service';
-import { GradeStructureRespDTO } from '../classGradeStructure/dto/response/GradeStructureResp';
+import { GradeStructureService } from '../grade-structure/grade-structure.service';
+import { GradeStructureRespDTO } from '../grade-structure/dto/response/GradeStructureResp';
 
 @Controller('class')
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 export class ClassController {
   constructor(
     private readonly classService: ClassService,
@@ -122,13 +113,9 @@ export class ClassController {
   @Post('/:classIdCode/gradeStructure')
   async handlePostGradeStructure(
     @Param('classIdCode') classIdCode: string,
-    // @Body() gradeStructureRespDTO: GradeStructureRespDTO,
     @Req() req,
   ): Promise<string> {
-    // console.log(req.body);
-    //  console.log(gradeStructureRespDTO);
     const gradeStructureRespDTO = req.body;
-    //  console.log(gradeStructureRespDTO);
     await this.classGradeStructureService.updateGradeStructure(
       classIdCode,
       gradeStructureRespDTO,

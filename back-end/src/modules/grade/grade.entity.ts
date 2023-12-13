@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { GradeStructure } from '../grade-structure/grade-structure.entity';
+import { StudentEntity } from '../student/student.entity';
 
 @Entity('grades')
 export class Grade {
@@ -26,16 +27,16 @@ export class Grade {
   @JoinTable()
   gradeStructure: GradeStructure;
 
-  @ManyToOne(() => User, {
+  @ManyToOne(() => StudentEntity, {
     eager: true,
     nullable: false,
   })
   @JoinTable()
-  student: User;
+  student: StudentEntity;
 
   @Column()
   gradeStructureId: number;
 
   @Column()
-  studentId: number;
+  studentId: string;
 }

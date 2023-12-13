@@ -4,7 +4,9 @@ import { Readable } from 'stream';
 import { InternalServerErrorException } from '@nestjs/common';
 
 export const FileHandler = {
-  readFileCsv: async (file: Express.Multer.File): Promise<GradeStudent[]> => {
+  readFileCsvForGradeStudent: async (
+    file: Express.Multer.File,
+  ): Promise<GradeStudent[]> => {
     const readableStream = Readable.from([file.buffer.toString()]);
     return new Promise((resolve, reject) => {
       const results: GradeStudent[] = [];
@@ -36,6 +38,35 @@ export const FileHandler = {
 
           gradeStudent.scores = scores;
           results.push(gradeStudent);
+        })
+        .on('end', () => resolve(results))
+        .on('error', () =>
+          reject(new InternalServerErrorException('Internal server error')),
+        );
+    });
+  },
+  readFileCsvForStudent: async (
+    file: Express.Multer.File,
+  ): Promise<Student[]> => {
+    const readableStream = Readable.from([file.buffer.toString()]);
+    return new Promise((resolve, reject) => {
+      const results: Student[] = [];
+
+      readableStream
+        .pipe(
+          csvParser({
+            mapHeaders: ({ header }) => header.trim().replace(/'/g, ''),
+          }),
+        )
+        .on('data', (data) => {
+          if (data['StudentId'] === '') {
+            return;
+          }
+
+          results.push({
+            studentId: data['StudentId'],
+            fullname: data['FullName'],
+          });
         })
         .on('end', () => resolve(results))
         .on('error', () =>

@@ -1,19 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { GradeRepository } from './grade.repository';
-import { UserService } from '../user/user.service';
-import { UserRepository } from '../user/user.repository';
-import { GradeStructureService } from '../grade-structure/grade-structure.service';
 import { ClassService } from '../class/class.service';
 import { GradeStructure } from '../grade-structure/grade-structure.entity';
+import { GradeStructureRepository } from '../grade-structure/grade-structure.repository';
+import { StudentRepository } from '../student/student.repository';
 
 @Injectable()
 export class GradeService {
   constructor(
     private readonly gradeRepository: GradeRepository,
-    private readonly userService: UserService,
-    private readonly userRepository: UserRepository,
-    private readonly gradeStructoreService: GradeStructureService,
     private readonly classService: ClassService,
+    private readonly studentRepository: StudentRepository,
+    private readonly gradeStructureRepository: GradeStructureRepository,
   ) {}
 
   async insertListGradeStudent(classId: string, gradeStudents: GradeStudent[]) {
@@ -23,7 +21,7 @@ export class GradeService {
       throw new NotFoundException('Class not found!');
     }
 
-    const gradeStructures = await this.gradeStructoreService.findByClass(
+    const gradeStructures = await this.gradeStructureRepository.findByClassId(
       classId,
     );
 
@@ -36,7 +34,7 @@ export class GradeService {
     gradeStructures: GradeStructure[],
     gradeStudent: GradeStudent,
   ) {
-    const matchedStudent = await this.userService.findByStudentId(
+    const matchedStudent = await this.studentRepository.findById(
       gradeStudent.studentId,
     );
 
@@ -65,12 +63,12 @@ export class GradeService {
   }
 
   async findByGradeStructureAndStudentId(
-    userId: number,
+    studentId: string,
     gradeStructureId: number,
   ) {
     return this.gradeRepository.findOne({
       where: {
-        studentId: userId,
+        studentId,
         gradeStructureId,
       },
     });

@@ -36,7 +36,7 @@ export class ClassUserService{
         const payload : RoleToken= {
             userId : newClassUser.userId,
             classCodeId: newClassUser.classId,
-            role: newClassUser.role,
+            role,
         } 
         return await this.signRoleToken(payload);
     }
@@ -164,6 +164,9 @@ export class ClassUserService{
         const classUser:ClassUser = await this.classUserRepository.findOne({
             where:{classId, userId}
         })
+        if(classUser ==null){
+            return null;
+        }
         return classUser.role;
     }
 }

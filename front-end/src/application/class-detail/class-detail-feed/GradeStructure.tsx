@@ -30,9 +30,10 @@ const GradeStructure = () => {
           classDetail.idCode
         );
         const data = response.data;
-        console.log(data);
         if (data) {
-          setAssignments(data.assignments);
+          setAssignments(
+            data.assignments.sort((a, b) => a.position - b.position)
+          );
         }
       };
 
@@ -65,14 +66,17 @@ const GradeStructure = () => {
           (acc, cur) => acc + cur.percentScore,
           0
         ),
+        position: newAssignment.length - 1,
       });
     }
+    newAssignment.forEach((assignment, index) => {
+      assignment.position = index;
+    });
     // send new structure to backend
     // Todo:
     const newGradeStructure: GradeStructureResp = {
       assignments: newAssignment,
     };
-    console.log(newGradeStructure);
     await ClassService.updateGradeStructure(
       classDetail.idCode,
       newGradeStructure
@@ -89,6 +93,12 @@ const GradeStructure = () => {
     let tempData = Array.from(UIassignments);
     let [source_data] = tempData.splice(e.source.index, 1);
     tempData.splice(e.destination.index, 0, source_data);
+
+    // Update the position property of the assignments
+    tempData.forEach((assignment, index) => {
+      assignment.position = index;
+    });
+
     setAssignments(tempData);
   };
   return (
@@ -239,6 +249,9 @@ const GradeStructure = () => {
                                           UIassignments.indexOf(assignment),
                                           1
                                         );
+                                        temp.forEach((assignment, index) => {
+                                          assignment.position = index;
+                                        });
                                         setAssignments(temp);
                                       }}
                                     >
@@ -282,13 +295,17 @@ const GradeStructure = () => {
             variant="contained"
             className="w-fit"
             onClick={() => {
-              const temp = UIassignments.map((assignment) => ({
-                ...assignment,
-              }));
+              const temp = [...UIassignments];
+
               temp.splice(temp.length - 1, 0, {
                 nameAssignment: `Assignment ${temp.length}`,
                 percentScore: 0,
+                position: 0,
               });
+              temp.forEach((assignment, index) => {
+                assignment.position = index;
+              });
+
               setAssignments(temp);
             }}
           >
