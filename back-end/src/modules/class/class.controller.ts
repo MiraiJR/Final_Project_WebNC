@@ -19,9 +19,9 @@ import { config } from 'process';
 import { Roles } from 'src/shared/decorators/roles.decorator';
 import { InviteMailReqDto } from './dto/class/InviteMailReq.dto';
 import { InviteToken } from 'src/shared/types/InviteToken';
-import { GradeStructure } from '../classGradeStructure/gradeStructure.entity';
-import {GradeStructureService } from '../classGradeStructure/gradeStructure.service';
-import { GradeStructureRespDTO } from '../classGradeStructure/dto/response/GradeStructureResp';
+import { GradeStructure } from '../grade-structure/grade-structure.entity';
+import {GradeStructureService } from '../grade-structure/grade-structure.service';
+import { GradeStructureRespDTO } from '../grade-structure/dto/response/GradeStructureResp';
 
 @Controller('class')
 @UseGuards(AuthGuard)
@@ -84,12 +84,8 @@ export class ClassController {
 
     @Post('/:classIdCode/gradeStructure')
     async handlePostGradeStructure(@Param('classIdCode') classIdCode: string, 
-    // @Body() gradeStructureRespDTO: GradeStructureRespDTO,
     @Req() req,): Promise<string>{
-        // console.log(req.body);
-        //  console.log(gradeStructureRespDTO); 
          const gradeStructureRespDTO = req.body;
-        //  console.log(gradeStructureRespDTO);
         await this.classGradeStructureService.updateGradeStructure(classIdCode , gradeStructureRespDTO);
          return "Updated gradeStructure successfully"
     }

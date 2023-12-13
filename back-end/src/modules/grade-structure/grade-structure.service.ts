@@ -1,13 +1,16 @@
 import { ConfigService } from "@nestjs/config";
-import { GradeStructureRepository } from "./gradeStructure.repository";
+import { GradeStructureRepository } from "./grade-structure.repository";
 import { Assignment } from "src/shared/types/Assignment";
-import { GradeStructure } from "./gradeStructure.entity";
+import { GradeStructure } from "./grade-structure.entity";
 import { Injectable } from "@nestjs/common";
 import { GradeStructureRespDTO } from "./dto/response/GradeStructureResp";
+import { ClassRepository } from "../class/class.repository";
+import { ClassService } from "../class/class.service";
 @Injectable()
 export class GradeStructureService {
     constructor (
         private readonly gradeStructureRepository: GradeStructureRepository,
+        private readonly classService: ClassService,
         private readonly configService: ConfigService,
     ) {}
 
@@ -21,8 +24,8 @@ export class GradeStructureService {
             const rs: GradeStructureRespDTO = {
                 assignments: 
                     gradeStructure.map(assignment => {
-                        const {id, nameAssignment, percentScore} = assignment;
-                        return {id, nameAssignment, percentScore}
+                        const {id, nameAssignment, percentScore, position} = assignment;
+                        return {id, nameAssignment, percentScore , position}
                     })
             }
             return rs;
@@ -35,7 +38,8 @@ export class GradeStructureService {
 
     async updateGradeStructure(classId: string,gradeStructure:GradeStructureRespDTO ): Promise<void> {
         try {
-            await this.gradeStructureRepository.updateGradeStructure(classId,gradeStructure);
+            const classGradeStructure = await this.classService.findByIdCode(classId);
+            await this.gradeStructureRepository.updateGradeStructure(classGradeStructure,gradeStructure);
         } catch (error) {
             throw new Error(`Error updating grade structure: ${error.message}`);    
         }
