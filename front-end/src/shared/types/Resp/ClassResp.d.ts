@@ -37,6 +37,7 @@ type GradeAssignmentResp = {
     id?: number;
     nameAssignment: string;
     percentScore: number;
+    position: number;
 }
 
 type GradeStructureResp = {

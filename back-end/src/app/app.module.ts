@@ -3,7 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/modules/auth/auth.module';
 import { ClassModule } from 'src/modules/class/class.module';
-import { GradeStructureModule } from 'src/modules/classGradeStructure/gradeStructure.module';
+import { GradeStructureModule } from 'src/modules/grade-structure/grade-structure.module';
 import { ClassUserModule } from 'src/modules/classUser/class-user.module';
 import { MailModule } from 'src/modules/mail/mail.module';
 import { UserModule } from 'src/modules/user/user.module';
