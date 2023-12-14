@@ -10,9 +10,9 @@ export class GradeReviewRepository {
         private readonly repository: Repository<GradeReview>, 
     ) {}
 
-    async findByClassId(classId: string): Promise<GradeReview[]> {
+    async findByClassId(classIdCode: string): Promise<GradeReview[]> {
         return await this.repository.find({
-            where: { classId: classId },
+            where: { classIdCode: classIdCode },
         });
     }
 

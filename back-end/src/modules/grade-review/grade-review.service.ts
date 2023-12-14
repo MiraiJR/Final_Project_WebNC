@@ -11,20 +11,20 @@ export class GradeReviewService {
         private readonly configService: ConfigService,
     ) {}
 
-    async getGradeReviewByClassId(classId: string): Promise<GradeReviewRespDTO[]> {
+    async getGradeReviewByClassId(classIdCode: string): Promise<GradeReviewRespDTO[]> {
         try {
-            const gradeReviews = await this.gradeReviewRepository.findByClassId(classId);
+            const gradeReviews = await this.gradeReviewRepository.findByClassId(classIdCode);
 
             if (!gradeReviews || gradeReviews.length === 0) {
                 return [];
             }
-            const rs:GradeReviewRespDTO[] = gradeReviews.map(gradeReview => {
-                const { id, student, nameAssignment, currPercentScore, expectPercentScore, explain } = gradeReview;
-                const studentName = student.fullname;
-                const rs: GradeReviewRespDTO = { id, studentName, nameAssignment, currPercentScore, expectPercentScore, explain };
+            const rs:GradeReviewRespDTO[] = gradeReviews.map(  (gradeReview )=> {
+                const { id,structureId, studentId, nameAssignment, currPercentScore, expectPercentScore, explain } = gradeReview;
+                const studentName = "example name";
+                const rs: GradeReviewRespDTO = { id,structureId, studentName, nameAssignment, currPercentScore, expectPercentScore, explain };
                 return rs;
             });
-            return rs;
+            return rs; 
         } catch (error) {
             // Log the error or handle it appropriately
             console.error(`Error fetching grade review: ${error.message}`);

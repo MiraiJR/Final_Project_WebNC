@@ -1,8 +1,10 @@
 import {
     Column,
     Entity,
+    JoinColumn,
     JoinTable,
     ManyToOne,
+    PrimaryColumn,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
@@ -15,24 +17,24 @@ export class GradeReview {
     id: number;
 
     @ManyToOne(() => Class, { lazy: true, nullable: false })
-    @JoinTable()
+    @JoinColumn({name: 'classIdCode'})
     class: Class;
 
     @ManyToOne(() => GradeStructure, { lazy: true, nullable: false })
-    @JoinTable()
+    @JoinColumn({name: 'structureId'})
     structure: GradeStructure;
 
     @ManyToOne(() => User, { lazy: true, nullable: false })
-    @JoinTable()
+    @JoinColumn({name: 'studentId'})
     student: User;
 
-    @Column({ name: 'classIdCode' })
-    classId: string;
+    @Column()
+    classIdCode: string;
     
-    @Column({ name: 'structureId' })
-    structureId: string;
+    @Column() 
+    structureId: number;
 
-    @Column({ name: 'studentId' })
+    @Column()
     studentId: string;
 
     @Column({ nullable: false })

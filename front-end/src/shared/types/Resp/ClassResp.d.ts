@@ -46,6 +46,7 @@ type GradeStructureResp = {
 
   type GradeReviewResp = {
     id: number;
+    structureId: number;
     studentName: string;
     nameAssignment: string;
     currPercentScore: number;
