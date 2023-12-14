@@ -23,6 +23,7 @@ export class Grade {
   @ManyToOne(() => GradeStructure, {
     eager: true,
     nullable: false,
+    onDelete: 'CASCADE',
   })
   @JoinTable()
   gradeStructure: GradeStructure;
@@ -30,6 +31,7 @@ export class Grade {
   @ManyToOne(() => StudentEntity, {
     eager: true,
     nullable: false,
+    onDelete: 'CASCADE',
   })
   @JoinTable()
   student: StudentEntity;

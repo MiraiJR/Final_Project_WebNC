@@ -19,4 +19,14 @@ export class StudentService {
       await this.studentRepository.insertStudent(student, classId);
     });
   }
+
+  async checkExistedStudent(id: string): Promise<boolean> {
+    const student = await this.studentRepository.findById(id);
+
+    if (!student) {
+      throw new NotFoundException(`Student with StudentID [${id}] not found!`);
+    }
+
+    return true;
+  }
 }

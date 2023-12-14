@@ -26,7 +26,7 @@ import { GradeStructureService } from '../grade-structure/grade-structure.servic
 import { GradeStructureRespDTO } from '../grade-structure/dto/response/GradeStructureResp';
 
 @Controller('class')
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 export class ClassController {
   constructor(
     private readonly classService: ClassService,

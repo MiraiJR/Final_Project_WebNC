@@ -3,7 +3,7 @@ import { Class } from '../class/class.entity';
 
 @Entity('students')
 export class StudentEntity {
-  @ManyToOne(() => Class, { lazy: true, nullable: false })
+  @ManyToOne(() => Class, { lazy: true, nullable: false, onDelete: 'CASCADE' })
   @JoinTable()
   class: Class;
 

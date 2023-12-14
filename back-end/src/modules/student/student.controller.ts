@@ -28,6 +28,7 @@ export class StudentController {
 
     const students = await FileHandler.readFileCsvForStudent(file);
     await this.studentService.insertListStudent(students, classId);
+
     return 'Upload list student for class successfully!';
   }
 }

@@ -18,6 +18,7 @@ export class StudentRepository extends Repository<StudentEntity> {
   ): Promise<StudentEntity> {
     return this.save({
       classId,
+      id: student.studentId,
       ...student,
     });
   }
@@ -26,6 +27,17 @@ export class StudentRepository extends Repository<StudentEntity> {
     return this.findOne({
       where: {
         id,
+      },
+    });
+  }
+
+  async findStudentsOfClassId(classId: string): Promise<StudentEntity[]> {
+    return await this.find({
+      where: {
+        classId,
+      },
+      order: {
+        id: 'asc',
       },
     });
   }

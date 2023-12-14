@@ -1,10 +1,5 @@
 type GradeStudent = {
   studentId: string;
-  scores: number[];
-};
-
-type GradeStudentResp = {
-  studentId: string;
   fullname: string;
   scores: Score[];
 };

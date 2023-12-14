@@ -11,4 +11,35 @@ export class GradeRepository extends Repository<Grade> {
   ) {
     super(repository.target, repository.manager, repository.queryRunner);
   }
+
+  async findByGradeStructureAndStudentId(
+    studentId: string,
+    gradeStructureId: number,
+  ): Promise<Grade> {
+    return this.findOne({
+      where: {
+        studentId,
+        gradeStructureId,
+      },
+    });
+  }
+
+  async findGradeStudentsByClassIdAndGradeStructureId(
+    classId: string,
+    gradeStructureId: number,
+  ) {
+    const gradeStudents = await this.find({
+      where: {
+        student: {
+          classId,
+        },
+        gradeStructureId,
+      },
+      order: {
+        studentId: 'asc',
+      },
+    });
+
+    return gradeStudents;
+  }
 }
