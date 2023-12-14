@@ -44,4 +44,11 @@ export class GradeStructureRepository {
             await this.repository.save(rs);
         }
     }
+
+    async findAssignment(classId: string , gradeStructureId: number): Promise<GradeStructure>{
+        return await this.repository.findOne({
+            where: { classId: classId, id: gradeStructureId },
+            // relations: ['class'],
+        });
+    }
 }

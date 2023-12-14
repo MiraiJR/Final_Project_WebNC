@@ -4,10 +4,12 @@ import { Assignment } from "src/shared/types/Assignment";
 import { GradeReview } from "./grade-review.entity";
 import { Injectable } from "@nestjs/common";
 import { GradeReviewRespDTO } from "./dto/response/gradeReviewResp.dto";
+import { GradeStructureService } from "../grade-structure/grade-structure.service";
 @Injectable()
 export class GradeReviewService {
     constructor (
         private readonly gradeReviewRepository: GradeReviewRepository,
+        private readonly gradeStructureService: GradeStructureService,
         private readonly configService: ConfigService,
     ) {}
 
@@ -18,12 +20,15 @@ export class GradeReviewService {
             if (!gradeReviews || gradeReviews.length === 0) {
                 return [];
             }
-            const rs:GradeReviewRespDTO[] = gradeReviews.map(  (gradeReview )=> {
-                const { id,structureId, studentId, nameAssignment, currPercentScore, expectPercentScore, explain } = gradeReview;
+            const rs = Promise.all(gradeReviews.map( async  (gradeReview )=> {
+                const { id,structureId, studentId, expectPercentScore, explain } = gradeReview;
+                const assignment = await this.gradeStructureService.getGradeAssignment(classIdCode, structureId);
+                const {nameAssignment, percentScore} = assignment;
+                //get name from table grade
                 const studentName = "example name";
-                const rs: GradeReviewRespDTO = { id,structureId, studentName, nameAssignment, currPercentScore, expectPercentScore, explain };
+                const rs: GradeReviewRespDTO = { id,structureId, studentName, nameAssignment, currPercentScore: percentScore, expectPercentScore, explain };
                 return rs;
-            });
+            }));
             return rs; 
         } catch (error) {
             // Log the error or handle it appropriately

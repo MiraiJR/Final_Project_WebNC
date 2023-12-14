@@ -44,6 +44,16 @@ export class GradeStructureService {
             throw new Error(`Error updating grade structure: ${error.message}`);    
         }
     }
+
+    async getGradeAssignment(classId: string, gradeStructureId: number): Promise<GradeStructure> {
+        // get the grade assignment 
+        try {
+            const gradeAssignment = await this.gradeStructureRepository.findAssignment(classId, gradeStructureId);
+            return gradeAssignment;
+        } catch (error) {
+            throw new Error(`Error fetching grade assignment: ${error.message}`);    
+        }
+    }
     
 }
  

@@ -24,9 +24,9 @@ export class GradeReview {
     @JoinColumn({name: 'structureId'})
     structure: GradeStructure;
 
-    @ManyToOne(() => User, { lazy: true, nullable: false })
-    @JoinColumn({name: 'studentId'})
-    student: User;
+    // @ManyToOne(() => User, { lazy: true, nullable: false })
+    // @JoinColumn({name: 'studentId'})
+    // student: User;
 
     @Column()
     classIdCode: string;
@@ -37,11 +37,11 @@ export class GradeReview {
     @Column()
     studentId: string;
 
-    @Column({ nullable: false })
-    nameAssignment: string;
+    // @Column({ nullable: false })
+    // nameAssignment: string;
 
-    @Column({ nullable: false })
-    currPercentScore: number;
+    // @Column({ nullable: false })
+    // currPercentScore: number;
 
     @Column({ nullable: false })
     expectPercentScore: number;
