@@ -23,9 +23,7 @@ const GradeReview = () => {
       const fetchData = async () => {
         const response = await ClassService.getGradeReviews(classDetail.idCode);
         const data = response.data;
-        if (data) {
-          setReview(data);
-        }
+        setReview(data);
       };
 
       fetchData();

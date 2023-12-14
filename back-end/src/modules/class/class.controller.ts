@@ -22,6 +22,8 @@ import { InviteToken } from 'src/shared/types/InviteToken';
 import { GradeStructure } from '../grade-structure/grade-structure.entity';
 import {GradeStructureService } from '../grade-structure/grade-structure.service';
 import { GradeStructureRespDTO } from '../grade-structure/dto/response/GradeStructureResp';
+import { GradeReviewService } from '../grade-review/grade-review.service';
+import { GradeReviewRespDTO } from '../grade-review/dto/response/gradeReviewResp.dto';
 
 @Controller('class')
 @UseGuards(AuthGuard)
@@ -29,7 +31,8 @@ export class ClassController {
     constructor(
         private readonly classService: ClassService,
         private readonly classUserService: ClassUserService,
-        private readonly classGradeStructureService: GradeStructureService
+        private readonly classGradeStructureService: GradeStructureService,
+        private readonly gradeReviewService: GradeReviewService,
         ) {}
 
     @Post('/create')
@@ -91,8 +94,8 @@ export class ClassController {
     }
 
     @Get('/:classIdCode/gradeReviews')
-    async handleGetGradeReview(@Param('classIdCode') classIdCode: string): Promise<GradeStructureRespDTO>{
-        return await this.classGradeStructureService.getGradeStructureByClassId(classIdCode);
+    async handleGetGradeReview(@Param('classIdCode') classIdCode: string): Promise<GradeReviewRespDTO[]>{
+        return await this.gradeReviewService.getGradeReviewByClassId(classIdCode);
     }
 
 }
