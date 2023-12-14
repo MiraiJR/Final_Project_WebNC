@@ -12,6 +12,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailModule } from '../mail/mail.module';
 import { GradeStructureModule } from '../grade-structure/grade-structure.module';
+import { GradeReviewModule } from '../grade-review/grade-review.module';
 
 @Module({
   imports: [
@@ -21,7 +22,8 @@ import { GradeStructureModule } from '../grade-structure/grade-structure.module'
     MailModule,
     ConfigModule,
     forwardRef(() => ClassUserModule),
-    forwardRef(() => GradeStructureModule)
+    forwardRef(() => GradeStructureModule),
+    forwardRef(() => GradeReviewModule)
   ],
   providers: [ClassService, ClassRepository, JwtService, ConfigService],
   controllers: [ClassController],

@@ -41,13 +41,14 @@ type GradeAssignmentResp = {
 }
 
 type GradeStructureResp = {
-    assignments: GradeAssignmentResp[];}
+    assignments: GradeAssignmentResp[];
+}
 
-type StudentResp = {
+  type GradeReviewResp = {
     id: number;
     studentName: string;
-    gradeComposition: string;
-    currGrade: number;
-    expectGrade: number;
-    explaination: string;
+    nameAssignment: string;
+    currPercentScore: number;
+    expectPercentScore: number;
+    explain: string;
   }

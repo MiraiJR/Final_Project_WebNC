@@ -1,6 +1,6 @@
 import axiosClient from "../libs/axios";
 import { SendInviteMailReq } from "../types/Req/SendInviteMailRequest";
-import { ClassDetailResp, ClassMembersListResp, ClassRespData, GradeAssignmentResp, GradeStructureResp } from "../types/Resp/ClassResp";
+import { ClassDetailResp, ClassMembersListResp, ClassRespData, GradeReviewResp, GradeStructureResp } from "../types/Resp/ClassResp";
 
 const ClassService ={
     getClassList : ()=> axiosClient.get<ClassRespData[]>('/class/all'),
@@ -12,6 +12,7 @@ const ClassService ={
     acceptInviteEmail: (token: string) => axiosClient.get<ClassDetailResp>(`/class/acceptInvite/?token=${token}`),
     getGradeStructure: (classID: string) => axiosClient.get<GradeStructureResp>(`/class/${classID}/gradeStructure`),
     updateGradeStructure: (classID: string, data: GradeStructureResp) => axiosClient.post<string>(`/class/${classID}/gradeStructure`,data),
+    getGradeReviews: (classID: string) => axiosClient.get<GradeReviewResp[]>(`/class/${classID}/gradeReviews`),
 }
 
 export default ClassService;

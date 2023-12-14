@@ -7,6 +7,7 @@ import { GradeStructureModule } from 'src/modules/grade-structure/grade-structur
 import { ClassUserModule } from 'src/modules/classUser/class-user.module';
 import { MailModule } from 'src/modules/mail/mail.module';
 import { UserModule } from 'src/modules/user/user.module';
+import { GradeReviewModule } from 'src/modules/grade-review/grade-review.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { UserModule } from 'src/modules/user/user.module';
     ClassModule,
     ClassUserModule,
     GradeStructureModule,
+    GradeReviewModule,
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true, cache: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

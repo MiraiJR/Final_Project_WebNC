@@ -85,9 +85,14 @@ export class ClassController {
     @Post('/:classIdCode/gradeStructure')
     async handlePostGradeStructure(@Param('classIdCode') classIdCode: string, 
     @Req() req,): Promise<string>{
-         const gradeStructureRespDTO = req.body;
+         const gradeStructureRespDTO: GradeStructureRespDTO = req.body;
         await this.classGradeStructureService.updateGradeStructure(classIdCode , gradeStructureRespDTO);
          return "Updated gradeStructure successfully"
+    }
+
+    @Get('/:classIdCode/gradeReviews')
+    async handleGetGradeReview(@Param('classIdCode') classIdCode: string): Promise<GradeStructureRespDTO>{
+        return await this.classGradeStructureService.getGradeStructureByClassId(classIdCode);
     }
 
 }
