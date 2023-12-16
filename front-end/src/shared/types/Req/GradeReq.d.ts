@@ -9,3 +9,8 @@ type UpdateStatusGradeReq = {
   gradeStructureId: numebr;
   isFinalized: boolean;
 };
+
+type UpdateStatusGradeForAssignmentReq = {
+  gradeStructureId: numebr;
+  isFinalized: boolean;
+};

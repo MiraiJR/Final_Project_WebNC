@@ -74,4 +74,33 @@ export const FileHandler = {
         );
     });
   },
+  readFileCsvForGradeInSpecificAssignment: async (
+    file: Express.Multer.File,
+  ): Promise<GradeStudentInAssignment[]> => {
+    const readableStream = Readable.from([file.buffer.toString()]);
+    return new Promise((resolve, reject) => {
+      const results: GradeStudentInAssignment[] = [];
+
+      readableStream
+        .pipe(
+          csvParser({
+            mapHeaders: ({ header }) => header.trim().replace(/'/g, ''),
+          }),
+        )
+        .on('data', (data) => {
+          if (data['StudentId'] === '') {
+            return;
+          }
+
+          results.push({
+            studentId: data['StudentId'],
+            score: parseFloat(data['Score']),
+          });
+        })
+        .on('end', () => resolve(results))
+        .on('error', () =>
+          reject(new InternalServerErrorException('Internal server error')),
+        );
+    });
+  },
 };

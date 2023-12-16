@@ -8,5 +8,9 @@ export const GradeService = {
   updateScoreForSpecificAssignment: (data: UpdateScoreReq) =>
     axiosClient.patch<string>(`/grades/update-score`, data),
   updateStatusForSpecificAssignmentOfStudent: (data: UpdateStatusGradeReq) =>
-    axiosClient.patch<string>(`/grades/update-status`, data),
+    axiosClient.patch<string>(`/grades/update-status/students`, data),
+  updateStatusForColumnAssignment: (data: UpdateStatusGradeForAssignmentReq) =>
+    axiosClient.patch<string>(`/grades/update-status/assignments`, data),
+  uploadGradesForAssignment: (formData: FormData) =>
+    axiosClient.post<string>(`/grades/upload-grades/assignments`, formData),
 };

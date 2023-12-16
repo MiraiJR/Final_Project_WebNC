@@ -1,31 +1,11 @@
 import { Helper } from "@/shared/utils/heper";
-import { Button, MenuItem, OutlinedInput, Menu, Switch } from "@mui/material";
-import { Check, FolderUp, MoreVertical, X } from "lucide-react";
+import { OutlinedInput, Switch } from "@mui/material";
+import { Check, X } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { VisuallyHiddenInput } from "./configs";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { GradeService } from "@/shared/services/GradeService";
 import { toast } from "react-toastify";
-import { useQueryClient } from "react-query";
-
-const menuItems: CustomMenuItem[] = [
-  {
-    label: "Finalize",
-    icon: Check,
-    handler: () => {
-      console.log("hello");
-    },
-    file: false,
-  },
-  {
-    label: "Upload grade",
-    icon: FolderUp,
-    handler: () => {
-      alert("Upload array");
-    },
-    file: true,
-  },
-];
+import { queryClient } from "@/shared/libs/react-query";
 
 interface itemProps {
   score: Score;
@@ -34,20 +14,11 @@ interface itemProps {
 }
 
 const RowScore = ({ score, studentId, gradeStructureId }: itemProps) => {
-  const queryClient = useQueryClient();
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const editTitleRef = useRef<HTMLFormElement | null>(null);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isFinalized, setIsFinalized] = useState<boolean>(
     score.isFinalized ?? false
   );
-  const open = Boolean(anchorEl);
-  const handleShowMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
   const { register, handleSubmit, setValue } = useForm<UpdateScoreReq>();
   const onSubmit: SubmitHandler<UpdateScoreReq> = (reqData) => {
     if (reqData.newScore === score.value) {
@@ -141,26 +112,6 @@ const RowScore = ({ score, studentId, gradeStructureId }: itemProps) => {
           {isFinalized ? "Finailized" : "Draft"}
         </span>
         <Switch checked={isFinalized} onChange={handleChangeStatusGrade} />
-      </div>
-      <div>
-        <button onClick={handleShowMenu}>
-          <MoreVertical />
-        </button>
-        <Menu
-          id="basic-menu"
-          anchorEl={anchorEl}
-          open={open}
-          onClose={handleClose}
-        >
-          {menuItems.map((item, _index) => (
-            <MenuItem key={_index}>
-              <Button component="label" startIcon={<item.icon />}>
-                {item.label}
-                {item.file && <VisuallyHiddenInput type="file" />}
-              </Button>
-            </MenuItem>
-          ))}
-        </Menu>
       </div>
     </div>
   );

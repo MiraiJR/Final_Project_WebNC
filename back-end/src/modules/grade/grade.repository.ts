@@ -42,4 +42,27 @@ export class GradeRepository extends Repository<Grade> {
 
     return gradeStudents;
   }
+
+  async updateIsFinalizedByGradeStructureId(
+    gradeStructureId: number,
+    isFinalized: boolean,
+  ) {
+    return await this.update({ gradeStructureId }, { isFinalized });
+  }
+
+  async updateSoreForStudentByGradeStructureId(
+    studentId: string,
+    gradeStructureId: number,
+    score: number,
+  ) {
+    return await this.update(
+      {
+        studentId,
+        gradeStructureId,
+      },
+      {
+        score,
+      },
+    );
+  }
 }

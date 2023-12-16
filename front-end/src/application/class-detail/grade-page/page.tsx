@@ -15,6 +15,7 @@ import { useQueryClient } from "react-query";
 const COLUMNS_STUDENT_TEMPLATE_CSV = ["StudentId", "FullName"];
 const FILENAME_STUDENT_TEMPLATE_CSV = "student_list_template.csv";
 const FILENAME_GRADE_STRUCTURE_TEMPLATE_CSV = "grade_structure_template.csv";
+
 enum TypeUpload {
   GRADE = "grade",
   STUDENT = "student",
@@ -139,6 +140,47 @@ const GradePage = () => {
     setFileGradeStudentListTemplate(null);
   };
 
+  const handleExportGradeBoard = async () => {
+    if (!classID) {
+      return;
+    }
+
+    const { data } = await ClassService.getGradeStructure(classID);
+    const { assignments } = data;
+
+    const columns = assignments.map((assignment) =>
+      Helper.capitalizeString(assignment.nameAssignment)
+    );
+    const { data: gradeStudents } = await GradeService.getGradeStudentsOfClass(
+      classID
+    );
+
+    if (!gradeStudents) {
+      return;
+    }
+
+    const headerRow: string[] = ["studentId", ...columns];
+    let rowDatas: string[] = [];
+    rowDatas.push(headerRow.join(","));
+    gradeStudents.forEach((gradeStudent) => {
+      rowDatas.push(
+        [
+          gradeStudent.studentId,
+          ...gradeStudent.scores.map((score) => score.value),
+        ].join(",")
+      );
+    });
+
+    const csvContent = FileHandler.generateFileCsv([rowDatas.join("\n")]);
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(csvContent);
+    link.download = FILENAME_GRADE_STRUCTURE_TEMPLATE_CSV;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="w-full flex flex-col gap-5">
       <div className="flex flex-row justify-end gap-4">
@@ -232,6 +274,15 @@ const GradePage = () => {
                 </div>
               )}
             </div>
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<ArrowDownFromLine />}
+              className="w-fit"
+              onClick={handleExportGradeBoard}
+            >
+              Export grade board
+            </Button>
           </div>
         </div>
         <TableGradeCustom />

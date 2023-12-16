@@ -3,43 +3,13 @@ import {
   getGradeStudentsOfClass,
 } from "@/shared/services/QueryService";
 import { GradeAssignmentResp } from "@/shared/types/Resp/ClassResp";
-import { Button, Menu, MenuItem } from "@mui/material";
-import { Check, FolderUp, MoreVertical } from "lucide-react";
-import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import RowScore from "./RowScore";
-import { VisuallyHiddenInput } from "./configs";
-
-const menuItems: CustomMenuItem[] = [
-  {
-    label: "Finalize",
-    icon: Check,
-    handler: () => {
-      console.log("hello");
-    },
-    file: false,
-  },
-  {
-    label: "Upload grade",
-    icon: FolderUp,
-    handler: () => {
-      alert("Upload array");
-    },
-    file: true,
-  },
-];
+import ColumnAssignment from "./ColumnAssignment";
 
 const TableGradeCustom = () => {
   const { classID } = useParams();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
-  const handleShowMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const { data: gradeStudents } = useQuery<GradeStudent[]>(
     `getGradeStudentsOfClass`,
@@ -88,44 +58,15 @@ const TableGradeCustom = () => {
             </th>
             <th className="text-left p-4 border-l-2">
               <div className="flex flex-row items-center justify-between">
-                <h2>Average</h2>
+                <h2>Total grade</h2>
               </div>
             </th>
             {gradeStructures &&
               gradeStructures.map((gradeStructure) => (
-                <th
-                  className="text-left p-4 border-l-2"
+                <ColumnAssignment
+                  gradeStructure={gradeStructure}
                   key={gradeStructure.id}
-                >
-                  <div className="flex flex-row items-center justify-between">
-                    <div className="flex flex-row items-center gap-2">
-                      <h2>{gradeStructure.nameAssignment.toUpperCase()}</h2>
-                      <span className="text-red-400">
-                        {gradeStructure.percentScore}%
-                      </span>
-                    </div>
-                    <div>
-                      <button onClick={handleShowMenu}>
-                        <MoreVertical />
-                      </button>
-                      <Menu
-                        id="basic-menu"
-                        anchorEl={anchorEl}
-                        open={open}
-                        onClose={handleClose}
-                      >
-                        {menuItems.map((item, _index) => (
-                          <MenuItem key={_index}>
-                            <Button component="label" startIcon={<item.icon />}>
-                              {item.label}
-                              {item.file && <VisuallyHiddenInput type="file" />}
-                            </Button>
-                          </MenuItem>
-                        ))}
-                      </Menu>
-                    </div>
-                  </div>
-                </th>
+                />
               ))}
           </tr>
         </thead>

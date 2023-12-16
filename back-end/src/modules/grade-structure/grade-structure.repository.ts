@@ -27,6 +27,19 @@ export class GradeStructureRepository extends Repository<GradeStructure> {
     return gradeStructures;
   }
 
+  async findById(id: number): Promise<GradeStructure | null> {
+    const gradeStructures = await this.findOne({
+      where: {
+        id,
+      },
+      order: {
+        id: 'asc',
+      },
+    });
+
+    return gradeStructures;
+  }
+
   async updateGradeStructure(
     classGradeStructure: Class,
     gradeStructure: GradeStructureRespDTO,

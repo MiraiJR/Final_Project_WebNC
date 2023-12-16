@@ -13,3 +13,8 @@ type Score = {
   value: number;
   isFinalized: boolean;
 };
+
+type GradeStudentInAssignment = {
+  studentId: string;
+  score: number;
+};

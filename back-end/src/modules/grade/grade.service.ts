@@ -161,4 +161,38 @@ export class GradeService {
       isFinalized,
     });
   }
+
+  async updateStatusGradeForAllStudents(
+    gradeStructureId: number,
+    isFinalized: boolean,
+  ): Promise<void> {
+    const matchedGradeStructure = await this.gradeStructureRepository.findById(
+      gradeStructureId,
+    );
+
+    if (!matchedGradeStructure) {
+      throw new NotFoundException(
+        `Grade structure with id [${gradeStructureId}] not found!`,
+      );
+    }
+
+    await this.gradeRepository.updateIsFinalizedByGradeStructureId(
+      gradeStructureId,
+      isFinalized,
+    );
+  }
+
+  async updateGradeForSpecificAssignment(
+    gradeStructureId: number,
+    gradeStudents: GradeStudentInAssignment[],
+  ) {
+    for (const gradeStudent of gradeStudents) {
+      await this.studentService.checkExistedStudent(gradeStudent.studentId);
+      await this.gradeRepository.updateSoreForStudentByGradeStructureId(
+        gradeStudent.studentId,
+        gradeStructureId,
+        gradeStudent.score,
+      );
+    }
+  }
 }

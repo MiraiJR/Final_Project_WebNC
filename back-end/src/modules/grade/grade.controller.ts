@@ -17,6 +17,8 @@ import { FileHandler } from 'src/shared/utils/Filehandler';
 import { ClassIdDto } from './dtos/CreateGradeReq';
 import { UpdateGradeReq } from './dtos/UpdateGradeReq';
 import { UpdateStatusGradeReq } from './dtos/UpdateStatusGradeReq';
+import { UpdateStatusGradeForAllReq } from './dtos/UpdateStatusGradeForAllReq';
+import { UpdateGradesForAssignmentReq } from './dtos/UpdateGradesForAssignment';
 
 @Controller('grades')
 export class GradeController {
@@ -34,6 +36,23 @@ export class GradeController {
     const gradeStudents = await FileHandler.readFileCsvForGradeStudent(file);
     await this.gradeService.insertListGradeStudent(classId, gradeStudents);
     return 'Upload grades for students successfully!';
+  }
+
+  @Post('/upload-grades/assignments')
+  @UseInterceptors(FileInterceptor('file'))
+  async handleUploadGradesForAssignmentCsv(
+    @Body() dataReq: UpdateGradesForAssignmentReq,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<string> {
+    Checker.checkCsvFile(file, Constant.CSV_FILE_TYPE);
+    const { gradeStructureId } = dataReq;
+    const gradeStudents =
+      await FileHandler.readFileCsvForGradeInSpecificAssignment(file);
+    await this.gradeService.updateGradeForSpecificAssignment(
+      gradeStructureId,
+      gradeStudents,
+    );
+    return 'Upload grades for this assignment successfully!';
   }
 
   @Get('/class/:classId')
@@ -56,7 +75,7 @@ export class GradeController {
     return 'Update score successfully!';
   }
 
-  @Patch('/update-status')
+  @Patch('/update-status/students')
   async handleUpdateStatusGrade(@Body() reqData: UpdateStatusGradeReq) {
     const { isFinalized, studentId, gradeStructureId } = reqData;
     await this.gradeService.updateStatusGradeForStudent(
@@ -66,5 +85,18 @@ export class GradeController {
     );
 
     return `${isFinalized ? 'Finalized' : 'Draft'} score successfully!`;
+  }
+
+  @Patch('/update-status/assignments')
+  async handleUpdateStatusGradeForAllStudents(
+    @Body() reqData: UpdateStatusGradeForAllReq,
+  ) {
+    const { isFinalized, gradeStructureId } = reqData;
+
+    await this.gradeService.updateStatusGradeForAllStudents(
+      gradeStructureId,
+      isFinalized,
+    );
+    return `${isFinalized ? 'Finalized' : 'Draft'} assignment successfully!`;
   }
 }
