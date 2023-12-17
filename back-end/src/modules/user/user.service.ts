@@ -22,11 +22,13 @@ export class UserService {
   }
 
   async findById(id: number): Promise<User> {
-    return this.userRepository.findOne({
-      where: {
-        id,
-      },
-    });
+    const matchedUser = await this.userRepository.findById(id);
+
+    if (!matchedUser) {
+      throw new NotFoundException('User not found!');
+    }
+
+    return matchedUser;
   }
 
   async findBySocialId(socialType: string, socialId: string): Promise<User> {
@@ -62,5 +64,28 @@ export class UserService {
     };
 
     return meResp;
+  }
+
+  async findByStudentId(studentId: string): Promise<UserRespDTO> {
+    const matchedStudent = await this.userRepository.findOne({
+      where: {
+        studentId,
+      },
+    });
+
+    if (!matchedStudent) {
+      throw new NotFoundException(
+        `Student with id ${studentId} not found in class!`,
+      );
+    }
+
+    const matchedStudentResp: UserRespDTO = {
+      email: matchedStudent.email,
+      fullname: matchedStudent.fullname,
+      studentId: matchedStudent.studentId,
+      id: matchedStudent.id,
+    };
+
+    return matchedStudentResp;
   }
 }

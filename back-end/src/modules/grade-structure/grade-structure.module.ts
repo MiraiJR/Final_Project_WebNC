@@ -8,9 +8,16 @@ import { GradeStructure } from './grade-structure.entity';
 import { ClassRepository } from '../class/class.repository';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([GradeStructure, GradeStructureRepository , ClassRepository]),forwardRef(()=> ClassModule),],
-    providers: [GradeStructureService , GradeStructureRepository ],
-    controllers: [GradeStructureController],
-    exports: [GradeStructureService], 
-}) 
+  imports: [
+    TypeOrmModule.forFeature([
+      GradeStructure,
+      GradeStructureRepository,
+      ClassRepository,
+    ]),
+    forwardRef(() => ClassModule),
+  ],
+  providers: [GradeStructureService, GradeStructureRepository],
+  controllers: [GradeStructureController],
+  exports: [GradeStructureService, GradeStructureRepository],
+})
 export class GradeStructureModule {}
