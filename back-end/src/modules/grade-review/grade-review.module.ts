@@ -6,9 +6,15 @@ import { ClassModule } from '../class/class.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GradeReview } from './grade-review.entity';
 import { GradeStructureModule } from '../grade-structure/grade-structure.module';
+import { StudentModule } from '../student/student.module';
+import { GradeModule } from '../grade/grade.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([GradeReview, GradeReviewRepository]),forwardRef(()=> ClassModule),forwardRef(()=> GradeStructureModule)],
+    imports: [TypeOrmModule.forFeature([GradeReview, GradeReviewRepository]),
+    forwardRef(()=> ClassModule),
+    forwardRef(()=> GradeStructureModule),
+    forwardRef(()=>StudentModule),
+    forwardRef(()=>GradeModule),],
     providers: [GradeReviewService , GradeReviewRepository ],
     controllers: [GradeReviewController],
     exports: [GradeReviewService], 

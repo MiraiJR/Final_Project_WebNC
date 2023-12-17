@@ -5,11 +5,15 @@ import { GradeReview } from "./grade-review.entity";
 import { Injectable } from "@nestjs/common";
 import { GradeReviewRespDTO } from "./dto/response/gradeReviewResp.dto";
 import { GradeStructureService } from "../grade-structure/grade-structure.service";
+import { StudentService } from "../student/student.service";
+import { GradeService } from "../grade/grade.service";
 @Injectable()
 export class GradeReviewService {
     constructor (
         private readonly gradeReviewRepository: GradeReviewRepository,
         private readonly gradeStructureService: GradeStructureService,
+        private readonly studentService: StudentService,
+        private readonly gradeService: GradeService,
         private readonly configService: ConfigService,
     ) {}
 
@@ -23,10 +27,11 @@ export class GradeReviewService {
             const rs = Promise.all(gradeReviews.map( async  (gradeReview )=> {
                 const { id,structureId, studentId, expectPercentScore, explain } = gradeReview;
                 const assignment = await this.gradeStructureService.getGradeAssignment(classIdCode, structureId);
-                const {nameAssignment, percentScore} = assignment;
-                //get name from table grade
-                const studentName = "example name";
-                const rs: GradeReviewRespDTO = { id,structureId, studentName, nameAssignment, currPercentScore: percentScore, expectPercentScore, explain };
+                const {nameAssignment} = assignment;
+                const score = await this.gradeService.getScoreOfAssignment(studentId, structureId);
+                //get name from table student
+                const studentName = await this.studentService.getStudentName(studentId);
+                const rs: GradeReviewRespDTO = { id,structureId, studentName, nameAssignment, currPercentScore: score, expectPercentScore, explain };
                 return rs;
             }));
             return rs; 
