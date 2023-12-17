@@ -16,4 +16,11 @@ export class GradeReviewRepository {
         });
     }
 
+    async deleteByStructureIdAndStudentId(structureId: number, studentId: string): Promise<void> {
+        await this.repository.delete({
+            structureId: structureId,
+            studentId: studentId,
+        });
+    }
+
 }

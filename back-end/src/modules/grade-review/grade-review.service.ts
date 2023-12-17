@@ -41,6 +41,20 @@ export class GradeReviewService {
             throw new Error('Failed to fetch grade review'); 
         }   
     }
+
+    async updateScoreAndDeleteReview( 
+        studentId: string,
+        structureId: number,
+        newScore: number,){
+        try {
+            await this.gradeService.updateScoreForStudentInGradeStructure(studentId, structureId, newScore);
+            await this.gradeReviewRepository.deleteByStructureIdAndStudentId(structureId, studentId);
+        } catch (error) {
+            // Log the error or handle it appropriately
+            console.error(`Error update score: ${error.message}`);
+            throw new Error('Failed to update score'); 
+        }   
+    }
     
 }
 

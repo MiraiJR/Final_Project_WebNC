@@ -5,8 +5,6 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import { useState } from "react";
-import { useNavigate } from "react-router";
-import { useClassDetail } from "../ClassDetail";
 import { Alert } from "@mui/material";
 import ClassService from "@/shared/services/ClassService";
 import { toast } from "react-toastify";
@@ -23,10 +21,8 @@ export default function CreateClassFormDialog({
   onClose,
   info,
 }: UpdateGradeDialogProps) {
-  const navigate = useNavigate();
   const [score, setScore] = useState(-1);
   const [isValid, setIsValid] = useState<boolean>(true);
-  const classDetail = useClassDetail();
   const handleUpdateButton = async () => {
     // send update grade to server annd update to db
     try {
@@ -37,7 +33,7 @@ export default function CreateClassFormDialog({
       };
       await ClassService.updateScore(data);
       toast.success("Update grade successfully");
-      navigate(`/class/${classDetail.idCode}`);
+      window.location.reload();
     } catch (error: any) {
       toast.error(error.message);
     }

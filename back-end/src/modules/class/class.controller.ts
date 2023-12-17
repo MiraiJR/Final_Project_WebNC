@@ -37,7 +37,6 @@ export class ClassController {
         private readonly classUserService: ClassUserService,
         private readonly classGradeStructureService: GradeStructureService,
         private readonly gradeReviewService: GradeReviewService,
-        private readonly gradeService: GradeService,
         ) {}
 
   @Post('/create')
@@ -128,7 +127,7 @@ export class ClassController {
     @Post('/updateScore')
     async handleUpdateScore( @Req() req): Promise<string>{
         const data: UpdateGradeRespDTO = req.body;
-        await this.gradeService.updateScoreForStudentInGradeStructure(data.studentId, data.structureId, data.newScore);
+        await this.gradeReviewService.updateScoreAndDeleteReview(data.studentId, data.structureId, data.newScore);
         return "Updated score successfully"
     }
 }

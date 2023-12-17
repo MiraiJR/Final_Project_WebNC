@@ -24,7 +24,6 @@ import { GradeModule } from '../grade/grade.module';
     forwardRef(() => ClassUserModule),
     forwardRef(() => GradeStructureModule),
     forwardRef(() => GradeReviewModule),
-    forwardRef(() => GradeModule),
   ],
   providers: [ClassService, ClassRepository, JwtService, ConfigService],
   controllers: [ClassController],
