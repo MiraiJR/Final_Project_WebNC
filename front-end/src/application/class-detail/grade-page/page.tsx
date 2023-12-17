@@ -129,7 +129,10 @@ const GradePage = () => {
     formData.append("classId", classID);
 
     try {
-      const { data } = await GradeService.uploadGradeStudentListCsv(formData);
+      const { data } = await GradeService.uploadGradeStudentListCsv(
+        classID,
+        formData
+      );
 
       toast.success(data);
       queryClient.invalidateQueries(`getGradeStudentsOfClass`);

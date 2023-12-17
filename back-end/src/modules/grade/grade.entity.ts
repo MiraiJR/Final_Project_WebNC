@@ -10,7 +10,7 @@ import { GradeStructure } from '../grade-structure/grade-structure.entity';
 import { StudentEntity } from '../student/student.entity';
 
 @Entity('grades')
-export class Grade {
+export class GradeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

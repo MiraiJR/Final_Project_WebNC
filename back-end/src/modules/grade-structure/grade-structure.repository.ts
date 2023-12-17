@@ -20,7 +20,7 @@ export class GradeStructureRepository extends Repository<GradeStructure> {
         classId,
       },
       order: {
-        id: 'asc',
+        position: 'asc',
       },
     });
 
@@ -33,7 +33,7 @@ export class GradeStructureRepository extends Repository<GradeStructure> {
         id,
       },
       order: {
-        id: 'asc',
+        position: 'asc',
       },
     });
 

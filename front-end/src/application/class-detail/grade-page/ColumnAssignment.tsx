@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 import { VisuallyHiddenInput } from "./configs";
 import { useRef, useState } from "react";
 import { FileHandler } from "@/shared/utils/file-handler";
+import { useParams } from "react-router-dom";
 
 const COLUMNS_TEMPLATE_GRADE_ASSIGNMENT = ["StudentId", "Score"];
 const FILENAME_GRADE_TEMPLATE_ASSIGNMENT = "grade_assignment_template.csv";
@@ -26,8 +27,8 @@ const menuItems: CustomMenuItem[] = [
   {
     label: "Finalize",
     icon: Check,
-    handler: (gradeStructureId: number) => {
-      GradeService.updateStatusForColumnAssignment({
+    handler: (classId: string, gradeStructureId: number) => {
+      GradeService.updateStatusForColumnAssignment(classId, {
         gradeStructureId,
         isFinalized: true,
       })
@@ -43,8 +44,8 @@ const menuItems: CustomMenuItem[] = [
   {
     label: "Draft",
     icon: Check,
-    handler: (gradeStructureId: number) => {
-      GradeService.updateStatusForColumnAssignment({
+    handler: (classId: string, gradeStructureId: number) => {
+      GradeService.updateStatusForColumnAssignment(classId, {
         gradeStructureId,
         isFinalized: false,
       })
@@ -82,6 +83,7 @@ const menuItems: CustomMenuItem[] = [
 ];
 
 const ColumnAssignment = ({ gradeStructure }: itemProps) => {
+  const { classID: classId } = useParams<string>();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -122,7 +124,7 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
   };
 
   const handleUploadFileToBe = async () => {
-    if (!selectedFile || !gradeStructure) {
+    if (!selectedFile || !gradeStructure || !classId) {
       return;
     }
 
@@ -130,7 +132,7 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
     formData.append("file", selectedFile);
     formData.append("gradeStructureId", gradeStructure.id.toString());
 
-    GradeService.uploadGradesForAssignment(formData)
+    GradeService.uploadGradesForAssignment(classId, formData)
       .then((response) => {
         const { data } = response;
         queryClient.invalidateQueries(`getGradeStudentsOfClass`);

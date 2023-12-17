@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { GradeRepository } from './grade.repository';
 import { ClassService } from '../class/class.service';
 import { GradeStructure } from '../grade-structure/grade-structure.entity';
 import { GradeStructureRepository } from '../grade-structure/grade-structure.repository';
 import { StudentRepository } from '../student/student.repository';
 import { StudentService } from '../student/student.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class GradeService {
@@ -14,6 +19,7 @@ export class GradeService {
     private readonly studentRepository: StudentRepository,
     private readonly gradeStructureRepository: GradeStructureRepository,
     private readonly studentService: StudentService,
+    private readonly userService: UserService,
   ) {}
 
   async insertListGradeStudent(classId: string, gradeStudents: GradeStudent[]) {
@@ -194,5 +200,30 @@ export class GradeService {
         gradeStudent.score,
       );
     }
+  }
+
+  async getFinalizedGradeOfAssignmentsOfUser(
+    userId: number,
+  ): Promise<number[]> {
+    const matchedUser = await this.userService.findById(userId);
+
+    if (!matchedUser.studentId) {
+      throw new BadRequestException('User without studentId!');
+    }
+
+    const gradeStudent = await this.gradeRepository.findGradeByStudentId(
+      matchedUser.studentId,
+    );
+    const grades: number[] = [];
+
+    gradeStudent.forEach((gradeStudentEle) => {
+      if (gradeStudentEle.isFinalized) {
+        grades.push(gradeStudentEle.score);
+      } else {
+        grades.push(0);
+      }
+    });
+
+    return grades;
   }
 }

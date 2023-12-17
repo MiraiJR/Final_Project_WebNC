@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Grade } from './grade.entity';
+import { GradeEntity } from './grade.entity';
 import { GradeRepository } from './grade.repository';
 import { GradeService } from './grade.service';
 import { GradeController } from './grade.controller';
@@ -11,10 +11,11 @@ import { StudentModule } from '../student/student.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Grade]),
+    TypeOrmModule.forFeature([GradeEntity]),
     StudentModule,
     GradeStructureModule,
     ClassModule,
+    UserModule,
   ],
   controllers: [GradeController],
   providers: [GradeRepository, GradeService],

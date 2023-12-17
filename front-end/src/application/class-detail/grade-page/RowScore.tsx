@@ -6,6 +6,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { GradeService } from "@/shared/services/GradeService";
 import { toast } from "react-toastify";
 import { queryClient } from "@/shared/libs/react-query";
+import { useParams } from "react-router-dom";
 
 interface itemProps {
   score: Score;
@@ -14,6 +15,7 @@ interface itemProps {
 }
 
 const RowScore = ({ score, studentId, gradeStructureId }: itemProps) => {
+  const { classID: classId } = useParams<string>();
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const editTitleRef = useRef<HTMLFormElement | null>(null);
   const [isFinalized, setIsFinalized] = useState<boolean>(
@@ -21,11 +23,11 @@ const RowScore = ({ score, studentId, gradeStructureId }: itemProps) => {
   );
   const { register, handleSubmit, setValue } = useForm<UpdateScoreReq>();
   const onSubmit: SubmitHandler<UpdateScoreReq> = (reqData) => {
-    if (reqData.newScore === score.value) {
+    if (reqData.newScore === score.value || !classId) {
       return;
     }
 
-    GradeService.updateScoreForSpecificAssignment({
+    GradeService.updateScoreForSpecificAssignment(classId, {
       ...reqData,
       newScore: parseFloat(reqData.newScore.toString()),
     })
@@ -47,7 +49,11 @@ const RowScore = ({ score, studentId, gradeStructureId }: itemProps) => {
   }, [score, studentId, gradeStructureId]);
 
   const handleChangeStatusGrade = async () => {
-    GradeService.updateStatusForSpecificAssignmentOfStudent({
+    if (!classId) {
+      return;
+    }
+
+    GradeService.updateStatusForSpecificAssignmentOfStudent(classId, {
       studentId,
       gradeStructureId,
       isFinalized: !isFinalized,

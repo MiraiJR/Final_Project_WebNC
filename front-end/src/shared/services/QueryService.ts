@@ -18,3 +18,11 @@ export const getGradeStructuresOfClass = async (
 
   return data.assignments;
 };
+
+export const getFinalizedGradesOfStudent = async (
+  classId: string
+): Promise<number[]> => {
+  const { data } = await GradeService.getFinalizedGradesOfStudent(classId);
+
+  return data;
+};

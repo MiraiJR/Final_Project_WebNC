@@ -22,11 +22,13 @@ export class UserService {
   }
 
   async findById(id: number): Promise<User> {
-    return this.userRepository.findOne({
-      where: {
-        id,
-      },
-    });
+    const matchedUser = await this.userRepository.findById(id);
+
+    if (!matchedUser) {
+      throw new NotFoundException('User not found!');
+    }
+
+    return matchedUser;
   }
 
   async findBySocialId(socialType: string, socialId: string): Promise<User> {

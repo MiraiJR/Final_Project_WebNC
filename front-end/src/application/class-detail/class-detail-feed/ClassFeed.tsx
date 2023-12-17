@@ -4,54 +4,70 @@ import GradeStructure from "./GradeStructure";
 import GradeReview from "./GradeReview";
 import { useClassDetail } from "../ClassDetail";
 import InviteCodeAndLinkBox from "./InviteCodeAndLinkBox";
+import { useParams } from "react-router-dom";
+import useCheckRoleInClass from "@/shared/hooks/useCheckRoleInClass";
+import { UserRole } from "@/shared/types/UserRole";
+import GradeStudent from "./GradeStudent";
 
 export default function ClassFeed() {
   const classDetail = useClassDetail();
-  return (
-    <Box width="100%" maxWidth="1000px" className="flex flex-col space-y-4">
-      <Box
-        width="100%"
-        height="150px"
-        borderRadius="10px"
-        padding="10px"
-        className="relative"
-        bgcolor={MAIN_COLOR}
-      >
-        <div className="absolute bottom-4 left-4">
-          <p className="text-base font-bold uppercase">{classDetail.title}</p>
-        </div>
-      </Box>
+  const { classID } = useParams<string>();
+  const role = useCheckRoleInClass(`${classID}`);
 
-      <div className="flex flex-row">
+  return (
+    <div className="w-full max-w-[1000px] grid grid-cols-12 gap-4">
+      <div className="col-span-12 flex flex-col gap-2">
         <Box
-          width="40%"
-          height="auto"
-          borderRadius="10px"
-          padding="10px"
-          margin="0 10px 0 0"
-          className="relative flex flex-col"
-          bgcolor={MAIN_COLOR}
-        >
-          <GradeStructure />
-        </Box>
-        <Box
-          width="60%"
-          height="auto"
+          width="100%"
+          height="150px"
           borderRadius="10px"
           padding="10px"
           className="relative"
           bgcolor={MAIN_COLOR}
         >
-          <GradeReview />
+          <div className="absolute bottom-4 left-4">
+            <p className="text-base font-bold uppercase">{classDetail.title}</p>
+          </div>
         </Box>
+        {role === UserRole.GV && (
+          <div className="flex flex-row">
+            <Box
+              width="40%"
+              height="auto"
+              borderRadius="10px"
+              padding="10px"
+              margin="0 10px 0 0"
+              className="relative flex flex-col"
+              bgcolor={MAIN_COLOR}
+            >
+              <GradeStructure />
+            </Box>
+            <Box
+              width="60%"
+              height="auto"
+              borderRadius="10px"
+              padding="10px"
+              className="relative"
+              bgcolor={MAIN_COLOR}
+            >
+              <GradeReview />
+            </Box>
+          </div>
+        )}
       </div>
-      <Box className="flex flex-col">
-        <Box>
+
+      <div className="col-span-3">
+        <div className="w-full">
           <InviteCodeAndLinkBox
             classId={classDetail.idCode}
           ></InviteCodeAndLinkBox>
-        </Box>
-      </Box>
-    </Box>
+        </div>
+      </div>
+      {role === UserRole.HS && (
+        <div className="col-span-9">
+          <GradeStudent />
+        </div>
+      )}
+    </div>
   );
 }

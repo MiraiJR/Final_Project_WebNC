@@ -11,4 +11,12 @@ export class UserRepository extends Repository<User> {
   ) {
     super(repository.target, repository.manager, repository.queryRunner);
   }
+
+  async findById(id: number): Promise<User> {
+    return this.findOne({
+      where: {
+        id,
+      },
+    });
+  }
 }

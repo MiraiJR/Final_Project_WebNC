@@ -1,13 +1,13 @@
 import { Repository } from 'typeorm';
-import { Grade } from './grade.entity';
+import { GradeEntity } from './grade.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class GradeRepository extends Repository<Grade> {
+export class GradeRepository extends Repository<GradeEntity> {
   constructor(
-    @InjectRepository(Grade)
-    repository: Repository<Grade>,
+    @InjectRepository(GradeEntity)
+    repository: Repository<GradeEntity>,
   ) {
     super(repository.target, repository.manager, repository.queryRunner);
   }
@@ -15,7 +15,7 @@ export class GradeRepository extends Repository<Grade> {
   async findByGradeStructureAndStudentId(
     studentId: string,
     gradeStructureId: number,
-  ): Promise<Grade> {
+  ): Promise<GradeEntity> {
     return this.findOne({
       where: {
         studentId,
@@ -27,7 +27,7 @@ export class GradeRepository extends Repository<Grade> {
   async findGradeStudentsByClassIdAndGradeStructureId(
     classId: string,
     gradeStructureId: number,
-  ) {
+  ): Promise<GradeEntity[]> {
     const gradeStudents = await this.find({
       where: {
         student: {
@@ -64,5 +64,18 @@ export class GradeRepository extends Repository<Grade> {
         score,
       },
     );
+  }
+
+  async findGradeByStudentId(studentId: string): Promise<GradeEntity[]> {
+    return this.find({
+      where: {
+        studentId,
+      },
+      order: {
+        gradeStructure: {
+          position: 'asc',
+        },
+      },
+    });
   }
 }

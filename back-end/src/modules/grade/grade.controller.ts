@@ -7,6 +7,7 @@ import {
   Patch,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { GradeService } from './grade.service';
@@ -19,12 +20,28 @@ import { UpdateGradeReq } from './dtos/UpdateGradeReq';
 import { UpdateStatusGradeReq } from './dtos/UpdateStatusGradeReq';
 import { UpdateStatusGradeForAllReq } from './dtos/UpdateStatusGradeForAllReq';
 import { UpdateGradesForAssignmentReq } from './dtos/UpdateGradesForAssignment';
+import { AuthGuard } from 'src/shared/guards/AuthGuard';
+import { UserRole } from 'src/shared/types/EnumUserRole';
+import { Roles } from 'src/shared/decorators/roles.decorator';
+import { RoleGuard } from 'src/shared/guards/RoleGuard';
+import { UserId } from 'src/shared/decorators/userid.decorator';
 
-@Controller('grades')
+@Controller('class-grades')
+@UseGuards(AuthGuard, RoleGuard)
 export class GradeController {
   constructor(private readonly gradeService: GradeService) {}
 
-  @Post('/upload-grades')
+  @Roles([UserRole.GV, UserRole.AD])
+  @Get('/:classIdCode')
+  @UseInterceptors(FileInterceptor('file'))
+  async handleGetGetGradeOfClass(
+    @Param('classIdCode') classId: string,
+  ): Promise<GradeStudentResp[]> {
+    return await this.gradeService.getGradeStudentsOfClass(classId);
+  }
+
+  @Roles([UserRole.GV, UserRole.AD])
+  @Post('/:classIdCode/upload-grades')
   @UseInterceptors(FileInterceptor('file'))
   async handleUploadGradesCsv(
     @Body() dataReq: ClassIdDto,
@@ -38,7 +55,8 @@ export class GradeController {
     return 'Upload grades for students successfully!';
   }
 
-  @Post('/upload-grades/assignments')
+  @Roles([UserRole.GV, UserRole.AD])
+  @Post('/:classIdCode/upload-grades/assignments')
   @UseInterceptors(FileInterceptor('file'))
   async handleUploadGradesForAssignmentCsv(
     @Body() dataReq: UpdateGradesForAssignmentReq,
@@ -55,15 +73,8 @@ export class GradeController {
     return 'Upload grades for this assignment successfully!';
   }
 
-  @Get('/class/:classId')
-  @UseInterceptors(FileInterceptor('file'))
-  async handleGetGetGradeOfClass(
-    @Param('classId') classId: string,
-  ): Promise<GradeStudentResp[]> {
-    return await this.gradeService.getGradeStudentsOfClass(classId);
-  }
-
-  @Patch('/update-score')
+  @Roles([UserRole.GV, UserRole.AD])
+  @Patch('/:classIdCode/update-score')
   async handleUpdateGradeStudent(@Body() reqData: UpdateGradeReq) {
     const { newScore, studentId, gradeStructureId } = reqData;
     await this.gradeService.updateScoreForStudentInGradeStructure(
@@ -75,7 +86,8 @@ export class GradeController {
     return 'Update score successfully!';
   }
 
-  @Patch('/update-status/students')
+  @Roles([UserRole.GV, UserRole.AD])
+  @Patch('/:classIdCode/update-status/students')
   async handleUpdateStatusGrade(@Body() reqData: UpdateStatusGradeReq) {
     const { isFinalized, studentId, gradeStructureId } = reqData;
     await this.gradeService.updateStatusGradeForStudent(
@@ -87,7 +99,8 @@ export class GradeController {
     return `${isFinalized ? 'Finalized' : 'Draft'} score successfully!`;
   }
 
-  @Patch('/update-status/assignments')
+  @Roles([UserRole.GV, UserRole.AD])
+  @Patch('/:classIdCode/update-status/assignments')
   async handleUpdateStatusGradeForAllStudents(
     @Body() reqData: UpdateStatusGradeForAllReq,
   ) {
@@ -98,5 +111,17 @@ export class GradeController {
       isFinalized,
     );
     return `${isFinalized ? 'Finalized' : 'Draft'} assignment successfully!`;
+  }
+
+  @Roles([UserRole.HS])
+  @Get('/:classIdCode/student')
+  async handleGetGradeOfSpecificStudent(
+    @UserId() userId: number,
+  ): Promise<number[]> {
+    const grades = await this.gradeService.getFinalizedGradeOfAssignmentsOfUser(
+      userId,
+    );
+
+    return grades;
   }
 }
