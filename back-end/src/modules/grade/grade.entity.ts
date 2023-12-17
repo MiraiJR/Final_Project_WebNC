@@ -1,29 +1,44 @@
 import {
   Column,
   Entity,
-  JoinColumn,
+  JoinTable,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
-import { GradeStructure } from '../classGradeStructure/gradeStructure.entity';
+import { GradeStructure } from '../grade-structure/grade-structure.entity';
+import { StudentEntity } from '../student/student.entity';
 
 @Entity('grades')
-export class Grade {
+export class GradeEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, { eager: true, nullable: false })
-  @JoinColumn({ name: 'student_id' })
-  studentId: string;
-
-  @Column({ default: false, name: 'is_finalized' })
+  @Column({ default: false })
   isFinalized: boolean;
 
   @Column({ type: 'decimal', precision: 5, scale: 2, default: 0.0 })
   score: number;
 
-  @ManyToOne(() => GradeStructure, { eager: true, nullable: false })
-  @JoinColumn({ name: 'grade_structure_id' })
+  @ManyToOne(() => GradeStructure, {
+    eager: true,
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  gradeStructure: GradeStructure;
+
+  @ManyToOne(() => StudentEntity, {
+    eager: true,
+    nullable: false,
+    onDelete: 'CASCADE',
+  })
+  @JoinTable()
+  student: StudentEntity;
+
+  @Column()
   gradeStructureId: number;
+
+  @Column()
+  studentId: string;
 }

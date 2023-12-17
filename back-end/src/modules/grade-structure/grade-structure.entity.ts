@@ -24,6 +24,6 @@ export class GradeStructure {
   @Column({ nullable: true })
   percentScore: number;
 
-  @Column ({ nullable: true })
+  @Column({ nullable: true })
   position: number;
 }

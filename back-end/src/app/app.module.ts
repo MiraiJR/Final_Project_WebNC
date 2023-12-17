@@ -5,8 +5,10 @@ import { AuthModule } from 'src/modules/auth/auth.module';
 import { ClassModule } from 'src/modules/class/class.module';
 import { GradeStructureModule } from 'src/modules/grade-structure/grade-structure.module';
 import { ClassUserModule } from 'src/modules/classUser/class-user.module';
+import { GradeModule } from 'src/modules/grade/grade.module';
 import { MailModule } from 'src/modules/mail/mail.module';
 import { UserModule } from 'src/modules/user/user.module';
+import { StudentModule } from 'src/modules/student/student.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { UserModule } from 'src/modules/user/user.module';
     ClassModule,
     ClassUserModule,
     GradeStructureModule,
+    GradeModule,
+    StudentModule,
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true, cache: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
