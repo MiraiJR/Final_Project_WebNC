@@ -24,16 +24,16 @@ export default function CreateClassFormDialog({
   info,
 }: UpdateGradeDialogProps) {
   const navigate = useNavigate();
+  const [score, setScore] = useState(-1);
   const [isValid, setIsValid] = useState<boolean>(true);
   const classDetail = useClassDetail();
-  let tempScore: number;
   const handleUpdateButton = async () => {
     // send update grade to server annd update to db
     try {
       const data: UpdateGrade = {
         structureId: info.structureId,
         studentId: info.studentId,
-        newScore: tempScore,
+        newScore: score,
       };
       await ClassService.updateScore(data);
       toast.success("Update grade successfully");
@@ -56,12 +56,13 @@ export default function CreateClassFormDialog({
           fullWidth
           variant="standard"
           onChange={(e) => {
+            const isEmpty = e.target.value.length === 0;
             const value = Number(e.target.value);
-            if (value >= 0 && value <= 10) {
+            if (value >= 0 && value <= 10 && !isEmpty) {
               setIsValid(true);
-              tempScore = value;
+              setScore(value);
             } else {
-              tempScore = -1;
+              setScore(-1);
               setIsValid(false);
             }
           }}
@@ -72,7 +73,9 @@ export default function CreateClassFormDialog({
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleUpdateButton}>Update</Button>
+        <Button onClick={handleUpdateButton} disabled={!isValid}>
+          Update
+        </Button>
       </DialogActions>
     </Dialog>
   );
