@@ -11,6 +11,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailModule } from '../mail/mail.module';
 import { GradeStructureModule } from '../grade-structure/grade-structure.module';
 import { GradeReviewModule } from '../grade-review/grade-review.module';
+import { GradeModule } from '../grade/grade.module';
 
 @Module({
   imports: [
@@ -22,7 +23,8 @@ import { GradeReviewModule } from '../grade-review/grade-review.module';
     GradeStructureModule,
     forwardRef(() => ClassUserModule),
     forwardRef(() => GradeStructureModule),
-    forwardRef(() => GradeReviewModule)
+    forwardRef(() => GradeReviewModule),
+    forwardRef(() => GradeModule),
   ],
   providers: [ClassService, ClassRepository, JwtService, ConfigService],
   controllers: [ClassController],

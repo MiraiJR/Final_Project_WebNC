@@ -227,7 +227,7 @@ export class GradeService {
     return grades;
   }
 
-  async getScoreOfAssignment(studentId: string, gradeStructureId: number){
+  async getGradeOfAssignment(studentId: string, gradeStructureId: number){
     const gradeStudent = await this.gradeRepository.findByGradeStructureAndStudentId(
       studentId,
       gradeStructureId,
@@ -239,6 +239,6 @@ export class GradeService {
       );
     }
 
-    return gradeStudent.score;
+    return gradeStudent;
   }
 }

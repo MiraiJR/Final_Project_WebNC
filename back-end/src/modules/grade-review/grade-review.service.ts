@@ -28,10 +28,10 @@ export class GradeReviewService {
                 const { id,structureId, studentId, expectPercentScore, explain } = gradeReview;
                 const assignment = await this.gradeStructureService.getGradeAssignment(classIdCode, structureId);
                 const {nameAssignment} = assignment;
-                const score = await this.gradeService.getScoreOfAssignment(studentId, structureId);
+                const gradeStudent = await this.gradeService.getGradeOfAssignment(studentId, structureId);
                 //get name from table student
                 const studentName = await this.studentService.getStudentName(studentId);
-                const rs: GradeReviewRespDTO = { id,structureId, studentName, nameAssignment, currPercentScore: score, expectPercentScore, explain };
+                const rs: GradeReviewRespDTO = { id,structureId, studentId,   studentName, nameAssignment, currPercentScore: gradeStudent.score, expectPercentScore, explain };
                 return rs;
             }));
             return rs; 

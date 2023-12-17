@@ -34,7 +34,7 @@ type ClassMembersListResp = {
 };
 
 type GradeAssignmentResp = {
-  id: number;
+  id?: number;
   nameAssignment: string;
   percentScore: number;
   position: number;
@@ -47,6 +47,7 @@ type GradeStructureResp = {
   type GradeReviewResp = {
     id: number;
     structureId: number;
+    studentId: string;
     studentName: string;
     nameAssignment: string;
     currPercentScore: number;

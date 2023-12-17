@@ -28,6 +28,8 @@ const ClassService = {
     axiosClient.post<string>(`/class/${classID}/gradeStructure`, data),
   getGradeReviews: (classID: string) => 
     axiosClient.get<GradeReviewResp[]>(`/class/${classID}/gradeReviews`),
+  updateScore: (data: UpdateGrade) => 
+    axiosClient.post<string>(`/class/updateScore`, data),
 };
 
 export default ClassService;

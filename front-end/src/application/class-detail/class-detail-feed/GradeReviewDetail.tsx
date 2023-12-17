@@ -175,7 +175,11 @@ const GradeReviewDetail = ({ info }: Props) => {
           </Button>
         </div>
       </div>
-      <UpdateGradeDialog open={isOpen} onClose={() => setIsOpen(false)} />
+      <UpdateGradeDialog
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        info={info}
+      />
     </>
   );
 };
