@@ -29,4 +29,14 @@ export class StudentService {
 
     return true;
   }
+
+  async getStudentName(id: string): Promise<string>{
+    const student = await this.studentRepository.findById(id);
+
+    if (!student) {
+      throw new NotFoundException(`Student with StudentID [${id}] not found!`);
+    }
+
+    return student.fullname;
+  }
 }

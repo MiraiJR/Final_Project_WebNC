@@ -10,13 +10,7 @@ import {
 import avatar from "../../../shared/assets/student-minhhoa.png";
 import { useEffect, useState } from "react";
 import UpdateGradeDialog from "./UpdateGradeDialog";
-interface StudentRequest {
-  studentName: string;
-  gradeComposition: string;
-  currGrade: number;
-  expectGrade: number;
-  explaination: string;
-}
+import { GradeReviewResp } from "@/shared/types/Resp/ClassResp";
 interface Comment {
   avatar: string;
   userName: string;
@@ -24,7 +18,7 @@ interface Comment {
   createAt: string;
 }
 interface Props {
-  info: StudentRequest;
+  info: GradeReviewResp;
 }
 const GradeReviewDetail = ({ info }: Props) => {
   const [userComment, setUserComment] = useState("");
@@ -79,18 +73,18 @@ const GradeReviewDetail = ({ info }: Props) => {
           />
         </ListItem>
         <ListItem>
+          <ListItemText primary={`Grade Composition: ${info.nameAssignment}`} />
+        </ListItem>
+        <ListItem>
+          <ListItemText primary={`Current Grade: ${info.currPercentScore}`} />
+        </ListItem>
+        <ListItem>
           <ListItemText
-            primary={`Grade Composition: ${info.gradeComposition}`}
+            primary={`Expected Grade: ${info.expectPercentScore}`}
           />
         </ListItem>
         <ListItem>
-          <ListItemText primary={`Current Grade: ${info.currGrade}`} />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={`Expected Grade: ${info.expectGrade}`} />
-        </ListItem>
-        <ListItem>
-          <ListItemText primary={`Explaination: ${info.explaination}`} />
+          <ListItemText primary={`Explaination: ${info.explain}`} />
         </ListItem>
         <div className="flex justify-end mt-2 ">
           <Button variant="contained" onClick={() => setIsOpen(true)}>
@@ -181,7 +175,11 @@ const GradeReviewDetail = ({ info }: Props) => {
           </Button>
         </div>
       </div>
-      <UpdateGradeDialog open={isOpen} onClose={() => setIsOpen(false)} />
+      <UpdateGradeDialog
+        open={isOpen}
+        onClose={() => setIsOpen(false)}
+        info={info}
+      />
     </>
   );
 };
