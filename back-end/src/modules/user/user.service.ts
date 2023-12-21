@@ -4,10 +4,15 @@ import { IUser } from './user.interface';
 import { UserRespDTO } from './dto/response/UserResp';
 import { User } from './user.entity';
 import { SocialType } from 'src/shared/types/EnumSocialType';
+import { LockedUserRepository } from '../locked-user/locked-user.repository';
+import { LockedUserService } from '../locked-user/locked-user.service';
 
 @Injectable()
 export class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private readonly lockedUserService: LockedUserService,
+  ) {}
 
   async createUser(user: IUser): Promise<User> {
     return this.userRepository.save(user);
@@ -87,5 +92,53 @@ export class UserService {
     };
 
     return matchedStudentResp;
+  }
+
+  async findUsers(): Promise<UserManagementResp[]> {
+    const users = await this.userRepository.find({
+      order: {
+        id: 'asc',
+      },
+    });
+
+    return users.map((user) => user.convertToResp());
+  }
+
+  async banOrUnbanUser(
+    userId: number,
+    isBanned: boolean,
+  ): Promise<UserManagementResp> {
+    const userToUpdate = await this.findById(userId);
+
+    await this.userRepository.update(userToUpdate.id, {
+      isBanned,
+    });
+
+    return (await this.findById(userId)).convertToResp();
+  }
+
+  async lockUser(
+    userId: number,
+    duration: number,
+  ): Promise<UserManagementResp> {
+    const userToUpdate = await this.findById(userId);
+    const lockedUser = await this.lockedUserService.create(userId, duration);
+
+    await this.userRepository.update(userToUpdate.id, {
+      locked: lockedUser,
+    });
+
+    return (await this.findById(userId)).convertToResp();
+  }
+
+  async unlockUser(userId: number): Promise<UserManagementResp> {
+    const userToUpdate = await this.findById(userId);
+    await this.lockedUserService.delete(userId);
+
+    await this.userRepository.update(userToUpdate.id, {
+      locked: null,
+    });
+
+    return (await this.findById(userId)).convertToResp();
   }
 }
