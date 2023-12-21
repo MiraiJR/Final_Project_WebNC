@@ -9,6 +9,7 @@ import { GradeModule } from 'src/modules/grade/grade.module';
 import { MailModule } from 'src/modules/mail/mail.module';
 import { UserModule } from 'src/modules/user/user.module';
 import { StudentModule } from 'src/modules/student/student.module';
+import { LockedUserModule } from 'src/modules/locked-user/locked-user.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { StudentModule } from 'src/modules/student/student.module';
     GradeStructureModule,
     GradeModule,
     StudentModule,
+    LockedUserModule,
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true, cache: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

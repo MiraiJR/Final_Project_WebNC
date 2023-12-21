@@ -1,5 +1,12 @@
 import { UserRole } from 'src/shared/types/EnumUserRole';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { LockedUserEntity } from '../locked-user/locked-user.entity';
 
 @Entity('users')
 export class User {
@@ -27,6 +34,37 @@ export class User {
   @Column({ nullable: true, name: 'google_id' })
   googleId: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   studentId: string;
+
+  @Column({ nullable: false, default: false })
+  isBanned: boolean;
+
+  @OneToOne(() => LockedUserEntity, {
+    eager: true,
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn()
+  locked: LockedUserEntity;
+
+  convertToResp(): UserManagementResp {
+    const resp: UserManagementResp = {
+      id: this.id,
+      email: this.email,
+      fullname: this.fullname,
+      facebookId: !!this.facebookId,
+      googleId: !!this.googleId,
+      studentId: this.studentId,
+      isBanned: this.isBanned,
+      locked: this.locked
+        ? {
+            lockedAt: this.locked.lockedAt,
+            duration: this.locked.duration,
+          }
+        : null,
+    };
+
+    return resp;
+  }
 }
