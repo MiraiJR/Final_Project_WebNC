@@ -28,6 +28,7 @@ type ClassDetail = {
   creatorId: number;
   idCode: string;
   roleToken: string;
+  role:UserRole;
 };
 
 // Hàm kiểm tra xem chuỗi có trong enum hay không
@@ -40,9 +41,10 @@ export default function ClassDetail() {
   let { classID } = useParams();
   let { pathname } = useLocation();
   const pathnameSplit = pathname.split("/");
-  const role = useCheckRoleInClass(`${classID}`);
+  const role = classDetail.role;
 
   function initValue(): string {
+    console.log(1);
     if (pathnameSplit.length <= 3) {
       return TagValue.Feed;
     }
@@ -69,7 +71,7 @@ export default function ClassDetail() {
           component={Link}
           to={link + `/${TagValue.List}`}
         />
-        {role === UserRole.GV && (
+        {(role === UserRole.GV || role===UserRole.AD) && (
           <Tab
             value={TagValue.Grade}
             label="Grade"

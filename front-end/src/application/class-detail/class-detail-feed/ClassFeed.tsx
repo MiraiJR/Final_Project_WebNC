@@ -12,7 +12,7 @@ import GradeStudent from "./GradeStudent";
 export default function ClassFeed() {
   const classDetail = useClassDetail();
   const { classID } = useParams<string>();
-  const role = useCheckRoleInClass(`${classID}`);
+  const role = classDetail.role;
 
   return (
     <div className="w-full max-w-[1000px] grid grid-cols-12 gap-4">
@@ -29,7 +29,7 @@ export default function ClassFeed() {
             <p className="text-base font-bold uppercase">{classDetail.title}</p>
           </div>
         </Box>
-        {role === UserRole.GV && (
+        {(role === UserRole.GV || role ===UserRole.AD)&& (
           <div className="flex flex-row">
             <Box
               width="40%"

@@ -34,6 +34,10 @@ export default function UserMenu({fullname}: UserMenuProps){
       navigate('/auth/sign-in');
     }
 
+    const handleProfile = ()=>{
+      navigate('/profile/update');
+    }
+
     return(
         <>
         <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -86,7 +90,7 @@ export default function UserMenu({fullname}: UserMenuProps){
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleProfile}>
           <Avatar /> Profile
         </MenuItem>
         <Divider />

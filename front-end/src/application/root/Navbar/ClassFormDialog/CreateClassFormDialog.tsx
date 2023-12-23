@@ -89,6 +89,7 @@ export const createClassAction : ActionFunction= async({request}) => {
         return redirect(`/class/${response.idCode}`);
     }catch(e:any){
         toast.error(e.message);
+        return;
     }
     
 }

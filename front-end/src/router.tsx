@@ -19,6 +19,7 @@ import MemberList, {
 import { joinClassLoader } from "./application/join-page/JoinPage";
 import AcceptInvitingDialog from "./application/join-page/AcceptInvitePage";
 import GradePage from "./application/class-detail/grade-page/page";
+import UpdateProfilePage, { updateProfileAction } from "./application/profile-page/UpdateProfilePage";
 
 const router = createBrowserRouter([
   {
@@ -63,6 +64,18 @@ const router = createBrowserRouter([
   {
     path: "about",
     element: <div>About</div>,
+  },
+  {
+    path: "/profile",
+    element: <Root></Root>,
+    loader: rootLoader,
+    children: [
+      {
+        path:"update",
+        element: <UpdateProfilePage></UpdateProfilePage>,
+        action: updateProfileAction,
+      }
+    ]
   },
   {
     path: "auth",
