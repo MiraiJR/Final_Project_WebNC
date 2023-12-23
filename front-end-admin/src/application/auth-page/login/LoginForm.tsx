@@ -5,16 +5,18 @@ import {
 import { Button, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as yup from "yup";
-import AuthService from "@/shared/services/AuthService";
 import JwtStorage from "@/shared/storages/JwtStorage";
 import { toast } from "react-toastify";
-import ListSocialButton from "../auth-component/ListSocialButton";
+import AdminAuthService from "@/shared/services/AdminSerivce";
 
 const schemaValidation = yup
   .object({
-    email: yup.string().required("Email is required!").email("Invalid email!"),
+    username: yup
+      .string()
+      .required("Username is required!")
+      .min(3, `Password must be at least ${3} characters long`),
     password: yup
       .string()
       .required("Password is required")
@@ -31,26 +33,22 @@ const schemaValidation = yup
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const next: string = searchParams.get("next") as string;
-  console.log(next);
+
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<SigninReq>({
+  } = useForm<AdminAuthReq>({
     resolver: yupResolver(schemaValidation),
   });
-  const onSubmit: SubmitHandler<SigninReq> = async (loginReqData) => {
+  const onSubmit: SubmitHandler<AdminAuthReq> = async (loginReqData) => {
     try {
-      const { data } = await AuthService.sigin(loginReqData);
+      const { data } = await AdminAuthService.login(loginReqData);
 
       JwtStorage.setToken(data);
       toast.success("Login successfully!");
-      if (next) {
-        navigate(next);
-      }
-      navigate("/class");
+
+      navigate("/");
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -64,13 +62,13 @@ const LoginForm = () => {
         className="flex flex-col gap-5 my-10"
       >
         <TextField
-          type="email"
-          label="Email"
+          type="username"
+          label="Username"
           variant="outlined"
-          {...register("email")}
+          {...register("username")}
           className="w-[400px]"
-          error={errors.email ? true : false}
-          helperText={errors.email?.message}
+          error={errors.username ? true : false}
+          helperText={errors.username?.message}
         />
         <TextField
           label="Password"
@@ -82,9 +80,6 @@ const LoginForm = () => {
           helperText={errors.password?.message}
         />
         <div className="flex flex-col items-end gap-2">
-          <Link className="text-blue-400" to={"/auth/forgot-password"}>
-            Forgot password?
-          </Link>
           <Button variant="contained" type="submit" className="w-fit">
             Sign In
           </Button>
@@ -92,16 +87,10 @@ const LoginForm = () => {
       </form>
       <div>
         <span>You don't have an account?</span>
-        <Link className="text-blue-400 ml-2" to={"/auth/register"}>
+        <Link className="text-blue-400 ml-2" to={"/register"}>
           Register
         </Link>
       </div>
-      <div className="my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t before:border-neutral-300 after:mt-0.5 after:flex-1 after:border-t after:border-neutral-300">
-        <p className="mx-4 mb-0 text-center font-semibold dark:text-neutral-200">
-          Hoặc
-        </p>
-      </div>
-      <ListSocialButton></ListSocialButton>
     </div>
   );
 };

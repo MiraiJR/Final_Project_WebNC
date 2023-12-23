@@ -8,4 +8,8 @@ export default defineConfig({
       "@": "/src",
     },
   },
+  preview: {
+    host: true,
+    port: 5174,
+  },
 });

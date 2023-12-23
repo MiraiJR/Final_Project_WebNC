@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 const GradeStructure = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [isSave, setIsSave] = useState(false);
-  const [assignments, setAssignments] = useState<GradeAssignmentResp[]>();
+  const [assignments, setAssignments] = useState<GradeAssignmentReq[]>();
   const classDetail = useClassDetail();
   useEffect(() => {
     try {
@@ -42,12 +42,12 @@ const GradeStructure = () => {
       toast.error(error.message);
     }
   }, [isSave]);
-  let UIassignments: GradeAssignmentResp[] = [];
+  let UIassignments: GradeAssignmentReq[] = [];
   if (assignments) {
     UIassignments = assignments.map((assignment) => ({ ...assignment }));
   }
   const handleSaveButton = async () => {
-    const newAssignment: GradeAssignmentResp[] = UIassignments.map(
+    const newAssignment: GradeAssignmentReq[] = UIassignments.map(
       (assignment) => ({
         ...assignment,
       })
@@ -74,7 +74,7 @@ const GradeStructure = () => {
     });
     // send new structure to backend
     // Todo:
-    const newGradeStructure: GradeStructureResp = {
+    const newGradeStructure: GradeStructureReq = {
       assignments: newAssignment,
     };
     await ClassService.updateGradeStructure(

@@ -15,6 +15,7 @@ import { UserRespDTO } from './dto/response/UserResp';
 import { BanOrUnbanUserReqDto } from './dto/request/BanOrUnbanUserReq';
 import { UnlockUserReqDto } from './dto/request/UnlockUserReq';
 import { LockUserReqDto } from './dto/request/LockUserReq';
+import { AdminAuthGuard } from 'src/shared/guards/AdminAuthGuard';
 
 @Controller('/users')
 export class UserController {
@@ -27,6 +28,7 @@ export class UserController {
     return this.userService.getMe(userID);
   }
 
+  @UseGuards(AdminAuthGuard)
   @Get('/')
   @HttpCode(HttpStatus.OK)
   async handleGetUsers(): Promise<UserManagementResp[]> {
@@ -34,30 +36,32 @@ export class UserController {
     return users;
   }
 
+  @UseGuards(AdminAuthGuard)
   @Patch('/actions/ban-unban')
   @HttpCode(HttpStatus.OK)
   async handleBanOrUnbanUser(
     @Body() reqData: BanOrUnbanUserReqDto,
   ): Promise<string> {
     const { userId, isBan } = reqData;
-    const user = await this.userService.banOrUnbanUser(userId, isBan);
-
+    await this.userService.banOrUnbanUser(userId, isBan);
     return isBan ? 'Ban user successfully!' : 'Unban user successfully!';
   }
 
+  @UseGuards(AdminAuthGuard)
   @Patch('/actions/lock')
   @HttpCode(HttpStatus.OK)
   async handleLockUser(@Body() reqData: LockUserReqDto): Promise<string> {
     const { userId, duration } = reqData;
-    const user = await this.userService.lockUser(userId, duration);
+    await this.userService.lockUser(userId, duration);
     return 'Lock user successfully!';
   }
 
+  @UseGuards(AdminAuthGuard)
   @Patch('/actions/unlock')
   @HttpCode(HttpStatus.OK)
   async handleUnlockUser(@Body() reqData: UnlockUserReqDto): Promise<string> {
     const { userId } = reqData;
-    const user = await this.userService.unlockUser(userId);
+    await this.userService.unlockUser(userId);
     return 'Unlock user successfully!';
   }
 }

@@ -1,5 +1,5 @@
 export class Assignment {
-    id?: number;
+    id: number;
     nameAssignment: string;
     percentScore: number;
     position: number;

@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  backend:
+    build: 
+      context: ./back-end
+    env_file:
+      - .docker.server.env
+    depends_on:
+      - postgres
+    ports:
+      - 3000:3000
+  frontend:
+    build: 
+      context: ./front-end
+    env_file:
+      - .docker.client.env
+    ports:
+      - 5173:5173
+  frontend-admin:
+    build: 
+      context: ./front-end-admin
+    env_file:
+      - .docker.admin.env
+    ports:
+      - 5174:5174
+  
+  postgres:
+    container_name: db_postgres
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=classroom_database
+      - POSTGRES_USER=triplehclassroom
+      - POSTGRES_PASSWORD=HaoHieuHai
+    ports:
+      - 5432:5432
+    volumes:
+      - docker-nest-postgres:/var/lib/postgresql/data
+volumes:
+  docker-nest-postgres:
