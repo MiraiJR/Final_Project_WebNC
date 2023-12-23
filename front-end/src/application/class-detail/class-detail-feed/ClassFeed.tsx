@@ -4,15 +4,17 @@ import GradeStructure from "./GradeStructure";
 import GradeReview from "./GradeReview";
 import { useClassDetail } from "../ClassDetail";
 import InviteCodeAndLinkBox from "./InviteCodeAndLinkBox";
-import { useParams } from "react-router-dom";
-import useCheckRoleInClass from "@/shared/hooks/useCheckRoleInClass";
 import { UserRole } from "@/shared/types/UserRole";
 import GradeStudent from "./GradeStudent";
 
 export default function ClassFeed() {
   const classDetail = useClassDetail();
+<<<<<<< HEAD
   const { classID } = useParams<string>();
   const role = classDetail.role;
+=======
+  const { role } = classDetail;
+>>>>>>> 3df51207ccce8ab87f61f5d7807f090bf8f375cc
 
   return (
     <div className="w-full max-w-[1000px] grid grid-cols-12 gap-4">

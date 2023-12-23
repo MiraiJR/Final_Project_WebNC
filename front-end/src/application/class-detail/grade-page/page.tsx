@@ -5,7 +5,7 @@ import { useParams } from "react-router-dom";
 import ClassService from "@/shared/services/ClassService";
 import { Helper } from "@/shared/utils/heper";
 import { FileHandler } from "@/shared/utils/file-handler";
-import { useRef, useState } from "react";
+import { RefObject, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import StudentService from "@/shared/services/StudentService";
 import { VisuallyHiddenInput } from "./configs";
@@ -23,7 +23,8 @@ enum TypeUpload {
 
 const GradePage = () => {
   const queryClient = useQueryClient();
-  const uploadFileComponent = useRef<HTMLInputElement | null>(null);
+  const uploadFileGradeTemplate = useRef<HTMLInputElement | null>(null);
+  const uploadFileStudentTemplate = useRef<HTMLInputElement | null>(null);
   const { classID } = useParams();
   const handleGenerateStudentTemplate = () => {
     const csvContent = FileHandler.generateFileCsv(
@@ -60,17 +61,19 @@ const GradePage = () => {
     link.click();
     document.body.removeChild(link);
   };
-  const handleUploadFile = (type: TypeUpload) => {
-    if (!uploadFileComponent.current) {
+  const handleUploadFile = (
+    ref: RefObject<HTMLInputElement>,
+    type: TypeUpload
+  ) => {
+    if (!ref.current) {
       return;
     }
 
-    if (!uploadFileComponent.current.files) {
+    if (!ref.current.files) {
       return;
     }
 
-    const selectedFile = uploadFileComponent.current.files[0];
-
+    const selectedFile = ref.current.files[0];
     if (selectedFile.size > 10 * 1024 * 1024) {
       toast.error("File <= 10MB");
       return;
@@ -203,10 +206,12 @@ const GradePage = () => {
           >
             Student template
             <VisuallyHiddenInput
-              ref={uploadFileComponent}
+              ref={uploadFileStudentTemplate}
               type="file"
               accept=".csv"
-              onChange={() => handleUploadFile(TypeUpload.STUDENT)}
+              onChange={() =>
+                handleUploadFile(uploadFileStudentTemplate, TypeUpload.STUDENT)
+              }
             />
           </Button>
           {fileStudentListTemplate && (
@@ -251,10 +256,12 @@ const GradePage = () => {
               >
                 Grade template
                 <VisuallyHiddenInput
-                  ref={uploadFileComponent}
+                  ref={uploadFileGradeTemplate}
                   type="file"
                   accept=".csv"
-                  onChange={() => handleUploadFile(TypeUpload.GRADE)}
+                  onChange={() =>
+                    handleUploadFile(uploadFileGradeTemplate, TypeUpload.GRADE)
+                  }
                 />
               </Button>
               {fileGradeStudentListTemplate && (

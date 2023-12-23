@@ -14,7 +14,6 @@ import ClassService from "@/shared/services/ClassService";
 import { ClassDetailResp } from "@/shared/types/Resp/ClassResp";
 import { toast } from "react-toastify";
 import RoleTokenStorage from "@/shared/storages/RoleTokenStorage";
-import useCheckRoleInClass from "@/shared/hooks/useCheckRoleInClass";
 import { UserRole } from "@/shared/types/UserRole";
 
 enum TagValue {
@@ -28,7 +27,7 @@ type ClassDetail = {
   creatorId: number;
   idCode: string;
   roleToken: string;
-  role:UserRole;
+  role: UserRole;
 };
 
 // Hàm kiểm tra xem chuỗi có trong enum hay không
@@ -41,7 +40,7 @@ export default function ClassDetail() {
   let { classID } = useParams();
   let { pathname } = useLocation();
   const pathnameSplit = pathname.split("/");
-  const role = classDetail.role;
+  const { role } = classDetail;
 
   function initValue(): string {
     if (pathnameSplit.length <= 3) {
