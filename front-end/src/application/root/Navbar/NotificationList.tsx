@@ -1,5 +1,3 @@
-
-import * as React from 'react';
 import Badge from '@mui/material/Badge';
 import {Bell as BellIcon} from "lucide-react"
 

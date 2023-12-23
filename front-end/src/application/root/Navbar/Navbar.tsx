@@ -1,11 +1,9 @@
 
-
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import { AlignJustify, Plus } from 'lucide-react';
+import { AlignJustify } from 'lucide-react';
 import UserMenu from './UserMenu';
 import AddClassMenu from './AddClassMenu';
 import NotificationList from './NotificationList';

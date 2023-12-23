@@ -18,7 +18,7 @@ export default function UpdateProfilePage(){
     const user = useUser() as UserRespData;
     const submit = useSubmit();
 
-    const { register, handleSubmit, formState: { errors },reset } = useForm<Inputs>({
+    const { register, handleSubmit, formState: { errors } } = useForm<Inputs>({
         mode: 'onSubmit',
         reValidateMode: 'onChange',
         defaultValues: {},
@@ -93,7 +93,7 @@ export const updateProfileAction : ActionFunction = async({request})=>{
     const formData = await request.formData();
     const data:UserProfileReq = Object.fromEntries(formData) as UserProfileReq;
     try{
-        const response: UserRespData = (await UserService.updateProfile(data)).data;
+        await UserService.updateProfile(data);
         return redirect ('/class');
     }catch(e:any){
         toast.error(e.message);
