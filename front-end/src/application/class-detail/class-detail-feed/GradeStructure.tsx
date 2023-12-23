@@ -67,6 +67,7 @@ const GradeStructure = () => {
           0
         ),
         position: newAssignment.length - 1,
+        id: 0,
       });
     }
     newAssignment.forEach((assignment, index) => {
@@ -301,6 +302,7 @@ const GradeStructure = () => {
                 nameAssignment: `Assignment ${temp.length}`,
                 percentScore: 0,
                 position: 0,
+                id: 0,
               });
               temp.forEach((assignment, index) => {
                 assignment.position = index;
