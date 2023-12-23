@@ -21,6 +21,9 @@ export class Class{
     @JoinColumn()
     creator: User;
 
+    @Column({nullable:false, default: true})
+    isActive: boolean; 
+
     @BeforeInsert()
     generateId() {
         this.idCode = uuidv4();
