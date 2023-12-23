@@ -1,4 +1,4 @@
-import { GradeAssignmentResp } from "../types/Resp/ClassResp";
+import { ClassRespData, GradeAssignmentResp } from "../types/Resp/ClassResp";
 import ClassService from "./ClassService";
 import { GradeService } from "./GradeService";
 import UserService from "./UserService";
@@ -30,6 +30,12 @@ export const getFinalizedGradesOfStudent = async (
 
 export const getUsers = async (): Promise<UserManagementResp[]> => {
   const { data } = await UserService.getUsers();
+
+  return data;
+};
+
+export const getClasses = async (): Promise<ClassRespData[]> => {
+  const { data } = await ClassService.getAllClass();
 
   return data;
 };

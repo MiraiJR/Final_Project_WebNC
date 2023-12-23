@@ -25,6 +25,10 @@ const ClassService = {
     axiosClient.get<GradeStructureResp>(`/class/${classID}/gradeStructure`),
   updateGradeStructure: (classID: string, data: GradeStructureResp) =>
     axiosClient.post<string>(`/class/${classID}/gradeStructure`, data),
+  getAllClass: () =>
+    axiosClient.get<ClassRespData[]>("/class"),
+  updateClassState: (classID: string, isActive: boolean) => 
+    axiosClient.post<string>(`/class/${classID}/updateState`, {isActive}),
 };
 
 export default ClassService;

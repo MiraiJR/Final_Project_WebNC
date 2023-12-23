@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import DashboardPage from "./application/dashboard-page/page";
 import ListUsersTable from "./application/users-management/ListUsersTable";
+import ClassManagement from "./application/classes-management/ClassManagement";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,14 @@ const router = createBrowserRouter([
     element: (
       <DashboardPage>
         <ListUsersTable />
+      </DashboardPage>
+    ),
+  },
+  {
+    path: "/class-management",
+    element: (
+      <DashboardPage>
+        <ClassManagement />
       </DashboardPage>
     ),
   },
