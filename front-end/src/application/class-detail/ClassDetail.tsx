@@ -44,7 +44,6 @@ export default function ClassDetail() {
   const role = classDetail.role;
 
   function initValue(): string {
-    console.log(1);
     if (pathnameSplit.length <= 3) {
       return TagValue.Feed;
     }
