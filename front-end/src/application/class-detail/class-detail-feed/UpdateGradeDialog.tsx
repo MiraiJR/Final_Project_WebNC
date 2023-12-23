@@ -17,7 +17,7 @@ export default function CreateClassFormDialog({
   onClose,
 }: UpdateGradeDialogProps) {
   const navigate = useNavigate();
-  const [updateGrade, setUpdateGrade] = useState<number>(-1);
+  const [_updateGrade, setUpdateGrade] = useState<number>(-1);
   const handleUpdateButton = () => {
     // send update grade to server annd update to db
 
