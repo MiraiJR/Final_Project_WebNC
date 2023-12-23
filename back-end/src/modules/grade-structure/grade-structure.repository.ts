@@ -55,6 +55,8 @@ export class GradeStructureRepository extends Repository<GradeStructure> {
         await this.delete(assignment.id);
       }
     }
+
+   
     // loop through grade structure and update each one assignment
     for (let i = 0; i < gradeStructure.assignments.length; i++) {
       const assignment = gradeStructure.assignments[i];
@@ -70,4 +72,11 @@ export class GradeStructureRepository extends Repository<GradeStructure> {
       await this.save(rs);
     }
   }
+
+  async findAssignment(classId: string , gradeStructureId: number): Promise<GradeStructure>{
+    return await this.findOne({
+        where: { classId: classId, id: gradeStructureId },
+        // relations: ['class'],
+    });
+}
 }

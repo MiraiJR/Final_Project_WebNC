@@ -4,6 +4,7 @@ import {
   ClassDetailResp,
   ClassMembersListResp,
   ClassRespData,
+  GradeReviewResp,
   GradeStructureResp,
 } from "../types/Resp/ClassResp";
 
@@ -25,6 +26,10 @@ const ClassService = {
     axiosClient.get<GradeStructureResp>(`/class/${classID}/gradeStructure`),
   updateGradeStructure: (classID: string, data: GradeStructureResp) =>
     axiosClient.post<string>(`/class/${classID}/gradeStructure`, data),
+  getGradeReviews: (classID: string) => 
+    axiosClient.get<GradeReviewResp[]>(`/class/${classID}/gradeReviews`),
+  updateScore: (data: UpdateGrade) => 
+    axiosClient.post<string>(`/class/updateScore`, data),
 };
 
 export default ClassService;

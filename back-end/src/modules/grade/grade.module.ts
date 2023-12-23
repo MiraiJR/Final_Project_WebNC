@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GradeEntity } from './grade.entity';
 import { GradeRepository } from './grade.repository';
@@ -12,10 +12,10 @@ import { StudentModule } from '../student/student.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([GradeEntity]),
-    StudentModule,
-    GradeStructureModule,
-    ClassModule,
-    UserModule,
+    forwardRef(()=>StudentModule),
+    forwardRef(()=>GradeStructureModule),
+    forwardRef(()=>ClassModule),
+    forwardRef(()=>UserModule),
   ],
   controllers: [GradeController],
   providers: [GradeRepository, GradeService],

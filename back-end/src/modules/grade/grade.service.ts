@@ -226,4 +226,19 @@ export class GradeService {
 
     return grades;
   }
+
+  async getGradeOfAssignment(studentId: string, gradeStructureId: number){
+    const gradeStudent = await this.gradeRepository.findByGradeStructureAndStudentId(
+      studentId,
+      gradeStructureId,
+    );
+
+    if (!gradeStudent) {
+      throw new NotFoundException(
+        `Grade of student [${studentId}] in grade structure [${gradeStructureId}] not found!`,
+      );
+    }
+
+    return gradeStudent;
+  }
 }

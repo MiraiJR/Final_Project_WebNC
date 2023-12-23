@@ -24,15 +24,20 @@ import { Roles } from 'src/shared/decorators/roles.decorator';
 import { InviteMailReqDto } from './dto/class/InviteMailReq.dto';
 import { GradeStructureService } from '../grade-structure/grade-structure.service';
 import { GradeStructureRespDTO } from '../grade-structure/dto/response/GradeStructureResp';
+import { GradeReviewService } from '../grade-review/grade-review.service';
+import { GradeReviewRespDTO } from '../grade-review/dto/response/gradeReviewResp.dto';
+import { GradeService } from '../grade/grade.service';
+import { UpdateGradeRespDTO } from './dto/class/UpdateGradeResp.dto';
 
 @Controller('class')
 @UseGuards(AuthGuard)
 export class ClassController {
-  constructor(
-    private readonly classService: ClassService,
-    private readonly classUserService: ClassUserService,
-    private readonly classGradeStructureService: GradeStructureService,
-  ) {}
+    constructor(
+        private readonly classService: ClassService,
+        private readonly classUserService: ClassUserService,
+        private readonly classGradeStructureService: GradeStructureService,
+        private readonly gradeReviewService: GradeReviewService,
+        ) {}
 
   @Post('/create')
   @HttpCode(HttpStatus.CREATED)
@@ -101,25 +106,28 @@ export class ClassController {
     );
   }
 
-  @Get('/:classIdCode/gradeStructure')
-  async handleGetGradeStructure(
-    @Param('classIdCode') classIdCode: string,
-  ): Promise<GradeStructureRespDTO> {
-    return await this.classGradeStructureService.getGradeStructureByClassId(
-      classIdCode,
-    );
-  }
+    @Get('/:classIdCode/gradeStructure')
+    async handleGetGradeStructure(@Param('classIdCode') classIdCode: string): Promise<GradeStructureRespDTO>{
+        return await this.classGradeStructureService.getGradeStructureByClassId(classIdCode);
+    }
 
-  @Post('/:classIdCode/gradeStructure')
-  async handlePostGradeStructure(
-    @Param('classIdCode') classIdCode: string,
-    @Req() req,
-  ): Promise<string> {
-    const gradeStructureRespDTO = req.body;
-    await this.classGradeStructureService.updateGradeStructure(
-      classIdCode,
-      gradeStructureRespDTO,
-    );
-    return 'Updated gradeStructure successfully';
-  }
+    @Post('/:classIdCode/gradeStructure')
+    async handlePostGradeStructure(@Param('classIdCode') classIdCode: string, 
+    @Req() req,): Promise<string>{
+         const gradeStructureRespDTO: GradeStructureRespDTO = req.body;
+        await this.classGradeStructureService.updateGradeStructure(classIdCode , gradeStructureRespDTO);
+         return "Updated gradeStructure successfully"
+    }
+
+    @Get('/:classIdCode/gradeReviews')
+    async handleGetGradeReview(@Param('classIdCode') classIdCode: string): Promise<GradeReviewRespDTO[]>{
+        return await this.gradeReviewService.getGradeReviewByClassId(classIdCode);
+    }
+
+    @Post('/updateScore')
+    async handleUpdateScore( @Req() req): Promise<string>{
+        const data: UpdateGradeRespDTO = req.body;
+        await this.gradeReviewService.updateScoreAndDeleteReview(data.studentId, data.structureId, data.newScore);
+        return "Updated score successfully"
+    }
 }

@@ -9,43 +9,27 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import GradeReviewDetail from "./GradeReviewDetail";
+import { useClassDetail } from "../ClassDetail";
+import ClassService from "@/shared/services/ClassService";
+import { toast } from "react-toastify";
+import { GradeReviewResp } from "@/shared/types/Resp/ClassResp";
 
-interface StudentRequest {
-  studentName: string;
-  gradeComposition: string;
-  currGrade: number;
-  expectGrade: number;
-  explaination: string;
-}
 const GradeReview = () => {
-  const [infoDetail, setInfoDetail] = useState<StudentRequest>();
-  const [rows, setRows] = useState<StudentRequest[] | undefined>([]);
+  const [infoDetail, setInfoDetail] = useState<GradeReviewResp>();
+  const [reviews, setReview] = useState<GradeReviewResp[]>([]);
+  const classDetail = useClassDetail();
   useEffect(() => {
-    // const data = [
-    //   {
-    //     studentName: "Nguyen Phuoc Hai",
-    //     gradeComposition: "Midterm",
-    //     currGrade: 40,
-    //     expectGrade: 60,
-    //     explaination: "abc",
-    //   },
-    //   {
-    //     studentName: "Truong Van Hao",
-    //     gradeComposition: "Final",
-    //     currGrade: 40,
-    //     expectGrade: 80,
-    //     explaination: "abc",
-    //   },
-    //   {
-    //     studentName: "Vo Minh Hieu",
-    //     gradeComposition: "Final",
-    //     currGrade: 40,
-    //     expectGrade: 100,
-    //     explaination: "abc",
-    //   },
-    // ];
-    const data = undefined;
-    setRows(data);
+    try {
+      const fetchData = async () => {
+        const response = await ClassService.getGradeReviews(classDetail.idCode);
+        const data = response.data;
+        setReview(data);
+      };
+
+      fetchData();
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   }, []);
   return (
     <>
@@ -54,7 +38,7 @@ const GradeReview = () => {
       ) : (
         <>
           <p className=" text-base m-2 font-bold">Grade Review</p>
-          {rows === undefined ? (
+          {reviews.length === 0 ? (
             <div className="flex flex-col justify-center items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -94,28 +78,28 @@ const GradeReview = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row, index) => (
+                  {reviews.map((review, index) => (
                     <TableRow
                       key={index}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                        <p className="font-bold">{row.studentName}</p>
+                        <p className="font-bold">{review.studentName}</p>
                       </TableCell>
                       <TableCell>
-                        <p className="font-bold">{row.gradeComposition}</p>
+                        <p className="font-bold">{review.nameAssignment}</p>
                       </TableCell>
                       <TableCell align="right">
-                        <p className="font-bold">{row.currGrade}</p>
+                        <p className="font-bold">{review.currPercentScore}</p>
                       </TableCell>
                       <TableCell align="right">
-                        <p className="font-bold">{row.expectGrade}</p>
+                        <p className="font-bold">{review.expectPercentScore}</p>
                       </TableCell>
                       <TableCell align="right">
                         <Button
                           variant="contained"
                           onClick={() => {
-                            setInfoDetail(row);
+                            setInfoDetail(review);
                           }}
                         >
                           <svg

@@ -8,6 +8,7 @@ import { ClassUserModule } from 'src/modules/classUser/class-user.module';
 import { GradeModule } from 'src/modules/grade/grade.module';
 import { MailModule } from 'src/modules/mail/mail.module';
 import { UserModule } from 'src/modules/user/user.module';
+import { GradeReviewModule } from 'src/modules/grade-review/grade-review.module';
 import { StudentModule } from 'src/modules/student/student.module';
 import { LockedUserModule } from 'src/modules/locked-user/locked-user.module';
 import { AdminAccountModule } from 'src/modules/admin-auth/admin-auth.module';
@@ -20,6 +21,7 @@ import { AdminAccountModule } from 'src/modules/admin-auth/admin-auth.module';
     ClassModule,
     ClassUserModule,
     GradeStructureModule,
+    GradeReviewModule,
     GradeModule,
     StudentModule,
     LockedUserModule,

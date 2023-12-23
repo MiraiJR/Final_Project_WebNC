@@ -34,21 +34,23 @@ type ClassMembersListResp = {
 };
 
 type GradeAssignmentResp = {
-  id: number;
+  id?: number;
   nameAssignment: string;
   percentScore: number;
   position: number;
 };
 
 type GradeStructureResp = {
-  assignments: GradeAssignmentResp[];
-};
+    assignments: GradeAssignmentResp[];
+}
 
-type StudentResp = {
-  id: number;
-  studentName: string;
-  gradeComposition: string;
-  currGrade: number;
-  expectGrade: number;
-  explaination: string;
-};
+  type GradeReviewResp = {
+    id: number;
+    structureId: number;
+    studentId: string;
+    studentName: string;
+    nameAssignment: string;
+    currPercentScore: number;
+    expectPercentScore: number;
+    explain: string;
+  }
