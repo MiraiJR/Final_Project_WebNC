@@ -163,105 +163,106 @@ export default function ListUsersTable() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        <TableCell align={"right"}>{row.id}</TableCell>
-                        <TableCell align={"right"}>{row.email}</TableCell>
-                        <TableCell align={"right"}>{row.fullname}</TableCell>
-                        <TableCell align={"right"}>{row.studentId}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-row item-center justify-center">
-                            {row.facebookId ? (
-                              <CheckCircle2 color="green" />
-                            ) : (
-                              <XCircle color="red" />
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell align={"right"}>
-                          <div className="flex flex-row item-center justify-center">
-                            {row.googleId ? (
-                              <CheckCircle2 color="green" />
-                            ) : (
-                              <XCircle color="red" />
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell align={"right"}>
-                          <div className="flex flex-row item-center justify-center">
-                            {row.isBanned ? (
-                              <ShieldX color="red" />
-                            ) : (
-                              <ShieldCheck color="green" />
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell align={"left"}>
-                          {row.locked ? (
-                            <div className="flex flex-col gap-2">
-                              <span>
-                                Locked at:{" "}
-                                <strong>
-                                  {Helper.formatDate(row.locked.lockedAt)}
-                                </strong>
-                              </span>
-                              <span>
-                                Expired At:{" "}
-                                <strong>
-                                  {" "}
-                                  {Helper.addDate(
-                                    row.locked.lockedAt,
-                                    row.locked.duration
-                                  )}
-                                </strong>
-                              </span>
+                {rows &&
+                  rows
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row) => {
+                      return (
+                        <TableRow
+                          hover
+                          role="checkbox"
+                          tabIndex={-1}
+                          key={row.id}
+                        >
+                          <TableCell align={"right"}>{row.id}</TableCell>
+                          <TableCell align={"right"}>{row.email}</TableCell>
+                          <TableCell align={"right"}>{row.fullname}</TableCell>
+                          <TableCell align={"right"}>{row.studentId}</TableCell>
+                          <TableCell>
+                            <div className="flex flex-row item-center justify-center">
+                              {row.facebookId ? (
+                                <CheckCircle2 color="green" />
+                              ) : (
+                                <XCircle color="red" />
+                              )}
                             </div>
-                          ) : (
-                            <div className="flex flex-row items-center justify-center">
-                              <ShieldCheck color="green" />
+                          </TableCell>
+                          <TableCell align={"right"}>
+                            <div className="flex flex-row item-center justify-center">
+                              {row.googleId ? (
+                                <CheckCircle2 color="green" />
+                              ) : (
+                                <XCircle color="red" />
+                              )}
                             </div>
-                          )}
-                        </TableCell>
-                        <TableCell align={"left"}>
-                          <div className="flex flex-row items-center justify-center gap-4">
-                            {row.isBanned ? (
-                              <button
-                                onClick={() => handleUnbanUser(row)}
-                                className="bg-blue-500 p-2 rounded-xs font-bold text-white"
-                              >
-                                Unban
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => handleBanUser(row)}
-                                className="bg-red-500 p-2 rounded-xs font-bold text-white"
-                              >
-                                Ban
-                              </button>
-                            )}
+                          </TableCell>
+                          <TableCell align={"right"}>
+                            <div className="flex flex-row item-center justify-center">
+                              {row.isBanned ? (
+                                <ShieldX color="red" />
+                              ) : (
+                                <ShieldCheck color="green" />
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell align={"left"}>
                             {row.locked ? (
-                              <button
-                                onClick={() => handleUnlockUser(row)}
-                                className="bg-blue-500 p-2 rounded-xs font-bold text-white w-fit"
-                              >
-                                Unlock
-                              </button>
+                              <div className="flex flex-col gap-2">
+                                <span>
+                                  Locked at:{" "}
+                                  <strong>
+                                    {Helper.formatDate(row.locked.lockedAt)}
+                                  </strong>
+                                </span>
+                                <span>
+                                  Expired At:{" "}
+                                  <strong>
+                                    {" "}
+                                    {Helper.addDate(
+                                      row.locked.lockedAt,
+                                      row.locked.duration
+                                    )}
+                                  </strong>
+                                </span>
+                              </div>
                             ) : (
-                              <LockedDurationOption user={row} />
+                              <div className="flex flex-row items-center justify-center">
+                                <ShieldCheck color="green" />
+                              </div>
                             )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                          </TableCell>
+                          <TableCell align={"left"}>
+                            <div className="flex flex-row items-center justify-center gap-4">
+                              {row.isBanned ? (
+                                <button
+                                  onClick={() => handleUnbanUser(row)}
+                                  className="bg-blue-500 p-2 rounded-xs font-bold text-white"
+                                >
+                                  Unban
+                                </button>
+                              ) : (
+                                <button
+                                  onClick={() => handleBanUser(row)}
+                                  className="bg-red-500 p-2 rounded-xs font-bold text-white"
+                                >
+                                  Ban
+                                </button>
+                              )}
+                              {row.locked ? (
+                                <button
+                                  onClick={() => handleUnlockUser(row)}
+                                  className="bg-blue-500 p-2 rounded-xs font-bold text-white w-fit"
+                                >
+                                  Unlock
+                                </button>
+                              ) : (
+                                <LockedDurationOption user={row} />
+                              )}
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
               </TableBody>
             </Table>
           </TableContainer>
