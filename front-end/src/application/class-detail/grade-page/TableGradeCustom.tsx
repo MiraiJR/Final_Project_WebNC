@@ -7,12 +7,13 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import RowScore from "./RowScore";
 import ColumnAssignment from "./ColumnAssignment";
+import { queryClient } from "@/shared/libs/react-query";
 
 const TableGradeCustom = () => {
   const { classID } = useParams();
 
   const { data: gradeStudents } = useQuery<GradeStudent[]>(
-    `getGradeStudentsOfClass`,
+    [`getGradeStudentsOfClass`, classID],
     () => getGradeStudentsOfClass(String(classID)),
     {
       enabled: !!classID,
@@ -20,12 +21,16 @@ const TableGradeCustom = () => {
   );
 
   const { data: gradeStructures } = useQuery<GradeAssignmentResp[]>(
-    `getGradeStructuresOfClass`,
+    [`getGradeStructuresOfClass`, classID],
     () => getGradeStructuresOfClass(String(classID)),
     {
       enabled: !!classID,
     }
   );
+
+  const queryCache = queryClient.getQueryCache();
+  const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
+  console.log(queryKeys);
 
   const calculateAverageGrade = (
     gradeStudent: GradeStudent,

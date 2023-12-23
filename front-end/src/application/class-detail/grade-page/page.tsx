@@ -114,7 +114,7 @@ const GradePage = () => {
       const { data } = await StudentService.uploadStudentListCsv(formData);
 
       toast.success(data);
-      queryClient.invalidateQueries(`getGradeStudentsOfClass`);
+      await queryClient.invalidateQueries([`getGradeStudentsOfClass`, classID]);
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -138,7 +138,7 @@ const GradePage = () => {
       );
 
       toast.success(data);
-      queryClient.invalidateQueries(`getGradeStudentsOfClass`);
+      await queryClient.invalidateQueries([`getGradeStudentsOfClass`, classID]);
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -259,9 +259,10 @@ const GradePage = () => {
                   ref={uploadFileGradeTemplate}
                   type="file"
                   accept=".csv"
-                  onChange={() =>
-                    handleUploadFile(uploadFileGradeTemplate, TypeUpload.GRADE)
-                  }
+                  onChange={() => {
+                    console.log("upload m");
+                    handleUploadFile(uploadFileGradeTemplate, TypeUpload.GRADE);
+                  }}
                 />
               </Button>
               {fileGradeStudentListTemplate && (

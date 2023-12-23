@@ -11,6 +11,7 @@ import { UserModule } from 'src/modules/user/user.module';
 import { GradeReviewModule } from 'src/modules/grade-review/grade-review.module';
 import { StudentModule } from 'src/modules/student/student.module';
 import { LockedUserModule } from 'src/modules/locked-user/locked-user.module';
+import { AdminAccountModule } from 'src/modules/admin-auth/admin-auth.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { LockedUserModule } from 'src/modules/locked-user/locked-user.module';
     GradeModule,
     StudentModule,
     LockedUserModule,
+    AdminAccountModule,
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true, cache: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

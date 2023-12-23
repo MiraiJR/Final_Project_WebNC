@@ -2,7 +2,7 @@ const isClient = typeof window !== "undefined";
 import Cookies from "js-cookie";
 
 const JwtStorage = () => {
-  let inMemoryToken: AuthToken | null = null;
+  let inMemoryToken: AdminAuthToken | null = null;
 
   const getToken = () => {
     if (!isClient) {
@@ -11,7 +11,7 @@ const JwtStorage = () => {
 
     if (
       Cookies.get("accessToken") &&
-      inMemoryToken === null && 
+      inMemoryToken === null &&
       Cookies.get("refreshToken")
     ) {
       inMemoryToken = {
@@ -23,7 +23,7 @@ const JwtStorage = () => {
     return inMemoryToken;
   };
 
-  const setToken = (token: AuthToken) => {
+  const setToken = (token: AdminAuthToken) => {
     isClient && Cookies.set("accessToken", token.accessToken, { expires: 1 });
     isClient && Cookies.set("refreshToken", token.refreshToken, { expires: 7 });
     inMemoryToken = token;

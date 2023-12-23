@@ -1,4 +1,3 @@
-import * as React from "react";
 import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
@@ -9,11 +8,16 @@ import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import MenuBarLeft from "./MenuBarLeft";
+import useCheckLogin from "@/shared/hooks/useCheckLogin";
+import { ReactNode, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import AdminAuthService from "@/shared/services/AdminSerivce";
+import JwtStorage from "@/shared/storages/JwtStorage";
+import { useGlobalState } from "@/shared/storages/GlobalStorage";
 
 const drawerWidth: number = 240;
 
@@ -67,10 +71,32 @@ const Drawer = styled(MuiDrawer, {
 
 const defaultTheme = createTheme();
 
-const DashboardPage = ({ children }: { children: React.ReactNode }) => {
-  const [open, setOpen] = React.useState(true);
+const DashboardPage = ({ children }: { children: ReactNode }) => {
+  const [open, setOpen] = useState(true);
+  const { setIsLogin } = useGlobalState();
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+  const isLogin = useCheckLogin();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isLogin) {
+      navigate("/login");
+    }
+  }, [isLogin]);
+
+  const handleLogout = async () => {
+    try {
+      const { data } = await AdminAuthService.logout();
+
+      JwtStorage.deleteToken();
+      setIsLogin(false);
+      toast.success(data);
+      navigate("/login");
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -104,10 +130,8 @@ const DashboardPage = ({ children }: { children: React.ReactNode }) => {
             >
               TripleH Class
             </Typography>
-            <IconButton color="inherit">
-              <Badge badgeContent={4} color="secondary">
-                <NotificationsIcon />
-              </Badge>
+            <IconButton color="inherit" onClick={handleLogout}>
+              Logout
             </IconButton>
           </Toolbar>
         </AppBar>
