@@ -4,11 +4,13 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
-export class GradeReviewRepository {
+export class GradeReviewRepository extends Repository<GradeReview> {
     constructor(
         @InjectRepository(GradeReview)
         private readonly repository: Repository<GradeReview>, 
-    ) {}
+    ) {
+        super(repository.target, repository.manager, repository.queryRunner);
+    }
 
     async findByClassId(classIdCode: string): Promise<GradeReview[]> {
         return await this.repository.find({

@@ -8,9 +8,11 @@ import { GradeReview } from './grade-review.entity';
 import { GradeStructureModule } from '../grade-structure/grade-structure.module';
 import { StudentModule } from '../student/student.module';
 import { GradeModule } from '../grade/grade.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([GradeReview, GradeReviewRepository]),
+    forwardRef(()=> UserModule),
     forwardRef(()=> ClassModule),
     forwardRef(()=> GradeStructureModule),
     forwardRef(()=>StudentModule),
