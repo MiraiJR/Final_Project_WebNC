@@ -15,16 +15,7 @@ import { toast } from "react-toastify";
 import { GradeReviewResp } from "@/shared/types/Resp/ClassResp";
 
 const GradeReview = () => {
-  const [infoDetail, setInfoDetail] = useState<GradeReviewResp>({
-    id: 1,
-    structureId: 100,
-    studentId: "student123",
-    studentName: "John Doe",
-    nameAssignment: "Assignment 1",
-    currPercentScore: 85.5,
-    expectPercentScore: 90,
-    explain: "Good effort, but room for improvement.",
-  });
+  const [infoDetail, setInfoDetail] = useState<GradeReviewResp>();
   const [reviews, setReview] = useState<GradeReviewResp[]>([]);
   const classDetail = useClassDetail();
   useEffect(() => {

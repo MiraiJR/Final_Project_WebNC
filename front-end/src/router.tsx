@@ -48,6 +48,13 @@ const router = createBrowserRouter([
             path: "grade",
             element: <GradePage />,
           },
+          {
+            path: "feed",
+            element: <ClassFeed></ClassFeed>,
+            children: [{
+                path:"/review/:reviewid",
+            }] 
+          }
         ],
       },
     ],

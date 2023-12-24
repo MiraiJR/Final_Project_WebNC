@@ -94,49 +94,6 @@ const GradeStudent = () => {
       </div>
     </div>
   );
-  /*
-  return (
-    <div className="w-full">
-      <div>
-        <table className="border-2 min-w-full table-fixed">
-          <thead className={`border-b-2 bg-[${MAIN_COLOR}]`}>
-            <tr>
-              {gradeStructures &&
-                gradeStructures.map((gradeStructure) => (
-                  <ColumnAssignment
-                    gradeStructure={gradeStructure}
-                    key={gradeStructure.id}
-                  />
-                ))}
-            </tr>
-          </thead>
-          <tbody className="border-b-2">
-            <tr className="border-b-2">
-              {gradeStructures &&
-                grades &&
-                grades.map((grade, _index) => (
-                  <td className="border-r-2 p-2" key={_index}>
-                    {grade}
-                  </td>
-                ))}
-            </tr>
-            <tr className="border-b-2">
-              <td colSpan={gradeStructures?.length}>
-                <div className="py-2 font-bold flex flex-row justify-end">
-                  {grades &&
-                    gradeStructures &&
-                    calculateAverageGrade(grades, gradeStructures).toPrecision(
-                      3
-                    )}
-                  <span className="ml-10">Average Score</span>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );*/
 };
 
 export default GradeStudent;
