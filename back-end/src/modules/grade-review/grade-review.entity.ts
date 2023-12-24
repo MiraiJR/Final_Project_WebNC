@@ -54,5 +54,7 @@ export class GradeReview {
      // Thêm mối quan hệ OneToMany
      @OneToMany(() => GradeReviewComment, comment => comment.review)
      comments: GradeReviewComment[];
- 
+    
+     @Column({ default: false })
+    isFinalized: boolean;
 }

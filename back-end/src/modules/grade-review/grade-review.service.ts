@@ -20,6 +20,14 @@ export class GradeReviewService {
         private readonly configService: ConfigService,
     ) {}
     
+    async findGrandReviewById(reviewId: number){
+        return this.gradeReviewRepository.findOne({
+            where:{
+                id: reviewId,
+            }
+        })
+    }
+
     async findGradeReviewOfStudentByStructureId(studentId: string, structureId: number){
         try{
             return this.gradeReviewRepository.findOne({
