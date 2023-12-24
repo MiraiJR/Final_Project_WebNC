@@ -116,9 +116,6 @@ export default function ListClassesTable({ searchText }: Props) {
   let UIrows: ClassRespData[] | undefined;
   if (searchText !== "") {
     UIrows = rows?.filter((row) => {
-      console.log(row.title.toLowerCase());
-      console.log(searchText.toLowerCase());
-      console.log(row.title.toLowerCase().includes(searchText.toLowerCase()));
       return row.title.toLowerCase().includes(searchText.toLowerCase());
     });
   } else {
@@ -129,7 +126,6 @@ export default function ListClassesTable({ searchText }: Props) {
     classData: ClassRespData,
     isActive: boolean
   ) => {
-    console.log(isActive);
     const { data } = await ClassService.updateClassState(
       classData.idCode,
       isActive

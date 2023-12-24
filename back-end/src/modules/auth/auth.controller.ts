@@ -15,19 +15,17 @@ import { LoginReqDTO } from './dto/request/LoginReq';
 import { RegisterReqDTO } from './dto/request/RegisterReq';
 import { RefreshTokenReqDTO } from './dto/request/RefreshTokenReq';
 import { AccountRespDTO } from './dto/response/AccountRespDTO';
-import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
 import { ForgotPasswordReqDTO } from './dto/request/ForgotPasswordReq';
 import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
 import { LoginSocialReqDTO } from './dto/request/LoginSocialReq';
 import { CodeRespDTO } from './dto/response/CodeResponseDTO';
+import { UserId } from 'src/shared/decorators/userid.decorator';
+import { AuthGuard } from 'src/shared/guards/AuthGuard';
 
 @Controller('/auth')
 export class AuthController {
-  constructor(
-    private authService: AuthService,
-    private configService: ConfigService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @Post('/login')
   @HttpCode(HttpStatus.OK)
@@ -45,6 +43,14 @@ export class AuthController {
     await this.authService.register(registerReqDto);
 
     return 'Please! Check your email to verify your account!';
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/logout')
+  @HttpCode(HttpStatus.OK)
+  async handleLogout(@UserId() userId: number): Promise<string> {
+    await this.authService.logout(userId);
+    return 'logout successfully!';
   }
 
   @Post('/refresh-token')
