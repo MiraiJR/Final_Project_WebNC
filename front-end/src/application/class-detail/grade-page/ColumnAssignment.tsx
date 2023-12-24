@@ -18,6 +18,7 @@ import { useParams } from "react-router-dom";
 import { UserRole } from "@/shared/types/UserRole";
 import { CustomMenuItem } from "./type";
 import { useClassDetail } from "../ClassDetail";
+import CreateReviewFormDialog from "../class-detail-feed/CreateReviewForm";
 
 const COLUMNS_TEMPLATE_GRADE_ASSIGNMENT = ["StudentId", "Score"];
 const FILENAME_GRADE_TEMPLATE_ASSIGNMENT = "grade_assignment_template.csv";
@@ -90,7 +91,7 @@ const menuItems: CustomMenuItem[] = [
   {
     label: "Create Review",
     icon: FolderUp,
-    handler: () => {},
+    handler: ()=>{},
     file: false,
     role: [UserRole.HS],
   },
@@ -111,6 +112,7 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const open = Boolean(anchorEl);
+  const [createReviewOpen,setCreateReviewOpen] = useState<boolean>(false);
   const handleShowMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -166,6 +168,10 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
     setSelectedFile(null);
   };
 
+  const handleCreateReviewFormClose = ()=>{
+    setCreateReviewOpen(false);
+  }
+
   return (
     <th className="text-left p-4 border-l-2" key={gradeStructure.id}>
       <div className="flex flex-row items-center justify-between">
@@ -187,7 +193,10 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
               <MenuItem
                 key={_index}
                 onClick={() => {
-                  if (!menuItem.file) {
+                  if(menuItem.label == "Create Review"){
+                    setCreateReviewOpen(true); 
+                  }
+                  else if (!menuItem.file) {
                     menuItem.handler(gradeStructure.id);
                   }
                 }}
@@ -228,6 +237,7 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
           </Menu>
         </div>
       </div>
+      <CreateReviewFormDialog onClose = {handleCreateReviewFormClose} open={createReviewOpen} gradeAssignment={gradeStructure}></CreateReviewFormDialog>
     </th>
   );
 };

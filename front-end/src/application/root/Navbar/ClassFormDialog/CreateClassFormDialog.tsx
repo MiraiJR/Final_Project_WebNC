@@ -42,7 +42,6 @@ export default function CreateClassFormDialog({open,onClose}:CreateClassFormDial
         onClose();
     }
 
-
     return(
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Create new class</DialogTitle>
@@ -54,7 +53,7 @@ export default function CreateClassFormDialog({open,onClose}:CreateClassFormDial
                     autoFocus
                     margin="dense"
                     id="title"
-                    label="Class Name (Required)"
+                    label="Grade Expected"
                     type="text"
                     fullWidth
                     variant="standard"
@@ -78,6 +77,7 @@ export default function CreateClassFormDialog({open,onClose}:CreateClassFormDial
         </DialogActions>
         </Dialog>
     )
+    
 }
 
 
