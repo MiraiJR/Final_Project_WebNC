@@ -4,8 +4,8 @@ import { IUser } from './user.interface';
 import { UserRespDTO } from './dto/response/UserResp';
 import { User } from './user.entity';
 import { SocialType } from 'src/shared/types/EnumSocialType';
-import { LockedUserRepository } from '../locked-user/locked-user.repository';
 import { LockedUserService } from '../locked-user/locked-user.service';
+import { LockedUserEntity } from '../locked-user/locked-user.entity';
 
 @Injectable()
 export class UserService {

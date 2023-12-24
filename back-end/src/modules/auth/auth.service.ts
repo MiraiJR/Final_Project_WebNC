@@ -20,6 +20,8 @@ import { ChangePasswordReqDTO } from './dto/request/ChangePasswordReq';
 import { LoginSocialReqDTO } from './dto/request/LoginSocialReq';
 import { CodeRespDTO } from './dto/response/CodeResponseDTO';
 import { SocialType } from 'src/shared/types/EnumSocialType';
+import { Helper } from 'src/shared/utils/Helper';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -52,6 +54,8 @@ export class AuthService {
       throw new BadRequestException('Email or password is wrong');
     }
 
+    this.checkBanOrLockAccount(matchedAccount);
+
     const accessToken = this.signAccessToken(matchedAccount.id);
     const refreshToken = this.signRefreshToken(matchedAccount.id);
 
@@ -67,6 +71,23 @@ export class AuthService {
     });
 
     return accountResp;
+  }
+
+  checkBanOrLockAccount(userNeedCheck: User): boolean {
+    if (userNeedCheck.isBanned) {
+      throw new BadRequestException('Your account is banned forever!');
+    }
+
+    if (userNeedCheck.locked) {
+      throw new BadRequestException(
+        `Your account is locked. It will expire at ${Helper.addDate(
+          userNeedCheck.locked.lockedAt,
+          userNeedCheck.locked.duration,
+        )}`,
+      );
+    }
+
+    return true;
   }
 
   async register(registerReqDto: RegisterReqDTO): Promise<void> {
@@ -156,6 +177,8 @@ export class AuthService {
       return codeResp;
     }
 
+    this.checkBanOrLockAccount(matchedUser);
+
     if (matchedUser.email === email) {
       await this.userService.updateUser({
         ...matchedUser,
@@ -178,6 +201,20 @@ export class AuthService {
     });
 
     return accountResp;
+  }
+
+  async logout(userId: number): Promise<void> {
+    const matchedUser = await this.userService.findById(userId);
+
+    if (!matchedUser) {
+      throw new NotFoundException('Account not found');
+    }
+
+    await this.userService.updateUser({
+      ...matchedUser,
+      accessToken: null,
+      refreshToken: null,
+    });
   }
 
   async refreshToken(dataReq: RefreshTokenReqDTO): Promise<AccountRespDTO> {
@@ -253,6 +290,8 @@ export class AuthService {
 
   async forgotPassword(email: string) {
     const matchedUser = await this.userService.findByEmail(email);
+
+    this.checkBanOrLockAccount(matchedUser);
 
     if (!matchedUser) {
       throw new NotFoundException(`Cannot found user with email [${email}]`);
