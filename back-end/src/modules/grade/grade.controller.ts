@@ -117,10 +117,13 @@ export class GradeController {
   @Get('/:classIdCode/student')
   async handleGetGradeOfSpecificStudent(
     @UserId() userId: number,
+    @Param('classIdCode') classId: string,
   ): Promise<number[]> {
-    const grades = await this.gradeService.getFinalizedGradeOfAssignmentsOfUser(
-      userId,
-    );
+    const grades =
+      await this.gradeService.getFinalizedGradeOfAssignmentsOfUserInClass(
+        classId,
+        userId,
+      );
 
     return grades;
   }
