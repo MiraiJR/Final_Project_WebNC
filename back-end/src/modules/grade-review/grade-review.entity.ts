@@ -4,12 +4,14 @@ import {
     JoinColumn,
     JoinTable,
     ManyToOne,
+    OneToMany,
     PrimaryColumn,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { GradeStructure } from '../grade-structure/grade-structure.entity';
 import { Class } from '../class/class.entity';
+import { GradeReviewComment } from '../grade-review-comment/grade-review-comment.entity';
 
 @Entity('grade-reviews')
 export class GradeReview {
@@ -48,4 +50,9 @@ export class GradeReview {
 
     @Column({ nullable: true })
     explain: string;
+
+     // Thêm mối quan hệ OneToMany
+     @OneToMany(() => GradeReviewComment, comment => comment.review)
+     comments: GradeReviewComment[];
+ 
 }
