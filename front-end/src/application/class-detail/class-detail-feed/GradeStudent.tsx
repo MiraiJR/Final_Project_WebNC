@@ -25,6 +25,22 @@ const GradeStudent = () => {
     }
   );
 
+  function tableData(){
+    if(gradeStructures ==null){
+      return [];
+    }
+    const tableData = [];
+    for(let i = 0; i<gradeStructures.length;i++){
+      const gradeStructure = gradeStructures[i];;
+      const grade = (grades!=null && grades[i] !== undefined) ? grades[i] : null;
+      tableData.push({
+        gradeStructure,
+        grade,
+      })
+    }
+    return tableData;
+  } 
+
   const calculateAverageGrade = (
     grades: number[],
     gradeStructures: GradeAssignmentResp[]
@@ -38,6 +54,47 @@ const GradeStudent = () => {
     return averageGrade;
   };
 
+  return (
+    <div className="w-full">
+      <div>
+        <table className="border-2 min-w-full table-fixed">
+          <thead className={`border-b-2 bg-[${MAIN_COLOR}]`}>
+            <tr>
+              <th className="border-r-2 p-2 w-3/5">Assignment</th>
+              <th className="border-r-2 p-2">Score</th>
+            </tr>
+          </thead>
+          <tbody className="border-b-2">
+            {gradeStructures &&
+              tableData().map(({gradeStructure,grade},_index) => (
+                <tr className="border-b-2" key={gradeStructure.id}>
+                  <ColumnAssignment
+                    gradeStructure={gradeStructure}
+                    key={gradeStructure.id}
+                  />
+                  <td className="border-x-2 border-b-2 p-2 text-center" key={_index}>
+                    {grade}
+                  </td>
+                </tr>
+            ))}
+            <tr className="border-b-2">
+              <td colSpan={gradeStructures?.length}>
+                <div className="py-2 font-bold flex flex-row justify-end">
+                  {grades &&
+                    gradeStructures &&
+                    calculateAverageGrade(grades, gradeStructures).toPrecision(
+                      3
+                    )}
+                  <span className="ml-10">Average Score</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+  /*
   return (
     <div className="w-full">
       <div>
@@ -79,7 +136,7 @@ const GradeStudent = () => {
         </table>
       </div>
     </div>
-  );
+  );*/
 };
 
 export default GradeStudent;
