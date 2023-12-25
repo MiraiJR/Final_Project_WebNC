@@ -6,7 +6,7 @@ import { useClassDetail } from "../ClassDetail";
 import InviteCodeAndLinkBox from "./InviteCodeAndLinkBox";
 import { UserRole } from "@/shared/types/UserRole";
 import GradeStudent from "./GradeStudent";
-import { useOutlet } from "react-router-dom";
+import { Outlet, useOutlet } from "react-router-dom";
 
 export default function ClassFeed() {
   const outlet = useOutlet();
@@ -67,6 +67,7 @@ export default function ClassFeed() {
         {outlet===null && role === UserRole.HS && (
           <GradeStudent />
         )}
+        <Outlet></Outlet>
       </div>
     </div>
   );

@@ -11,16 +11,22 @@ import avatar from "../../../shared/assets/student-minhhoa.png";
 import { useEffect, useState } from "react";
 import UpdateGradeDialog from "./UpdateGradeDialog";
 import { GradeReviewResp } from "@/shared/types/Resp/ClassResp";
+import { toast } from "react-toastify";
+import { GradeReviewService } from "@/shared/services/GradeReviewService";
+import { useLoaderData } from "react-router-dom";
+import Box from "@mui/material/Box";
+import { MAIN_COLOR } from "@/shared/utils/constant";
+
 interface Comment {
   avatar: string;
   userName: string;
   content: string;
   createAt: string;
 }
-interface Props {
-  info: GradeReviewResp;
-}
-const GradeReviewDetail = ({ info }: Props) => {
+
+const GradeReviewDetail = () => {
+  const info = useLoaderData() as GradeReviewResp;
+  console.log(info);
   const [userComment, setUserComment] = useState("");
   const [comments, setComments] = useState<Comment[] | undefined>();
   const [isOpen, setIsOpen] = useState(false);
@@ -63,6 +69,7 @@ const GradeReviewDetail = ({ info }: Props) => {
   };
   return (
     <>
+      <Box className = {`border-2 rounded-md border-[${MAIN_COLOR}] p-4`}>
       <p className=" text-base m-2 font-bold">Grade Review Detail</p>
       <Divider />
       <List>
@@ -180,7 +187,20 @@ const GradeReviewDetail = ({ info }: Props) => {
         onClose={() => setIsOpen(false)}
         info={info}
       />
+      </Box>
     </>
   );
 };
 export default GradeReviewDetail;
+
+export async function  gradeReviewDetailLoader({params}:any) : Promise<GradeReviewResp> {
+  try{
+    console.log(params.classID)
+    const gradeReview = (await (GradeReviewService.getGradeReviewDetailService(params.classID,params.reviewId))).data
+
+    return gradeReview;
+  }catch(e:any){
+    toast.error(e.message);
+    throw new Error(e);
+  }
+} 

@@ -20,6 +20,7 @@ import { joinClassLoader } from "./application/join-page/JoinPage";
 import AcceptInvitingDialog from "./application/join-page/AcceptInvitePage";
 import GradePage from "./application/class-detail/grade-page/page";
 import UpdateProfilePage, { updateProfileAction } from "./application/profile-page/UpdateProfilePage";
+import GradeReviewDetail, { gradeReviewDetailLoader } from "./application/class-detail/class-detail-feed/GradeReviewDetail";
 
 const router = createBrowserRouter([
   {
@@ -49,10 +50,12 @@ const router = createBrowserRouter([
             element: <GradePage />,
           },
           {
-            path: "feed",
+            path: "feed/review",
             element: <ClassFeed></ClassFeed>,
             children: [{
-                path:"/review/:reviewid",
+                path:":reviewId",
+                element: <GradeReviewDetail></GradeReviewDetail>,
+                loader: gradeReviewDetailLoader,
             }] 
           }
         ],
