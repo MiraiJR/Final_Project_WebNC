@@ -9,11 +9,16 @@ export class GradeReviewCommentGateWay{
 
     @SubscribeMessage('joinRoom')
     handleJoinRoom(@MessageBody() reviewId: number, @ConnectedSocket() client: Socket): void{
-        client.join(`review-${reviewId}`)
+        client.join(`review-${reviewId}`);
+    }
+
+    @SubscribeMessage('leaveRoom')
+    handleLeaveRoom(@MessageBody() reviewId: number, @ConnectedSocket() client: Socket){
+        client.leave(`review-${reviewId}`);
     }
 
     @SubscribeMessage('comment')
-    handleComment(@MessageBody() comment: GradeReviewCommentResponse): void {
-        this.server.emit('newComment', comment);
+    handleComment( comment: GradeReviewCommentResponse): void {
+        this.server.to(`review-${comment.reviewId}`).emit('newComment', comment);
     }
 }

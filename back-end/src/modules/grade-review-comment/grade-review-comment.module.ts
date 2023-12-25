@@ -7,13 +7,15 @@ import { GradeReviewComment } from "./grade-review-comment.entity";
 import { GradeReviewModule } from "../grade-review/grade-review.module";
 import { GradeReviewCommentGateWay } from "./grade-review-comment.gateway";
 import { UserModule } from "../user/user.module";
+import { ClassUserModule } from "../classUser/class-user.module";
 
 
 @Module({
     imports : [TypeOrmModule.forFeature([GradeReviewComment]),
     forwardRef(()=> GradeReviewModule),
     forwardRef(()=> UserModule),
-    forwardRef(()=> GradeReviewModule)],
+    forwardRef(()=> GradeReviewModule),
+    forwardRef(()=>ClassUserModule)],
     providers: [GradeReviewCommentRepository,GradeReviewCommentService,GradeReviewCommentGateWay],
     controllers: [GradeReviewController],
     exports: [GradeReviewCommentService],

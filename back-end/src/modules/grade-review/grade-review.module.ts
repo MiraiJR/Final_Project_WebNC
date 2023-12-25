@@ -9,6 +9,8 @@ import { GradeStructureModule } from '../grade-structure/grade-structure.module'
 import { StudentModule } from '../student/student.module';
 import { GradeModule } from '../grade/grade.module';
 import { UserModule } from '../user/user.module';
+import { ClassUserModule } from '../classUser/class-user.module';
+import { GradeReviewCommentModule } from '../grade-review-comment/grade-review-comment.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([GradeReview, GradeReviewRepository]),
@@ -16,7 +18,9 @@ import { UserModule } from '../user/user.module';
     forwardRef(()=> ClassModule),
     forwardRef(()=> GradeStructureModule),
     forwardRef(()=>StudentModule),
-    forwardRef(()=>GradeModule),],
+    forwardRef(()=>GradeModule),
+    forwardRef(()=>ClassUserModule),
+    forwardRef(()=>GradeReviewCommentModule)],
     providers: [GradeReviewService , GradeReviewRepository ],
     controllers: [GradeReviewController],
     exports: [GradeReviewService], 

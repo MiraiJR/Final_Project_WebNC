@@ -5,6 +5,8 @@ import { GradeReviewCommentGateWay } from "./grade-review-comment.gateway";
 import { UserService } from "../user/user.service";
 import { User } from "../user/user.entity";
 import { GradeReviewService } from "../grade-review/grade-review.service";
+import { ClassUserService } from "../classUser/class-user.service";
+import { UserRole } from "src/shared/types/EnumUserRole";
 
 
 @Injectable()
@@ -14,6 +16,7 @@ export class GradeReviewCommentService{
         private readonly commentsGateway: GradeReviewCommentGateWay,
         private readonly userService: UserService,
         private readonly gradeReviewService: GradeReviewService,
+        private readonly classUserService: ClassUserService,
     ){}
 
     async createComment(userId:number, reviewId: number,content:string):Promise<GradeReviewCommentResponse>{
@@ -27,6 +30,14 @@ export class GradeReviewCommentService{
         }else if(review.isFinalized){
             throw new BadRequestException("Review is finalize");
         }
+
+        const role= await this.classUserService.findRole(review.classIdCode,userId);
+        if(!role){
+            throw new BadRequestException("User not in this class")
+        }else if(role == UserRole.HS && user.studentId != review.studentId){
+            throw new BadRequestException("This review is not of you")
+        }
+        
 
         const createGradeReviewComment = await this.gradeReviewCommentRepository.create({
             user: user,

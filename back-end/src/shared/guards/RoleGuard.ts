@@ -34,7 +34,6 @@ export class RoleGuard implements CanActivate {
       const payload: RoleToken = await this.jwtService.verifyAsync(roleToken, {
         secret: this.configService.get<string>('JWT_ACCESS_KEY'),
       });
-
       if (payload.userId != request.user || payload.classCodeId != classId) {
         throw new UnauthorizedException('Invalid roleToken');
       }

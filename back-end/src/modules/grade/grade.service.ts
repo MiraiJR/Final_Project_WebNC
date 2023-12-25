@@ -241,4 +241,11 @@ export class GradeService {
 
     return gradeStudent;
   }
+
+  async findGradeOfAssignment(studentId: string, gradeStructureId: number){
+    return await this.gradeRepository.findByGradeStructureAndStudentId(
+      studentId,
+      gradeStructureId,
+    );
+  }
 }

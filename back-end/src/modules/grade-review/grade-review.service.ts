@@ -9,6 +9,10 @@ import { StudentService } from "../student/student.service";
 import { GradeService } from "../grade/grade.service";
 import { UserService } from "../user/user.service";
 import { User } from "../user/user.entity";
+import { ClassUserService } from "../classUser/class-user.service";
+import { UserRole } from "src/shared/types/EnumUserRole";
+import { GradeReviewComment } from "../grade-review-comment/grade-review-comment.entity";
+import { GradeReviewCommentResponse } from "../grade-review-comment/dto/res/GradeReviewCommentResp.dto";
 @Injectable()
 export class GradeReviewService {
     constructor (
@@ -18,6 +22,7 @@ export class GradeReviewService {
         private readonly gradeService: GradeService,
         private readonly userServide: UserService,
         private readonly configService: ConfigService,
+        private readonly classUserService: ClassUserService
     ) {}
     
     async findGrandReviewById(reviewId: number){
@@ -27,6 +32,50 @@ export class GradeReviewService {
             }
         })
     }
+
+    async getGradeReviewDetail(reviewId: number, userId: number): Promise<GradeReviewRespDTO>{
+        const user = await this.userServide.findById(userId);
+        const review = await this.findGrandReviewById(reviewId);
+        if(!review){
+            throw new BadRequestException("Review not Exist");
+        }
+        const grade = await this.gradeService.getGradeOfAssignment(review.studentId,review.structureId);
+        const role = await this.classUserService.findRole(review.classIdCode,userId);
+        if(!role){
+            throw new BadRequestException("User not in this Class of this Review");
+        }
+        else if(role==UserRole.HS && review.studentId!= user.studentId){
+            throw new BadRequestException("This review is not for you")
+        }
+        //User is AD or Teacher or Student who created review
+        else{
+            const comments = await review.comments;
+            const response : GradeReviewRespDTO={
+                id: review.id,
+                structureId: review.structureId,
+                studentId: review.studentId,
+                studentName: user.fullname,
+                nameAssignment:  review.structure.nameAssignment,
+                currPercentScore: grade.score,
+                expectPercentScore: review.expectPercentScore,
+                explain: review.explain,
+                comment: comments?.map((comment: GradeReviewComment)=> this.mapGradeReviewCommentToGradeReviewCommentResponse(comment)) || []
+            } 
+
+            return response;
+        }
+
+    }
+
+    private mapGradeReviewCommentToGradeReviewCommentResponse(comment: GradeReviewComment): GradeReviewCommentResponse { 
+        const commentResponse: GradeReviewCommentResponse = {
+            content: comment.content,
+            createdAt: comment.createdAt,
+            author: comment.user,
+            reviewId: comment.review.id,
+        };
+        return commentResponse;
+      }
 
     async findGradeReviewOfStudentByStructureId(studentId: string, structureId: number){
         try{
@@ -40,6 +89,35 @@ export class GradeReviewService {
             throw e;
         }
         
+    }
+
+    async getGradeReviewDetailByStructureId(userId: number,structureId: number) : Promise<GradeReviewRespDTO>{
+        const user = await this.userServide.findById(userId);
+        const grade = await this.gradeService.getGradeOfAssignment(user.studentId,structureId);
+        if(!grade){
+            throw new BadRequestException("Structure ID Not Valid or Not in this Class");
+        }else if(!grade.isFinalized){
+            throw new BadRequestException("This Score is not Finalized");
+        }
+        const review = await this.findGradeReviewOfStudentByStructureId(user.studentId,structureId);
+        if(!review){
+            throw new BadRequestException("Review has not created yet")
+        }
+
+        const comments = await review.comments;
+        const response : GradeReviewRespDTO={
+            id: review.id,
+            structureId,
+            studentId: user.studentId,
+            studentName: user.fullname,
+            nameAssignment: review.structure.nameAssignment,
+            currPercentScore: grade.score,
+            expectPercentScore: review.expectPercentScore,
+            explain: review.explain,
+            comment: comments?.map((comment: GradeReviewComment)=> this.mapGradeReviewCommentToGradeReviewCommentResponse(comment)) || []
+        } 
+
+        return response
     }
 
     async getGradeReviewByClassId(classIdCode: string): Promise<GradeReviewRespDTO[]> {
@@ -56,7 +134,7 @@ export class GradeReviewService {
                 const gradeStudent = await this.gradeService.getGradeOfAssignment(studentId, structureId);
                 //get name from table student
                 const studentName = await this.studentService.getStudentName(studentId);
-                const rs: GradeReviewRespDTO = { id,structureId, studentId,   studentName, nameAssignment, currPercentScore: gradeStudent.score, expectPercentScore, explain };
+                const rs: GradeReviewRespDTO = { id,structureId, studentId,   studentName, nameAssignment, currPercentScore: gradeStudent.score, expectPercentScore, explain,comment:[] };
                 return rs;
             }));
             return rs; 
@@ -84,7 +162,7 @@ export class GradeReviewService {
     async createGradeReview(classIdCode : string, userId: number, structureId:number,expectPercentScore: number,explain:string) : Promise<GradeReviewRespDTO>{
         const user:User = await this.userServide.findById(userId);
 
-        const grade = await this.gradeService.getGradeOfAssignment(user.studentId,structureId);
+        const grade = await this.gradeService.findGradeOfAssignment(user.studentId,structureId);
         if(!grade && grade.gradeStructure.classId != classIdCode){
             throw new BadRequestException("Structure ID Not Valid or Not in this Class");
         }else if(!grade.isFinalized){
@@ -116,7 +194,7 @@ export class GradeReviewService {
             currPercentScore: grade.score,
             expectPercentScore,
             explain,
-
+            comment: [],
         } 
 
         return gradeReviewResponse;

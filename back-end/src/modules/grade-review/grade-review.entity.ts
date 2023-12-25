@@ -22,7 +22,7 @@ export class GradeReview {
     @JoinColumn({name: 'classIdCode'})
     class: Class;
 
-    @ManyToOne(() => GradeStructure, { lazy: true, nullable: false })
+    @ManyToOne(() => GradeStructure, { eager: true, nullable: false })
     @JoinColumn({name: 'structureId'})
     structure: GradeStructure;
 
@@ -51,8 +51,7 @@ export class GradeReview {
     @Column({ nullable: true })
     explain: string;
 
-     // Thêm mối quan hệ OneToMany
-     @OneToMany(() => GradeReviewComment, comment => comment.review)
+    @OneToMany(() => GradeReviewComment,comment => comment.review,{lazy: true})
      comments: GradeReviewComment[];
     
      @Column({ default: false })

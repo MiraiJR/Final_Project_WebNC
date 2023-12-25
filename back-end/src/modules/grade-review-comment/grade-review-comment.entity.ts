@@ -7,11 +7,11 @@ export class GradeReviewComment{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(()=> GradeReview, {lazy:true, nullable:false})
+    @ManyToOne(()=> GradeReview, {eager:true, nullable:false})
     @JoinColumn({name: 'reviewId'})
     review: GradeReview;
 
-    @ManyToOne(()=>GradeReview,{lazy: true,nullable:false})
+    @ManyToOne(()=>User,{eager: true,nullable:false})
     @JoinColumn({name: 'userId'})
     user: User;
 
