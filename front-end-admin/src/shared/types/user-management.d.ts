@@ -13,3 +13,8 @@ type LockedUserResp = {
   lockedAt: Date;
   duration: number;
 };
+
+type UpdateStudentReq = {
+  userId: number;
+  studentId: string
+}

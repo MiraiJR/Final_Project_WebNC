@@ -141,4 +141,11 @@ export class UserService {
 
     return (await this.findById(userId)).convertToResp();
   }
+
+  async updateStudent(userId: number , studentId: string): Promise<void>{
+    const userToUpdate = await this.findById(userId);
+    await this.userRepository.update(userToUpdate.id, {
+      studentId: studentId,
+    });
+  }
 }

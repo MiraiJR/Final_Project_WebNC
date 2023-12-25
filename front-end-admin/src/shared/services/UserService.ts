@@ -9,6 +9,8 @@ const UserService = {
     axiosClient.patch<string>("/users/actions/unlock", data),
   banOrUnbanUser: (data: BanOrUnbanUserReq) =>
     axiosClient.patch<string>("/users/actions/ban-unban", data),
+  updateStudent: (data: UpdateStudentReq) =>
+    axiosClient.patch<string>("/users/actions/update-student", data)
 };
 
 export default UserService;

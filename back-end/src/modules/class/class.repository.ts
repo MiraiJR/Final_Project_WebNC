@@ -30,11 +30,9 @@ export class ClassRepository extends Repository<Class> {
   }
 
   async updateClassState(idCode: string, isActive: boolean) : Promise<void>{
-
-    const _class = await this.findClassByIdCode(idCode);
-    const a = await this.save({
-      ..._class,
-      isActive
+    const classToUpdate = await this.findClassByIdCode(idCode);
+    await this.update(classToUpdate.idCode, {
+      isActive: isActive,
     })
 
   }

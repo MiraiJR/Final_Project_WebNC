@@ -16,6 +16,7 @@ import { BanOrUnbanUserReqDto } from './dto/request/BanOrUnbanUserReq';
 import { UnlockUserReqDto } from './dto/request/UnlockUserReq';
 import { LockUserReqDto } from './dto/request/LockUserReq';
 import { AdminAuthGuard } from 'src/shared/guards/AdminAuthGuard';
+import { UpdateStudentReqDto } from './dto/request/UpdateStudentReq';
 
 @Controller('/users')
 export class UserController {
@@ -63,5 +64,14 @@ export class UserController {
     const { userId } = reqData;
     await this.userService.unlockUser(userId);
     return 'Unlock user successfully!';
+  }
+
+  @UseGuards(AdminAuthGuard)
+  @Patch('/actions/update-student')
+  @HttpCode(HttpStatus.OK)
+  async updateStudent(@Body() reqData: UpdateStudentReqDto): Promise<string>{
+    const {userId , studentId} = reqData;
+    await this.userService.updateStudent(userId, studentId);
+    return "Update student successfully!"
   }
 }

@@ -12,6 +12,7 @@ import { MailModule } from '../mail/mail.module';
 import { GradeStructureModule } from '../grade-structure/grade-structure.module';
 import { GradeReviewModule } from '../grade-review/grade-review.module';
 import { GradeModule } from '../grade/grade.module';
+import { AdminAccountModule } from '../admin-auth/admin-auth.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { GradeModule } from '../grade/grade.module';
     forwardRef(() => ClassUserModule),
     forwardRef(() => GradeStructureModule),
     forwardRef(() => GradeReviewModule),
+    forwardRef(() => AdminAccountModule)
   ],
   providers: [ClassService, ClassRepository, JwtService, ConfigService],
   controllers: [ClassController],

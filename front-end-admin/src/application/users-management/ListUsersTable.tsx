@@ -15,6 +15,7 @@ import { Helper } from "@/shared/utils/heper";
 import UserService from "@/shared/services/UserService";
 import { toast } from "react-toastify";
 import LockedDurationOption from "./LockedDurationOption";
+import StudentId from "./StudentId";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -61,7 +62,7 @@ const columns: readonly Column[] = [
     id: "studentId",
     label: "studentId",
     minWidth: 170,
-    align: "right",
+    align: "center",
   },
   {
     id: "facebookId",
@@ -175,9 +176,11 @@ export default function ListUsersTable() {
                           key={row.id}
                         >
                           <TableCell align={"right"}>{row.id}</TableCell>
-                          <TableCell align={"right"}>{row.email}</TableCell>
                           <TableCell align={"right"}>{row.fullname}</TableCell>
-                          <TableCell align={"right"}>{row.studentId}</TableCell>
+                          <TableCell align={"right"}>{row.email}</TableCell>
+                          <TableCell align={"right"}>
+                            <StudentId student={row} />
+                          </TableCell>
                           <TableCell>
                             <div className="flex flex-row item-center justify-center">
                               {row.facebookId ? (

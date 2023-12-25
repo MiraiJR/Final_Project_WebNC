@@ -28,7 +28,7 @@ const ClassService = {
   getAllClass: () =>
     axiosClient.get<ClassRespData[]>("/class"),
   updateClassState: (classID: string, isActive: boolean) => 
-    axiosClient.post<string>(`/class/${classID}/updateState`, {isActive}),
+    axiosClient.patch<string>(`/class/${classID}/updateState`, {isActive}),
 };
 
 export default ClassService;
