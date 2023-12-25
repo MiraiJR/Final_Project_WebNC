@@ -47,7 +47,7 @@ type GradeStructureResp = {
 type GradeReviewComment = {
   content: string;
   createdAt: Date;
-  author: UserRespDTO;
+  author: UserRespData;
   reviewId: number;
 }
 

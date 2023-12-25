@@ -3,3 +3,7 @@ type  GradeReviewReq = {
     expectPercentScore: number;
     explain: string;
 }
+
+type CommentGradeReviewReq = {
+    content: string;
+}
