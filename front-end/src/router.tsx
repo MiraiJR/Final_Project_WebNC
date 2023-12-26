@@ -18,8 +18,12 @@ import MemberList, {
 import { joinClassLoader } from "./application/join-page/JoinPage";
 import AcceptInvitingDialog from "./application/join-page/AcceptInvitePage";
 import GradePage from "./application/class-detail/grade-page/page";
-import UpdateProfilePage, { updateProfileAction } from "./application/profile-page/UpdateProfilePage";
-import GradeReviewDetail, { gradeReviewDetailLoader } from "./application/class-detail/class-detail-feed/GradeReviewDetail";
+import UpdateProfilePage, {
+  updateProfileAction,
+} from "./application/profile-page/UpdateProfilePage";
+import GradeReviewDetail, {
+  gradeReviewDetailLoader,
+} from "./application/class-detail/class-detail-feed/GradeReviewDetail";
 import { checkLoginLoader } from "./shared/loaders/checkLoginLoader";
 
 const router = createBrowserRouter([
@@ -53,12 +57,14 @@ const router = createBrowserRouter([
           {
             path: "feed/review",
             element: <ClassFeed></ClassFeed>,
-            children: [{
-                path:":reviewId",
+            children: [
+              {
+                path: ":reviewId",
                 element: <GradeReviewDetail></GradeReviewDetail>,
                 loader: gradeReviewDetailLoader,
-            }] 
-          }
+              },
+            ],
+          },
         ],
       },
     ],
@@ -82,11 +88,11 @@ const router = createBrowserRouter([
     loader: rootLoader,
     children: [
       {
-        path:"update",
+        path: "update",
         element: <UpdateProfilePage></UpdateProfilePage>,
         action: updateProfileAction,
-      }
-    ]
+      },
+    ],
   },
   {
     path: "auth",
@@ -94,22 +100,18 @@ const router = createBrowserRouter([
       {
         path: "register",
         element: <RegisterPage />,
-        loader: checkLoginLoader,
       },
       {
         path: "sign-in",
         element: <LoginPage />,
-        loader: checkLoginLoader,
       },
       {
         path: "forgot-password",
         element: <ForgotPasswordPage />,
-        loader: checkLoginLoader,
       },
       {
         path: "change-password",
         element: <ChangePasswordPage />,
-        loader: checkLoginLoader,
       },
     ],
   },

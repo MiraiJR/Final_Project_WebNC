@@ -8,6 +8,6 @@ export function checkLoginLoader(): any {
   if (accessToken && refreshToken) {
     return redirect("/class");
   } else {
-    return redirect("/login");
+    return redirect("/auth/sign-in");
   }
 }
