@@ -66,10 +66,16 @@ export class GradeRepository extends Repository<GradeEntity> {
     );
   }
 
-  async findGradeByStudentId(studentId: string): Promise<GradeEntity[]> {
+  async findGradeByStudentIdInClassId(
+    classId: string,
+    studentId: string,
+  ): Promise<GradeEntity[]> {
     return this.find({
       where: {
         studentId,
+        gradeStructure: {
+          classId,
+        },
       },
       order: {
         gradeStructure: {

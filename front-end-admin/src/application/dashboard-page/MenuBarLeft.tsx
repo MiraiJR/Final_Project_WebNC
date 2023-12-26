@@ -15,6 +15,10 @@ const listBarItem: BarItem[] = [
     label: "Users Management",
     path: "/user-management",
   },
+  {
+    label: "Classes Management",
+    path: "/class-management",
+  },
 ];
 
 const MenuBarLeft = () => {
@@ -26,7 +30,7 @@ const MenuBarLeft = () => {
           <ListItemIcon>
             <UsersRound />
           </ListItemIcon>
-          <ListItemText primary="Users Management" />
+          <ListItemText primary={barItem.label} />
         </ListItemButton>
       ))}
     </React.Fragment>

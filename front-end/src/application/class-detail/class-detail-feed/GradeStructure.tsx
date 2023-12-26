@@ -12,16 +12,12 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { useState, useEffect } from "react";
 import ClassService from "@/shared/services/ClassService";
 import { useClassDetail } from "../ClassDetail";
-import {
-  GradeAssignmentResp,
-  GradeStructureResp,
-} from "@/shared/types/Resp/ClassResp";
 import { toast } from "react-toastify";
 
 const GradeStructure = () => {
   const [isEdit, setIsEdit] = useState(false);
   const [isSave, setIsSave] = useState(false);
-  const [assignments, setAssignments] = useState<GradeAssignmentResp[]>();
+  const [assignments, setAssignments] = useState<GradeAssignmentReq[]>();
   const classDetail = useClassDetail();
   useEffect(() => {
     try {
@@ -42,39 +38,29 @@ const GradeStructure = () => {
       toast.error(error.message);
     }
   }, [isSave]);
-  let UIassignments: GradeAssignmentResp[] = [];
+  let UIassignments: GradeAssignmentReq[] = [];
   if (assignments) {
     UIassignments = assignments.map((assignment) => ({ ...assignment }));
   }
+
+  const totalRow: GradeAssignmentReq = {
+    nameAssignment: "Total",
+    percentScore: UIassignments.reduce((acc, cur) => acc + cur.percentScore, 0),
+    position: UIassignments.length - 1,
+  };
+
   const handleSaveButton = async () => {
-    const newAssignment: GradeAssignmentResp[] = UIassignments.map(
+    const newAssignment: GradeAssignmentReq[] = UIassignments.map(
       (assignment) => ({
         ...assignment,
       })
     );
-    const totalRow = newAssignment.find(
-      (assignment) => assignment.nameAssignment === "Total"
-    );
-    if (totalRow) {
-      totalRow.percentScore =
-        newAssignment.reduce((acc, cur) => acc + cur.percentScore, 0) -
-        totalRow.percentScore;
-    } else {
-      newAssignment.push({
-        nameAssignment: "Total",
-        percentScore: newAssignment.reduce(
-          (acc, cur) => acc + cur.percentScore,
-          0
-        ),
-        position: newAssignment.length - 1,
-      });
-    }
     newAssignment.forEach((assignment, index) => {
       assignment.position = index;
     });
     // send new structure to backend
     // Todo:
-    const newGradeStructure: GradeStructureResp = {
+    const newGradeStructure: GradeStructureReq = {
       assignments: newAssignment,
     };
     await ClassService.updateGradeStructure(
@@ -150,13 +136,7 @@ const GradeStructure = () => {
                           key={`${assignment.nameAssignment}-${assignment.percentScore}`}
                           draggableId={assignment.nameAssignment}
                           index={index}
-                          isDragDisabled={
-                            isEdit
-                              ? assignment.nameAssignment === "Total"
-                                ? true
-                                : false
-                              : true
-                          }
+                          isDragDisabled={isEdit ? false : true}
                         >
                           {(provider) => (
                             <TableRow
@@ -175,13 +155,7 @@ const GradeStructure = () => {
                                 {...provider.dragHandleProps}
                               >
                                 <TextField
-                                  disabled={
-                                    isEdit
-                                      ? assignment.nameAssignment === "Total"
-                                        ? true
-                                        : false
-                                      : true
-                                  }
+                                  disabled={isEdit ? false : true}
                                   id={`${assignment.nameAssignment}-${assignment.percentScore}-name`}
                                   className={
                                     assignment.nameAssignment === "Total"
@@ -281,6 +255,45 @@ const GradeStructure = () => {
                           )}
                         </Draggable>
                       ))}
+                    <Draggable
+                      key={`${totalRow.nameAssignment}-${totalRow.percentScore}`}
+                      draggableId={totalRow.nameAssignment}
+                      index={UIassignments.length}
+                      isDragDisabled={true}
+                    >
+                      {(provider) => (
+                        <TableRow
+                          key={`${totalRow.nameAssignment}-${totalRow.percentScore}`}
+                          sx={{
+                            "&:last-child td, &:last-child th": {
+                              border: 0,
+                            },
+                          }}
+                          {...provider.draggableProps}
+                          ref={provider.innerRef}
+                        >
+                          <TableCell component="th" scope="row">
+                            <TextField
+                              disabled={true}
+                              id={`${totalRow.nameAssignment}-${totalRow.percentScore}-name`}
+                              className="font-bold"
+                              variant="standard"
+                              defaultValue={totalRow.nameAssignment}
+                            />
+                          </TableCell>
+                          <TableCell align="right">
+                            <TextField
+                              disabled={true}
+                              id={`${totalRow.nameAssignment}-${totalRow.percentScore}-grade`}
+                              className="font-bold text-right"
+                              variant="standard"
+                              defaultValue={totalRow.percentScore}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </Draggable>
+
                     {provider.placeholder}
                   </TableBody>
                 )}

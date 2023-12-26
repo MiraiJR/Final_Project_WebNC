@@ -9,8 +9,10 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (isLogin) {
       navigate("/");
+    } else {
+      navigate("/login");
     }
-  }, [isLogin, navigate]);
+  }, [isLogin]);
 
   return (
     <div>

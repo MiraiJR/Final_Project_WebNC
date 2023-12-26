@@ -12,7 +12,7 @@ const TableGradeCustom = () => {
   const { classID } = useParams();
 
   const { data: gradeStudents } = useQuery<GradeStudent[]>(
-    `getGradeStudentsOfClass`,
+    [`getGradeStudentsOfClass`, classID],
     () => getGradeStudentsOfClass(String(classID)),
     {
       enabled: !!classID,
@@ -20,7 +20,7 @@ const TableGradeCustom = () => {
   );
 
   const { data: gradeStructures } = useQuery<GradeAssignmentResp[]>(
-    `getGradeStructuresOfClass`,
+    [`getGradeStructuresOfClass`, classID],
     () => getGradeStructuresOfClass(String(classID)),
     {
       enabled: !!classID,

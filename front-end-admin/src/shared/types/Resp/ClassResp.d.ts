@@ -7,9 +7,11 @@ type ClassRespData = {
     fullname: string;
     email: string;
   };
+  create_at: string;
   idCode: string;
   role: UserRole;
   description: string;
+  isActive: boolean;
 };
 
 type ClassDetailResp = {

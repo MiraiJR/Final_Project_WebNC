@@ -1,3 +1,5 @@
+import { LockedUserEntity } from '../locked-user/locked-user.entity';
+
 export interface IUser {
   id?: number;
   email?: string;
@@ -7,4 +9,7 @@ export interface IUser {
   refreshToken?: string;
   facebookId?: string;
   googleId?: string;
+  studentId?: string;
+  isBanned?: boolean;
+  locked?: LockedUserEntity;
 }

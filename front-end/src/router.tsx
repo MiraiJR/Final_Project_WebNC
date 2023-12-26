@@ -3,7 +3,6 @@ import RegisterPage from "./application/auth-page/register/page";
 import LoginPage from "./application/auth-page/login/page";
 import ForgotPasswordPage from "./application/auth-page/forgot-password/page";
 import ChangePasswordPage from "./application/auth-page/change-password/page";
-import AuthGuard from "./shared/components/guards/AuthGuard";
 import Root, { loader as rootLoader } from "./application/root/Root";
 import ClassList from "./application/class-page/ClassList";
 import ClassDetail, {
@@ -21,11 +20,13 @@ import AcceptInvitingDialog from "./application/join-page/AcceptInvitePage";
 import GradePage from "./application/class-detail/grade-page/page";
 import UpdateProfilePage, { updateProfileAction } from "./application/profile-page/UpdateProfilePage";
 import GradeReviewDetail, { gradeReviewDetailLoader } from "./application/class-detail/class-detail-feed/GradeReviewDetail";
+import { checkLoginLoader } from "./shared/loaders/checkLoginLoader";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <HomePage></HomePage>,
+    element: <HomePage />,
+    loader: checkLoginLoader,
   },
   {
     path: "/class",
@@ -92,35 +93,23 @@ const router = createBrowserRouter([
     children: [
       {
         path: "register",
-        element: (
-          <AuthGuard>
-            <RegisterPage />
-          </AuthGuard>
-        ),
+        element: <RegisterPage />,
+        loader: checkLoginLoader,
       },
       {
         path: "sign-in",
-        element: (
-          <AuthGuard>
-            <LoginPage />
-          </AuthGuard>
-        ),
+        element: <LoginPage />,
+        loader: checkLoginLoader,
       },
       {
         path: "forgot-password",
-        element: (
-          <AuthGuard>
-            <ForgotPasswordPage />
-          </AuthGuard>
-        ),
+        element: <ForgotPasswordPage />,
+        loader: checkLoginLoader,
       },
       {
         path: "change-password",
-        element: (
-          <AuthGuard>
-            <ChangePasswordPage />
-          </AuthGuard>
-        ),
+        element: <ChangePasswordPage />,
+        loader: checkLoginLoader,
       },
     ],
   },

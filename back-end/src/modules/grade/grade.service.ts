@@ -202,7 +202,8 @@ export class GradeService {
     }
   }
 
-  async getFinalizedGradeOfAssignmentsOfUser(
+  async getFinalizedGradeOfAssignmentsOfUserInClass(
+    classId: string,
     userId: number,
   ): Promise<number[]> {
     const matchedUser = await this.userService.findById(userId);
@@ -211,9 +212,11 @@ export class GradeService {
       throw new BadRequestException('User without studentId!');
     }
 
-    const gradeStudent = await this.gradeRepository.findGradeByStudentId(
-      matchedUser.studentId,
-    );
+    const gradeStudent =
+      await this.gradeRepository.findGradeByStudentIdInClassId(
+        classId,
+        matchedUser.studentId,
+      );
     const grades: number[] = [];
 
     gradeStudent.forEach((gradeStudentEle) => {
@@ -227,11 +230,12 @@ export class GradeService {
     return grades;
   }
 
-  async getGradeOfAssignment(studentId: string, gradeStructureId: number){
-    const gradeStudent = await this.gradeRepository.findByGradeStructureAndStudentId(
-      studentId,
-      gradeStructureId,
-    );
+  async getGradeOfAssignment(studentId: string, gradeStructureId: number) {
+    const gradeStudent =
+      await this.gradeRepository.findByGradeStructureAndStudentId(
+        studentId,
+        gradeStructureId,
+      );
 
     if (!gradeStudent) {
       throw new NotFoundException(

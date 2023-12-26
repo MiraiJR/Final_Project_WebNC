@@ -8,9 +8,11 @@ import { CodeResponse } from "@/shared/utils/codeResponse";
 import { authContext } from "@/shared/components/providers/AuthProvider";
 import { Helper } from "@/shared/utils/heper";
 import Cookies from "universal-cookie";
+import { useGlobalState } from "@/shared/storages/GlobalStorage";
 
 const FacebookButton = () => {
   const navigate = useNavigate();
+  const { setIsLogin } = useGlobalState();
   const { loginWithPopup, user, isAuthenticated } = useAuth0();
   const { dispatch } = useContext(authContext)!;
   const cookies = new Cookies(null, { path: "/" });
@@ -30,6 +32,7 @@ const FacebookButton = () => {
       toast.success("Login successfully!");
       JwtStorage.setToken(data as AuthToken);
       navigate("/class");
+      setIsLogin(true);
     } catch (error: any) {
       if (
         error.statusCode === 400 &&

@@ -4,8 +4,10 @@ import AuthService from "@/shared/services/AuthService";
 import JwtStorage from "@/shared/storages/JwtStorage";
 import { toast } from "react-toastify";
 import Cookies from "universal-cookie";
+import { useGlobalState } from "@/shared/storages/GlobalStorage";
 
 const GoogleButton = () => {
+  const { setIsLogin } = useGlobalState();
   const navigate = useNavigate();
   const { loginWithPopup, user, isAuthenticated } = useAuth0();
   const cookies = new Cookies(null, { path: "/" });
@@ -15,6 +17,7 @@ const GoogleButton = () => {
 
       toast.success("Login successfully!");
       JwtStorage.setToken(data as AuthToken);
+      setIsLogin(true);
       navigate("/class");
     } catch (error: any) {
       toast.error(error.message);

@@ -28,6 +28,7 @@ import { GradeReviewService } from '../grade-review/grade-review.service';
 import { GradeReviewRespDTO } from '../grade-review/dto/response/gradeReviewResp.dto';
 import { GradeService } from '../grade/grade.service';
 import { UpdateGradeRespDTO } from './dto/class/UpdateGradeResp.dto';
+import { AdminClassResponseDto } from './dto/class/AdminClassResponse.dto';
 
 @Controller('class')
 @UseGuards(AuthGuard)
@@ -38,6 +39,12 @@ export class ClassController {
         private readonly classGradeStructureService: GradeStructureService,
         private readonly gradeReviewService: GradeReviewService,
         ) {}
+
+  @Get('/')
+  async handleGetAllClass(): Promise<AdminClassResponseDto[]> {
+    return await this.classService.getAllClass();
+  }
+        
 
   @Post('/create')
   @HttpCode(HttpStatus.CREATED)
@@ -129,5 +136,11 @@ export class ClassController {
         const data: UpdateGradeRespDTO = req.body;
         await this.gradeReviewService.updateScoreAndDeleteReview(data.studentId, data.structureId, data.newScore);
         return "Updated score successfully"
+    }
+
+    @Post('/:classIdCode/updateState')
+    async handleUpdateState(@Param('classIdCode') classIdCode: string, @Body() data): Promise<string>{
+        await this.classService.updateClassState(classIdCode, data.isActive); 
+        return "Updated class state successfully"
     }
 }

@@ -11,6 +11,7 @@ import StudentService from "@/shared/services/StudentService";
 import { VisuallyHiddenInput } from "./configs";
 import { GradeService } from "@/shared/services/GradeService";
 import { useQueryClient } from "react-query";
+import { GradeAssignmentResp } from "@/shared/types/Resp/ClassResp";
 
 const COLUMNS_STUDENT_TEMPLATE_CSV = ["StudentId", "FullName"];
 const FILENAME_STUDENT_TEMPLATE_CSV = "student_list_template.csv";
@@ -114,7 +115,7 @@ const GradePage = () => {
       const { data } = await StudentService.uploadStudentListCsv(formData);
 
       toast.success(data);
-      queryClient.invalidateQueries(`getGradeStudentsOfClass`);
+      await queryClient.invalidateQueries([`getGradeStudentsOfClass`, classID]);
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -138,7 +139,7 @@ const GradePage = () => {
       );
 
       toast.success(data);
-      queryClient.invalidateQueries(`getGradeStudentsOfClass`);
+      await queryClient.invalidateQueries([`getGradeStudentsOfClass`, classID]);
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -165,7 +166,7 @@ const GradePage = () => {
       return;
     }
 
-    const headerRow: string[] = ["studentId", ...columns];
+    const headerRow: string[] = ["StudentId", ...columns, "Total"];
     let rowDatas: string[] = [];
     rowDatas.push(headerRow.join(","));
     gradeStudents.forEach((gradeStudent) => {
@@ -173,6 +174,7 @@ const GradePage = () => {
         [
           gradeStudent.studentId,
           ...gradeStudent.scores.map((score) => score.value),
+          calculateAverageGrade(gradeStudent, assignments),
         ].join(",")
       );
     });
@@ -185,6 +187,20 @@ const GradePage = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const calculateAverageGrade = (
+    gradeStudent: GradeStudent,
+    gradeStructures: GradeAssignmentResp[]
+  ): number => {
+    let averageGrade = 0;
+    for (const _index in gradeStructures) {
+      averageGrade +=
+        (gradeStructures[_index].percentScore / 100) *
+        gradeStudent.scores[_index].value;
+    }
+
+    return averageGrade;
   };
 
   return (
@@ -259,9 +275,9 @@ const GradePage = () => {
                   ref={uploadFileGradeTemplate}
                   type="file"
                   accept=".csv"
-                  onChange={() =>
-                    handleUploadFile(uploadFileGradeTemplate, TypeUpload.GRADE)
-                  }
+                  onChange={() => {
+                    handleUploadFile(uploadFileGradeTemplate, TypeUpload.GRADE);
+                  }}
                 />
               </Button>
               {fileGradeStudentListTemplate && (

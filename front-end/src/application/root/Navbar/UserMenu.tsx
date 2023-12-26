@@ -1,38 +1,43 @@
+import Avatar from "@mui/material/Avatar";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import Divider from "@mui/material/Divider";
+import React from "react";
+import { LogOut, Settings } from "lucide-react";
+import Box from "@mui/material/Box";
+import Tooltip from "@mui/material/Tooltip";
+import IconButton from "@mui/material/IconButton";
+import { Helper } from "@/shared/utils/heper";
+import { useNavigate } from "react-router-dom";
+import JwtStorage from "@/shared/storages/JwtStorage";
+import AuthService from "@/shared/services/AuthService";
+import { toast } from "react-toastify";
 
-import Avatar from '@mui/material/Avatar';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import Divider from '@mui/material/Divider';
-import React from 'react';
-import { LogOut, Settings } from 'lucide-react';
-import Box from '@mui/material/Box';
-import Tooltip from '@mui/material/Tooltip';
-import IconButton from '@mui/material/IconButton';
-import { Helper } from '@/shared/utils/heper';
-import { useNavigate } from 'react-router-dom';
-import JwtStorage from '@/shared/storages/JwtStorage';
-
-interface UserMenuProps{
-  fullname: string,
+interface UserMenuProps {
+  fullname: string;
 }
 
+export default function UserMenu({ fullname }: UserMenuProps) {
+  const navigate = useNavigate();
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-export default function UserMenu({fullname}: UserMenuProps){
-    const navigate = useNavigate();
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const open = Boolean(anchorEl);
-    const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-        setAnchorEl(null);
-    };
-
-    const handleLogout = ()=>{
+  const handleLogout = async () => {
+    try {
+      await AuthService.logout();
       JwtStorage.deleteToken();
-      navigate('/auth/sign-in');
+      navigate("/auth/sign-in");
+    } catch (error: any) {
+      toast.error(error.message);
     }
+  };
 
     const handleProfile = ()=>{
       navigate('/profile/update');
@@ -40,21 +45,22 @@ export default function UserMenu({fullname}: UserMenuProps){
 
     return(
         <>
-        <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
+        <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
             <Tooltip title="Account settings">
             <IconButton
                 onClick={handleClick}
                 size="small"
                 sx={{ ml: 2 }}
-                aria-controls={open ? 'account-menu' : undefined}
+                aria-controls={open ? "account-menu" : undefined}
                 aria-haspopup="true"
-                aria-expanded={open ? 'true' : undefined}
+                aria-expanded={open ? "true" : undefined}
             >
                 <Avatar sx={{ width: 32, height: 32 }}>{Helper.getFullNameIcon(fullname)}</Avatar>
             </IconButton>
             </Tooltip>
         </Box>
         <Menu
+
         anchorEl={anchorEl}
         id="account-menu"
         open={open}
@@ -63,32 +69,32 @@ export default function UserMenu({fullname}: UserMenuProps){
         PaperProps={{
           elevation: 0,
           sx: {
-            minWidth:'150px',
-            overflow: 'visible',
-            filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+            minWidth: "150px",
+            overflow: "visible",
+            filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
             mt: 1.5,
-            '& .MuiAvatar-root': {
+            "& .MuiAvatar-root": {
               width: 32,
               height: 32,
               ml: -0.5,
               mr: 1,
             },
-            '&:before': {
+            "&:before": {
               content: '""',
-              display: 'block',
-              position: 'absolute',
+              display: "block",
+              position: "absolute",
               top: 0,
               right: 14,
               width: 10,
               height: 10,
-              bgcolor: 'background.paper',
-              transform: 'translateY(-50%) rotate(45deg)',
+              bgcolor: "background.paper",
+              transform: "translateY(-50%) rotate(45deg)",
               zIndex: 0,
             },
           },
         }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        transformOrigin={{ horizontal: "right", vertical: "top" }}
+        anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
         <MenuItem onClick={handleProfile}>
           <Avatar /> Profile
@@ -96,19 +102,17 @@ export default function UserMenu({fullname}: UserMenuProps){
         <Divider />
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <Settings  fontSize="small" />
+            <Settings fontSize="small" />
           </ListItemIcon>
           Settings
         </MenuItem>
         <MenuItem onClick={handleLogout}>
           <ListItemIcon>
-            <LogOut  fontSize="small" />
+            <LogOut fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>
       </Menu>
-      </>
-
-    )
-    
+    </>
+  );
 }

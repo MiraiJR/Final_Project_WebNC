@@ -1,21 +1,22 @@
-import { useState, useEffect } from "react";
-import JwtStorage from "../storages/JwtStorage";
+import { useEffect } from "react";
+import Cookies from "js-cookie";
+import { useGlobalState } from "../storages/GlobalStorage";
 
 const useCheckLogin = () => {
-  const [isLoggedIn, setLoggedIn] = useState(false);
+  const { isLogin, setIsLogin } = useGlobalState();
 
   useEffect(() => {
-    if (
-      JwtStorage.getToken()?.accessToken &&
-      JwtStorage.getToken()?.refreshToken
-    ) {
-      setLoggedIn(true);
+    const accessToken = Cookies.get("accessToken");
+    const refreshToken = Cookies.get("refreshToken");
+
+    if (accessToken && refreshToken) {
+      setIsLogin(true);
     } else {
-      setLoggedIn(false);
+      setIsLogin(false);
     }
   }, []);
 
-  return isLoggedIn;
+  return isLogin;
 };
 
 export default useCheckLogin;
