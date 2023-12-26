@@ -10,5 +10,6 @@ export class GradeReviewRespDTO {
     expectPercentScore: number;
     explain: string;
     comment: GradeReviewCommentResponse[];
+    isFinalized: boolean;
   }
   

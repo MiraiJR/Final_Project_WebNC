@@ -134,7 +134,7 @@ export class ClassController {
     @Post('/updateScore')
     async handleUpdateScore( @Req() req): Promise<string>{
         const data: UpdateGradeRespDTO = req.body;
-        await this.gradeReviewService.updateScoreAndDeleteReview(data.studentId, data.structureId, data.newScore);
+        await this.gradeReviewService.updateScoreAndChangeStateOfReview(data.studentId, data.structureId, data.newScore);
         return "Updated score successfully"
     }
 
