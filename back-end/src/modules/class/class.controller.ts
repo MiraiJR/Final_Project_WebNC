@@ -42,12 +42,12 @@ export class ClassController {
         private readonly gradeReviewService: GradeReviewService,
         ) {}
 
+  @UseGuards(AdminAuthGuard)
   @Get('/')
   async handleGetAllClass(): Promise<AdminClassResponseDto[]> {
     return await this.classService.getAllClass();
   }
         
-
   @Post('/create')
   @HttpCode(HttpStatus.CREATED)
   async handleCreateClass(
