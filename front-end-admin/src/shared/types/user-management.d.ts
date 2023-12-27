@@ -18,3 +18,14 @@ type UpdateStudentReq = {
   userId: number;
   studentId: string
 }
+
+type StudentIdUser = {
+  email: string,
+  studentId: string,
+  reasonFail: string;
+}
+
+type UpdateStudentIdCsvResp = {
+  users: StudentIdUser[],
+  canRead: boolean,
+}
