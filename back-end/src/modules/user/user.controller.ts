@@ -1,11 +1,15 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
   HttpCode,
   HttpStatus,
   Patch,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
+  Post
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { AuthGuard } from 'src/shared/guards/AuthGuard';
@@ -17,6 +21,9 @@ import { UnlockUserReqDto } from './dto/request/UnlockUserReq';
 import { LockUserReqDto } from './dto/request/LockUserReq';
 import { UserUpdateDTO } from './dto/request/UserReq';
 import { AdminAuthGuard } from 'src/shared/guards/AdminAuthGuard';
+import { UpdateStudentReqDto } from './dto/request/UpdateStudentReq';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileHandler } from 'src/shared/utils/Filehandler';
 
 @Controller('/users')
 export class UserController {
@@ -71,5 +78,23 @@ export class UserController {
     const { userId } = reqData;
     await this.userService.unlockUser(userId);
     return 'Unlock user successfully!';
+  }
+
+  @UseGuards(AdminAuthGuard)
+  @Patch('/actions/update-student')
+  @HttpCode(HttpStatus.OK)
+  async updateStudent(@Body() reqData: UpdateStudentReqDto): Promise<string>{
+    const {userId , studentId} = reqData;
+    await this.userService.updateStudent(userId, studentId);
+    return "Update student successfully!"
+  }
+
+  @UseGuards(AdminAuthGuard)
+  @Post('/actions/update-student-id-csv')
+  @UseInterceptors(FileInterceptor('file'))
+  @HttpCode(HttpStatus.OK)
+  async mapStudentIdByFileCsv(@UploadedFile() file: Express.Multer.File,):Promise<MapStudentIdByFileCsvResp> {
+    return await this.userService.mapStudentIdByFileCsv(file);
+   
   }
 }

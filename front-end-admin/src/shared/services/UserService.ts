@@ -9,6 +9,10 @@ const UserService = {
     axiosClient.patch<string>("/users/actions/unlock", data),
   banOrUnbanUser: (data: BanOrUnbanUserReq) =>
     axiosClient.patch<string>("/users/actions/ban-unban", data),
+  updateStudent: (data: UpdateStudentReq) =>
+    axiosClient.patch<string>("/users/actions/update-student", data),
+  uploadStudentIdCsv: (data: FormData) =>
+    axiosClient.post<UpdateStudentIdCsvResp>("/users/actions/update-student-id-csv", data),
 };
 
 export default UserService;

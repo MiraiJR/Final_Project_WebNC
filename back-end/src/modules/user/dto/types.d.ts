@@ -13,3 +13,14 @@ type LockedUserResp = {
   lockedAt: Date;
   duration: number;
 };
+
+type StudentIdUser = {
+  email: string;
+  studentId:string;
+  reasonFail: string;
+}
+
+type MapStudentIdByFileCsvResp = {
+  users: StudentIdUser[];
+  canRead: boolean;
+}

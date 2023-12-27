@@ -103,4 +103,33 @@ export const FileHandler = {
         );
     });
   },
+  readFileCsvForStudentId: async (file: Express.Multer.File): Promise<StudentIdUser[]> => {
+    const readableStream = Readable.from([file.buffer.toString()]);
+    return new Promise((resolve, reject) => {
+      const results: StudentIdUser[] = [];
+
+      readableStream
+        .pipe(
+          csvParser({
+            mapHeaders: ({ header }) => header.trim().replace(/'/g, ''),
+          }),
+        )
+        .on('data', (data) => {
+          if (data['Email'] === '' || data['Email'] === undefined) {
+            console.log(data['Email']);
+            return;
+          }
+          let studentIdUser: StudentIdUser = {
+            email: data['Email'],
+            studentId: data['StudentId'],
+            reasonFail: "",
+          }
+          results.push(studentIdUser);
+        })
+        .on('end', () => resolve(results))
+        .on('error', () =>
+          reject(new InternalServerErrorException('Internal server error')),
+        );
+    });
+  }
 };
