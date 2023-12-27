@@ -4,12 +4,14 @@ import {
     JoinColumn,
     JoinTable,
     ManyToOne,
+    OneToMany,
     PrimaryColumn,
     PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../user/user.entity';
 import { GradeStructure } from '../grade-structure/grade-structure.entity';
 import { Class } from '../class/class.entity';
+import { GradeReviewComment } from '../grade-review-comment/grade-review-comment.entity';
 
 @Entity('grade-reviews')
 export class GradeReview {
@@ -20,7 +22,7 @@ export class GradeReview {
     @JoinColumn({name: 'classIdCode'})
     class: Class;
 
-    @ManyToOne(() => GradeStructure, { lazy: true, nullable: false })
+    @ManyToOne(() => GradeStructure, { eager: true, nullable: false })
     @JoinColumn({name: 'structureId'})
     structure: GradeStructure;
 
@@ -48,4 +50,10 @@ export class GradeReview {
 
     @Column({ nullable: true })
     explain: string;
+
+    @OneToMany(() => GradeReviewComment,comment => comment.review,{lazy: true})
+     comments: GradeReviewComment[];
+    
+     @Column({ default: false })
+    isFinalized: boolean;
 }

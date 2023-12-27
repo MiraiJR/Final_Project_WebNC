@@ -6,8 +6,10 @@ import { useClassDetail } from "../ClassDetail";
 import InviteCodeAndLinkBox from "./InviteCodeAndLinkBox";
 import { UserRole } from "@/shared/types/UserRole";
 import GradeStudent from "./GradeStudent";
+import { Outlet, useOutlet, useOutletContext } from "react-router-dom";
 
 export default function ClassFeed() {
+  const outlet = useOutlet();
   const classDetail = useClassDetail();
   const { role } = classDetail;
 
@@ -26,7 +28,7 @@ export default function ClassFeed() {
             <p className="text-base font-bold uppercase">{classDetail.title}</p>
           </div>
         </Box>
-        {role === UserRole.GV && (
+        {(role === UserRole.GV || role ===UserRole.AD)&& (
           <div className="flex flex-row">
             <Box
               width="40%"
@@ -55,16 +57,18 @@ export default function ClassFeed() {
 
       <div className="col-span-3">
         <div className="w-full">
+          
           <InviteCodeAndLinkBox
             classId={classDetail.idCode}
           ></InviteCodeAndLinkBox>
         </div>
       </div>
-      {role === UserRole.HS && (
-        <div className="col-span-9">
+      <div className="col-span-9">
+        {outlet===null && role === UserRole.HS && (
           <GradeStudent />
-        </div>
-      )}
+        )}
+        <Outlet context={useOutletContext()}></Outlet>
+      </div>
     </div>
   );
 }

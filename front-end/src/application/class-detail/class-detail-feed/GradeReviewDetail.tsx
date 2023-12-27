@@ -7,62 +7,60 @@ import {
   Button,
   Avatar,
 } from "@mui/material";
-import avatar from "../../../shared/assets/student-minhhoa.png";
 import { useEffect, useState } from "react";
 import UpdateGradeDialog from "./UpdateGradeDialog";
-import { GradeReviewResp } from "@/shared/types/Resp/ClassResp";
-interface Comment {
-  avatar: string;
-  userName: string;
-  content: string;
-  createAt: string;
-}
-interface Props {
-  info: GradeReviewResp;
-}
-const GradeReviewDetail = ({ info }: Props) => {
+import { GradeReviewComment, GradeReviewResp } from "@/shared/types/Resp/ClassResp";
+import { toast } from "react-toastify";
+import { GradeReviewService } from "@/shared/services/GradeReviewService";
+import { useLoaderData } from "react-router-dom";
+import Box from "@mui/material/Box";
+import { MAIN_COLOR } from "@/shared/utils/constant";
+import { SocketCommentService } from "@/shared/services/SocketCommentService";
+import { Helper } from "@/shared/utils/heper";
+import { useClassDetail } from "../ClassDetail";
+import { UserRole } from "@/shared/types/UserRole";
+import { useUser } from "@/application/root/Root";
+
+const GradeReviewDetail = () => {
+  const info = useLoaderData() as GradeReviewResp;
+  console.log(info.comment)
+  const classDetail = useClassDetail();
+  const user = useUser();
   const [userComment, setUserComment] = useState("");
-  const [comments, setComments] = useState<Comment[] | undefined>();
+  const [comments, setComments] = useState<GradeReviewComment[] | undefined>(info.comment);
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
-    const data = [
-      {
-        avatar: avatar,
-        userName: "Nguyen Phuoc Hai",
-        content: "abc",
-        createAt: "2023-12-08T17:42:23.473Z",
-      },
-      {
-        avatar: avatar,
-        userName: "Truong Van Hao",
-        content: "abc",
-        createAt: "2023-12-08T17:42:23.473Z",
-      },
-      {
-        avatar: avatar,
-        userName: "Vo Minh Hieu",
-        content: "abc",
-        createAt: "2023-12-08T17:42:23.473Z",
-      },
-    ];
-    // const data = undefined;
-    setComments(data);
-  }, []);
-  const handleClickButton = () => {
-    const data: Comment = {
-      avatar: avatar,
-      userName: "user name",
-      content: userComment,
-      createAt: new Date().toISOString(),
+    SocketCommentService.connect();
+    SocketCommentService.joinRoom(info.id);
+    SocketCommentService.listenForNewComment((newComment)=>{
+      setComments((prevComments) => (prevComments ? [...prevComments, newComment] : [newComment]));
+    })
+    return () => {
+      SocketCommentService.disconnect();
     };
-    if (comments === undefined) {
-      setComments([data]);
-      return;
+  }, [info.id]);
+
+  const handleClickButton = async () => {
+    if(userComment.length ==0){
+      toast.error("Comment can not empty")
     }
-    setComments([...comments!, data]);
+  
+    const commentReq : CommentGradeReviewReq={
+      content: userComment.trim(),
+    }
+    try{
+      await GradeReviewService.postGradeReviewComment(classDetail.idCode,info.id,commentReq);
+      setUserComment('');
+      toast.success("comment success");
+    }catch(e:any){
+      toast.error(e.message);
+    }
+    
+    
   };
   return (
     <>
+      <Box className = {`border-2 rounded-md border-[${MAIN_COLOR}] p-4`}>
       <p className=" text-base m-2 font-bold">Grade Review Detail</p>
       <Divider />
       <List>
@@ -134,12 +132,14 @@ const GradeReviewDetail = ({ info }: Props) => {
           <>
             {comments.map((comment) => (
               <div
-                key={`${comment.userName}-${comment.content}-${comment.createAt}`}
+                key={`${comment.author.fullname}-${comment.content}-${comment.createdAt}`}
                 className="flex flex-row mb-2"
               >
-                <Avatar src={comment.avatar} className="mr-2 mt-2"></Avatar>
+                <Avatar sx={{
+                  bgcolor: comment.author.studentId !== info.studentId ? MAIN_COLOR : undefined,
+                }} className="mr-2 mt-2"> {Helper.getFullNameIcon(comment.author.fullname)}</Avatar>
                 <div className="flex flex-col">
-                  <p className="font-bold">{comment.userName}</p>
+                  <p className="font-bold">{comment.author.fullname}</p>
                   <p>{comment.content}</p>
                 </div>
               </div>
@@ -148,12 +148,15 @@ const GradeReviewDetail = ({ info }: Props) => {
         )}
 
         <div className="flex flex-row">
-          <Avatar src={avatar} className="mr-2 self-center"></Avatar>
+          <Avatar sx={{
+              bgcolor: classDetail.role !== UserRole.HS ? MAIN_COLOR : undefined,
+            }} className="mr-2 mt-2"> {Helper.getFullNameIcon(user.fullname)}</Avatar>
           <TextField
             multiline
             placeholder="Add comment..."
             className="flex-1"
             onChange={(e) => setUserComment(e.target.value)}
+            value={userComment}
           ></TextField>
           <Button>
             <svg
@@ -180,7 +183,20 @@ const GradeReviewDetail = ({ info }: Props) => {
         onClose={() => setIsOpen(false)}
         info={info}
       />
+      </Box>
     </>
   );
 };
 export default GradeReviewDetail;
+
+export async function  gradeReviewDetailLoader({params}:any) : Promise<GradeReviewResp> {
+  try{
+    const gradeReview = (await (GradeReviewService.getGradeReviewDetailService(params.classID,params.reviewId))).data
+
+    return gradeReview;
+  }catch(e:any){
+    console.log(e);
+    toast.error(e.message);
+    throw new Error(e);
+  }
+} 

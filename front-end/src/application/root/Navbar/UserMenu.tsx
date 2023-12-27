@@ -39,25 +39,28 @@ export default function UserMenu({ fullname }: UserMenuProps) {
     }
   };
 
-  return (
-    <>
-      <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
-        <Tooltip title="Account settings">
-          <IconButton
-            onClick={handleClick}
-            size="small"
-            sx={{ ml: 2 }}
-            aria-controls={open ? "account-menu" : undefined}
-            aria-haspopup="true"
-            aria-expanded={open ? "true" : undefined}
-          >
-            <Avatar sx={{ width: 32, height: 32 }}>
-              {Helper.getFullNameIcon(fullname)}
-            </Avatar>
-          </IconButton>
-        </Tooltip>
-      </Box>
-      <Menu
+    const handleProfile = ()=>{
+      navigate('/profile/update');
+    }
+
+    return(
+        <>
+        <Box sx={{ display: "flex", alignItems: "center", textAlign: "center" }}>
+            <Tooltip title="Account settings">
+            <IconButton
+                onClick={handleClick}
+                size="small"
+                sx={{ ml: 2 }}
+                aria-controls={open ? "account-menu" : undefined}
+                aria-haspopup="true"
+                aria-expanded={open ? "true" : undefined}
+            >
+                <Avatar sx={{ width: 32, height: 32 }}>{Helper.getFullNameIcon(fullname)}</Avatar>
+            </IconButton>
+            </Tooltip>
+        </Box>
+        <Menu
+
         anchorEl={anchorEl}
         id="account-menu"
         open={open}
@@ -93,7 +96,7 @@ export default function UserMenu({ fullname }: UserMenuProps) {
         transformOrigin={{ horizontal: "right", vertical: "top" }}
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={handleProfile}>
           <Avatar /> Profile
         </MenuItem>
         <Divider />

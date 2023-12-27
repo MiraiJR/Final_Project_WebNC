@@ -9,9 +9,10 @@ import NotificationList from "./NotificationList";
 import { MAIN_COLOR } from "@/shared/utils/constant";
 import { Link } from "react-router-dom";
 
-interface NavbarProps {
-  onToggleMenuClick: Function;
-  userData: UserRespData;
+
+interface NavbarProps{
+  onToggleMenuClick : Function,
+  userData : UserRespData,
 }
 
 export default function Navbar({ onToggleMenuClick, userData }: NavbarProps) {

@@ -8,14 +8,14 @@ import {
   Button,
 } from "@mui/material";
 import { useEffect, useState } from "react";
-import GradeReviewDetail from "./GradeReviewDetail";
 import { useClassDetail } from "../ClassDetail";
 import ClassService from "@/shared/services/ClassService";
 import { toast } from "react-toastify";
 import { GradeReviewResp } from "@/shared/types/Resp/ClassResp";
+import { useNavigate } from "react-router-dom";
 
 const GradeReview = () => {
-  const [infoDetail, setInfoDetail] = useState<GradeReviewResp>();
+  const navigate = useNavigate();
   const [reviews, setReview] = useState<GradeReviewResp[]>([]);
   const classDetail = useClassDetail();
   useEffect(() => {
@@ -33,9 +33,6 @@ const GradeReview = () => {
   }, []);
   return (
     <>
-      {infoDetail ? (
-        <GradeReviewDetail info={infoDetail} />
-      ) : (
         <>
           <p className=" text-base m-2 font-bold">Grade Review</p>
           {reviews.length === 0 ? (
@@ -99,7 +96,7 @@ const GradeReview = () => {
                         <Button
                           variant="contained"
                           onClick={() => {
-                            setInfoDetail(review);
+                            navigate(`/class/${classDetail.idCode}/feed/review/${review.id}`)
                           }}
                         >
                           <svg
@@ -127,7 +124,6 @@ const GradeReview = () => {
             </TableContainer>
           )}
         </>
-      )}
     </>
   );
 };
