@@ -181,6 +181,7 @@ export default function ListUsersTable() {
 
     try {
       const { data } = await UserService.uploadStudentIdCsv(formData);
+      await queryClient.invalidateQueries(`getUsers`);
       if (data.canRead) {
         if (data.users.length > 0) {
           console.log(data.users);
@@ -190,7 +191,11 @@ export default function ListUsersTable() {
         } else {
           toast.success("File is uploaded successfully");
         }
-        await queryClient.invalidateQueries(`getUsers`);
+        // because the table not update so I have reload the whole page
+        setTimeout(
+          () => window.location.reload(),
+          1000 + 2000 * data.users.length
+        );
       } else {
         toast.error("Please provide a valid email and student id in csv file");
       }
@@ -198,7 +203,9 @@ export default function ListUsersTable() {
       toast.error(error.message);
     }
   };
-
+  if (rows) {
+    console.log(rows[0].studentId);
+  }
   return (
     <>
       <div className="flex flex-col ">
