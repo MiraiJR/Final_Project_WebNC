@@ -44,6 +44,13 @@ type GradeStructureResp = {
     assignments: GradeAssignmentResp[];
 }
 
+type GradeReviewComment = {
+  content: string;
+  createdAt: Date;
+  author: UserRespData;
+  reviewId: number;
+}
+
   type GradeReviewResp = {
     id: number;
     structureId: number;
@@ -53,4 +60,6 @@ type GradeStructureResp = {
     currPercentScore: number;
     expectPercentScore: number;
     explain: string;
+    comment: GradeReviewComment[];
+    isFinalized: boolean;
   }

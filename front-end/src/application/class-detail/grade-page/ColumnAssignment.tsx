@@ -1,6 +1,6 @@
 import { queryClient } from "@/shared/libs/react-query";
 import { GradeService } from "@/shared/services/GradeService";
-import { GradeAssignmentResp } from "@/shared/types/Resp/ClassResp";
+import { GradeAssignmentResp, GradeReviewResp } from "@/shared/types/Resp/ClassResp";
 import { Button, Menu, MenuItem } from "@mui/material";
 import {
   ArrowDownFromLine,
@@ -14,7 +14,12 @@ import { toast } from "react-toastify";
 import { VisuallyHiddenInput } from "./configs";
 import { useRef, useState } from "react";
 import { FileHandler } from "@/shared/utils/file-handler";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { UserRole } from "@/shared/types/UserRole";
+import { CustomMenuItem } from "./type";
+import { useClassDetail } from "../ClassDetail";
+import CreateReviewFormDialog from "../class-detail-feed/CreateReviewForm";
+import { GradeReviewService } from "@/shared/services/GradeReviewService";
 
 const COLUMNS_TEMPLATE_GRADE_ASSIGNMENT = ["StudentId", "Score"];
 const FILENAME_GRADE_TEMPLATE_ASSIGNMENT = "grade_assignment_template.csv";
@@ -40,6 +45,7 @@ const menuItems: CustomMenuItem[] = [
         .catch((error: ResponseError) => toast.error(error.message));
     },
     file: false,
+    role: [UserRole.AD,UserRole.GV],
   },
   {
     label: "Draft",
@@ -57,12 +63,14 @@ const menuItems: CustomMenuItem[] = [
         .catch((error: ResponseError) => toast.error(error.message));
     },
     file: false,
+    role: [UserRole.AD,UserRole.GV],
   },
   {
     label: "Upload grade",
     icon: FolderUp,
     handler: () => {},
     file: true,
+    role: [UserRole.AD,UserRole.GV],
   },
   {
     label: "Template",
@@ -79,15 +87,42 @@ const menuItems: CustomMenuItem[] = [
       document.body.removeChild(link);
     },
     file: false,
+    role: [UserRole.AD,UserRole.GV],
   },
+  {
+    label: "Create Review",
+    icon: FolderUp,
+    handler: ()=>{},
+    file: false,
+    role: [UserRole.HS],
+  },
+  {
+    label: "View Review",
+    icon: FolderUp,
+    handler: (classId: string, gradeStructureId: number) :Promise<GradeReviewResp> => {
+      return GradeReviewService.getGradeReviewByStructureId(classId,gradeStructureId
+      )
+        .then((response) => {
+          const { data } = response;
+          return data;
+        })
+        .catch((error: ResponseError) => toast.error(error.message));
+    },
+    file: false,
+    role: [UserRole.HS],
+  },
+
 ];
 
 const ColumnAssignment = ({ gradeStructure }: itemProps) => {
+  const navigate = useNavigate();
+  const classDetail = useClassDetail();
   const { classID: classId } = useParams<string>();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const open = Boolean(anchorEl);
+  const [createReviewOpen,setCreateReviewOpen] = useState<boolean>(false);
   const handleShowMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -143,6 +178,10 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
     setSelectedFile(null);
   };
 
+  const handleCreateReviewFormClose = ()=>{
+    setCreateReviewOpen(false);
+  }
+
   return (
     <th className="text-left p-4 border-l-2" key={gradeStructure.id}>
       <div className="flex flex-row items-center justify-between">
@@ -160,11 +199,20 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
             open={open}
             onClose={handleClose}
           >
-            {menuItems.map((menuItem, _index) => (
+            {menuItems.filter(menuItem => menuItem.role.includes(classDetail.role)).map((menuItem, _index) => (
               <MenuItem
                 key={_index}
-                onClick={() => {
-                  if (!menuItem.file) {
+                onClick={async () => {
+                  if(menuItem.label == "Create Review"){
+                    setCreateReviewOpen(true); 
+                  }else if(menuItem.label == "View Review"){
+                    const data = await menuItem.handler(classId,gradeStructure.id);
+                    console.log(data);
+                    if(data){
+                      navigate(`/class/${classId}/feed/review/${data.id}`)
+                    }
+                  }
+                  else if (!menuItem.file) {
                     menuItem.handler(gradeStructure.id);
                   }
                 }}
@@ -205,6 +253,7 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
           </Menu>
         </div>
       </div>
+      <CreateReviewFormDialog onClose = {handleCreateReviewFormClose} open={createReviewOpen} gradeAssignment={gradeStructure}></CreateReviewFormDialog>
     </th>
   );
 };

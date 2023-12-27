@@ -14,6 +14,7 @@ const AuthService = {
     axiosClient.post<AuthToken | CodeResp>(`/auth/login/social`, data),
   registerWithSocialAcount: (data: RegisterWithSocialAcount) =>
     axiosClient.post<AuthToken>(`/auth/register-social`, data),
+  logout: () => axiosClient.post<string>(`/auth/logout`),
 };
 
 export default AuthService;

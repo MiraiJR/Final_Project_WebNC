@@ -19,6 +19,7 @@ import { UserRespDTO } from './dto/response/UserResp';
 import { BanOrUnbanUserReqDto } from './dto/request/BanOrUnbanUserReq';
 import { UnlockUserReqDto } from './dto/request/UnlockUserReq';
 import { LockUserReqDto } from './dto/request/LockUserReq';
+import { UserUpdateDTO } from './dto/request/UserReq';
 import { AdminAuthGuard } from 'src/shared/guards/AdminAuthGuard';
 import { UpdateStudentReqDto } from './dto/request/UpdateStudentReq';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -33,6 +34,13 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   async handleGetMe(@UserId() userID: number): Promise<UserRespDTO> {
     return this.userService.getMe(userID);
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('/update')
+  @HttpCode(HttpStatus.OK)
+  async handleUpdateProfile(@UserId() userID: number, @Body() data: UserUpdateDTO): Promise<UserRespDTO>{
+    return this.userService.updateUserProfile(userID,data);
   }
 
   @UseGuards(AdminAuthGuard)

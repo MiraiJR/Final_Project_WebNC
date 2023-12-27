@@ -7,7 +7,6 @@ import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import RowScore from "./RowScore";
 import ColumnAssignment from "./ColumnAssignment";
-import { queryClient } from "@/shared/libs/react-query";
 
 const TableGradeCustom = () => {
   const { classID } = useParams();
@@ -27,10 +26,6 @@ const TableGradeCustom = () => {
       enabled: !!classID,
     }
   );
-
-  const queryCache = queryClient.getQueryCache();
-  const queryKeys = queryCache.getAll().map((cache) => cache.queryKey);
-  console.log(queryKeys);
 
   const calculateAverageGrade = (
     gradeStudent: GradeStudent,

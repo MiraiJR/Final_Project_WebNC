@@ -4,9 +4,10 @@ import { IUser } from './user.interface';
 import { UserRespDTO } from './dto/response/UserResp';
 import { User } from './user.entity';
 import { SocialType } from 'src/shared/types/EnumSocialType';
-import { LockedUserRepository } from '../locked-user/locked-user.repository';
 import { LockedUserService } from '../locked-user/locked-user.service';
 import { FileHandler } from 'src/shared/utils/Filehandler';
+import { UserUpdateDTO } from './dto/request/UserReq';
+import { LockedUserEntity } from '../locked-user/locked-user.entity';
 
 @Injectable()
 export class UserService {
@@ -58,6 +59,36 @@ export class UserService {
 
   async updateUser(user: IUser): Promise<User> {
     return this.userRepository.save(user);
+  }
+
+  async updateUserProfile(userID: number,updateData : UserUpdateDTO) : Promise<UserRespDTO>{
+      const user = await this.findById(userID);
+      if(!userID){
+        throw new BadRequestException("UserID not valid");
+      }
+  
+      const isStudentIDExist = await this.userRepository.findOne({
+        where: {
+          studentId: updateData.studentId,
+        },
+      });
+      console.log(isStudentIDExist);
+      if(isStudentIDExist != null){
+        throw new BadRequestException("StudentID is used by another student. Please choose another StudentID.")
+      }
+  
+      user.fullname = updateData.fullname;
+      user.studentId = updateData.studentId;
+      this.userRepository.save(user);
+      
+      const userResp: UserRespDTO = {
+        email: user.email,
+        fullname: user.fullname,
+        studentId: user.studentId,
+      };
+  
+      return userResp
+   
   }
 
   async getMe(userID: number): Promise<UserRespDTO> {

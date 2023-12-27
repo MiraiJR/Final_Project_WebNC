@@ -63,5 +63,13 @@ export class GradeStructureService {
     } catch (error) {
         throw new Error(`Error fetching grade assignment: ${error.message}`);    
     }
-}
+  }
+
+  async findGradeAssignmentById(id: number): Promise<GradeStructure>{
+    return await this.gradeStructureRepository.findOne({
+      where:{
+        id,
+      }
+    })
+  }
 }

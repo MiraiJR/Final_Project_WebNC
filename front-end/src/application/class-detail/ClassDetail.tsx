@@ -15,6 +15,7 @@ import { ClassDetailResp } from "@/shared/types/Resp/ClassResp";
 import { toast } from "react-toastify";
 import RoleTokenStorage from "@/shared/storages/RoleTokenStorage";
 import { UserRole } from "@/shared/types/UserRole";
+import { useUser } from "../root/Root";
 
 enum TagValue {
   Feed = "feed",
@@ -30,6 +31,11 @@ type ClassDetail = {
   role: UserRole;
 };
 
+type ClassDetailContext = {
+  classDetail: ClassDetail;
+  userData: UserRespData; 
+}
+
 // Hàm kiểm tra xem chuỗi có trong enum hay không
 function isStringInEnum(value: string): value is TagValue {
   return Object.values(TagValue).includes(value as TagValue);
@@ -37,6 +43,7 @@ function isStringInEnum(value: string): value is TagValue {
 
 export default function ClassDetail() {
   const classDetail: ClassDetail = useLoaderData() as ClassDetail;
+  const userData= useUser();
   let { classID } = useParams();
   let { pathname } = useLocation();
   const pathnameSplit = pathname.split("/");
@@ -69,7 +76,7 @@ export default function ClassDetail() {
           component={Link}
           to={link + `/${TagValue.List}`}
         />
-        {role === UserRole.GV && (
+        {(role === UserRole.GV || role===UserRole.AD) && (
           <Tab
             value={TagValue.Grade}
             label="Grade"
@@ -79,7 +86,7 @@ export default function ClassDetail() {
         )}
       </Tabs>
       <Box margin="20px" display="flex" justifyContent="center">
-        <Outlet context={classDetail}></Outlet>
+        <Outlet context={{classDetail,userData}}></Outlet> 
       </Box>
     </Box>
   );
@@ -101,5 +108,5 @@ export async function classDetailLoader({ params }: any): Promise<ClassDetail> {
 }
 
 export function useClassDetail(): ClassDetail {
-  return useOutletContext<ClassDetail>();
+  return useOutletContext<ClassDetailContext>().classDetail ;
 }

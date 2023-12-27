@@ -9,6 +9,7 @@ import { Alert } from "@mui/material";
 import ClassService from "@/shared/services/ClassService";
 import { toast } from "react-toastify";
 import { GradeReviewResp } from "@/shared/types/Resp/ClassResp";
+import { useClassDetail } from "../ClassDetail";
 
 interface UpdateGradeDialogProps {
   open: boolean;
@@ -23,6 +24,7 @@ export default function CreateClassFormDialog({
 }: UpdateGradeDialogProps) {
   const [score, setScore] = useState(-1);
   const [isValid, setIsValid] = useState<boolean>(true);
+  const classDetail = useClassDetail();
   const handleUpdateButton = async () => {
     // send update grade to server annd update to db
     try {
@@ -33,7 +35,8 @@ export default function CreateClassFormDialog({
       };
       await ClassService.updateScore(data);
       toast.success("Update grade successfully");
-      window.location.reload();
+
+      window.location.assign(`/class/${classDetail.idCode}`);
     } catch (error: any) {
       toast.error(error.message);
     }

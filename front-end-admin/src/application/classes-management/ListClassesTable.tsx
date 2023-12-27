@@ -126,7 +126,6 @@ export default function ListClassesTable({ searchText }: Props) {
     classData: ClassRespData,
     isActive: boolean
   ) => {
-    console.log(isActive);
     const { data } = await ClassService.updateClassState(
       classData.idCode,
       isActive

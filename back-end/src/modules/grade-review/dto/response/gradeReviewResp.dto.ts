@@ -1,3 +1,4 @@
+import { GradeReviewCommentResponse } from "src/modules/grade-review-comment/dto/res/GradeReviewCommentResp.dto";
 
 export class GradeReviewRespDTO {
     id: number;
@@ -8,5 +9,7 @@ export class GradeReviewRespDTO {
     currPercentScore: number;
     expectPercentScore: number;
     explain: string;
+    comment: GradeReviewCommentResponse[];
+    isFinalized: boolean;
   }
   
