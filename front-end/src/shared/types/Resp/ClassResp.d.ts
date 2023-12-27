@@ -61,4 +61,5 @@ type GradeReviewComment = {
     expectPercentScore: number;
     explain: string;
     comment: GradeReviewComment[];
+    isFinalized: boolean;
   }

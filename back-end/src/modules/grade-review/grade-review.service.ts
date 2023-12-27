@@ -13,6 +13,7 @@ import { ClassUserService } from "../classUser/class-user.service";
 import { UserRole } from "src/shared/types/EnumUserRole";
 import { GradeReviewComment } from "../grade-review-comment/grade-review-comment.entity";
 import { GradeReviewCommentResponse } from "../grade-review-comment/dto/res/GradeReviewCommentResp.dto";
+import { GradeReviewCommentService } from "../grade-review-comment/grade-review-comment.service";
 @Injectable()
 export class GradeReviewService {
     constructor (
@@ -22,7 +23,8 @@ export class GradeReviewService {
         private readonly gradeService: GradeService,
         private readonly userServide: UserService,
         private readonly configService: ConfigService,
-        private readonly classUserService: ClassUserService
+        private readonly classUserService: ClassUserService,
+      
     ) {}
     
     async findGrandReviewById(reviewId: number){
@@ -59,7 +61,8 @@ export class GradeReviewService {
                 currPercentScore: grade.score,
                 expectPercentScore: review.expectPercentScore,
                 explain: review.explain,
-                comment: comments?.map((comment: GradeReviewComment)=> this.mapGradeReviewCommentToGradeReviewCommentResponse(comment)) || []
+                comment: comments?.map((comment: GradeReviewComment)=> this.mapGradeReviewCommentToGradeReviewCommentResponse(comment)) || [],
+                isFinalized: review.isFinalized
             } 
 
             return response;
@@ -114,7 +117,8 @@ export class GradeReviewService {
             currPercentScore: grade.score,
             expectPercentScore: review.expectPercentScore,
             explain: review.explain,
-            comment: comments?.map((comment: GradeReviewComment)=> this.mapGradeReviewCommentToGradeReviewCommentResponse(comment)) || []
+            comment: comments?.map((comment: GradeReviewComment)=> this.mapGradeReviewCommentToGradeReviewCommentResponse(comment)) || [],
+            isFinalized: review.isFinalized
         } 
 
         return response
@@ -128,13 +132,18 @@ export class GradeReviewService {
                 return [];
             }
             const rs = Promise.all(gradeReviews.map( async  (gradeReview )=> {
-                const { id,structureId, studentId, expectPercentScore, explain } = gradeReview;
+                const { id,structureId, studentId, expectPercentScore, explain, isFinalized } = gradeReview;
                 const assignment = await this.gradeStructureService.getGradeAssignment(classIdCode, structureId);
                 const {nameAssignment} = assignment;
                 const gradeStudent = await this.gradeService.getGradeOfAssignment(studentId, structureId);
                 //get name from table student
                 const studentName = await this.studentService.getStudentName(studentId);
-                const rs: GradeReviewRespDTO = { id,structureId, studentId,   studentName, nameAssignment, currPercentScore: gradeStudent.score, expectPercentScore, explain,comment:[] };
+                const comments = await gradeReview.comments;
+                 //const commentsResp: GradeReviewCommentResponse[] = comments.map((comment: GradeReviewComment)=> this.mapGradeReviewCommentToGradeReviewCommentResponse(comment))
+                
+                const rs: GradeReviewRespDTO = { id,structureId, studentId,   studentName, nameAssignment, currPercentScore: gradeStudent.score, expectPercentScore, explain,
+                    comment: comments?.map((comment: GradeReviewComment)=> this.mapGradeReviewCommentToGradeReviewCommentResponse(comment)) || [],
+                    isFinalized };
                 return rs;
             }));
             return rs; 
@@ -145,13 +154,13 @@ export class GradeReviewService {
         }   
     }
 
-    async updateScoreAndDeleteReview( 
+    async updateScoreAndChangeStateOfReview( 
         studentId: string,
         structureId: number,
         newScore: number,){
         try {
             await this.gradeService.updateScoreForStudentInGradeStructure(studentId, structureId, newScore);
-            await this.gradeReviewRepository.deleteByStructureIdAndStudentId(structureId, studentId);
+            await this.gradeReviewRepository.updateStateOfReviewByStructureIdAndStudentId(structureId, studentId);
         } catch (error) {
             // Log the error or handle it appropriately
             console.error(`Error update score: ${error.message}`);
@@ -169,7 +178,7 @@ export class GradeReviewService {
             throw new BadRequestException("This Score is not Finalized");
         }
 
-        const findGradeReview = this.findGradeReviewOfStudentByStructureId(user.studentId,structureId);
+        const findGradeReview = await this.findGradeReviewOfStudentByStructureId(user.studentId,structureId);
         if(findGradeReview){
             throw new BadRequestException("This assignment is reviewed already");
         }
@@ -195,6 +204,7 @@ export class GradeReviewService {
             expectPercentScore,
             explain,
             comment: [],
+            isFinalized: grade.isFinalized,
         } 
 
         return gradeReviewResponse;
