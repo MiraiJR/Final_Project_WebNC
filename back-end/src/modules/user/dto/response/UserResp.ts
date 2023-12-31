@@ -3,4 +3,5 @@ export class UserRespDTO {
   fullname: string;
   studentId: string;
   id?: number;
+  isSocialLogin?: boolean;
 }
