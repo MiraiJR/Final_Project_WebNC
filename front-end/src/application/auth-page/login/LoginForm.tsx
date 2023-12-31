@@ -49,10 +49,11 @@ const LoginForm = () => {
 
       JwtStorage.setToken(data);
       toast.success("Login successfully!");
+      setIsLogin(true);
       if (next) {
         navigate(next);
+        return;
       }
-      setIsLogin(true);
       navigate("/class");
     } catch (error: any) {
       toast.error(error.message);

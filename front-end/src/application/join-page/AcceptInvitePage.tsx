@@ -28,6 +28,7 @@ export default function AcceptInvitingDialog() {
   };
 
   const swithAccountHandle = () => {
+    
     JwtStorage.deleteToken();
     //logout
     navigate(

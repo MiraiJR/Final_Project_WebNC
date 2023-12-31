@@ -174,7 +174,7 @@ export class GradeService {
 
     //Create Notification
     const receiver = await this.userService.findByStudentId(studentId);
-    if(isFinalized == true){
+    if(isFinalized == true && receiver != null){
       this.notificationService.createNotification(userId,receiver.id,NotificationType.FinalizedGradeComposition,gradeStudentToUpdate.gradeStructure.class,gradeStudentToUpdate.gradeStructure,null);
     }
   }

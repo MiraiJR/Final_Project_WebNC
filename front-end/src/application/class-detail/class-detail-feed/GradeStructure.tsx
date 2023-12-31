@@ -75,7 +75,6 @@ const GradeStructure = () => {
 
   const handleDragEnd = (e: any) => {
     if (!e.destination) return;
-    if (e.destination.index === UIassignments.length - 1) return;
     let tempData = Array.from(UIassignments);
     let [source_data] = tempData.splice(e.source.index, 1);
     tempData.splice(e.destination.index, 0, source_data);

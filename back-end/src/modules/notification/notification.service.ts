@@ -14,6 +14,7 @@ import { GradeService } from '../grade/grade.service';
 import { GradeReview } from '../grade-review/grade-review.entity';
 import { ClassUserService } from '../classUser/class-user.service';
 import { NotificationGateWay } from './notification.gateway';
+import { UserRole } from 'src/shared/types/EnumUserRole';
 
 @Injectable()
 export class NotificationService {
@@ -48,8 +49,8 @@ export class NotificationService {
         notifycationType: savedNotification.notificationType,
         isRead: savedNotification.isRead,
         classId: savedNotification.class.idCode,
-        gradeStructure: savedNotification.grade.id,
-        reviewId: savedNotification.review.id,
+        gradeStructure: savedNotification.grade?.id,
+        reviewId: savedNotification.review?.id,
         createdAt: savedNotification.createdAt,
     };
     this.notificationGateway.handleNewNotification(notificationDto);
@@ -62,7 +63,13 @@ export class NotificationService {
     const grades = await this.gradeService.findGradesByStructureId(structureId);
     grades.forEach(async grade =>{
         const user = await this.userService.findByStudentId(grade.studentId);
-        await this.createNotification(senderId,user.id,NotificationType.FinalizedGradeComposition,grade.gradeStructure.class,grade.gradeStructure);
+       
+        const classroom = await grade.gradeStructure.class;
+        const role = await this.classUserService.findRole(classroom.idCode,user.id);
+        if(user && role==UserRole.HS){
+
+          await this.createNotification(senderId,user.id,NotificationType.FinalizedGradeComposition,classroom,grade.gradeStructure);
+        }  
     })
   }
 
@@ -163,8 +170,8 @@ export class NotificationService {
         notifycationType: updatedNotification.notificationType,
         isRead: updatedNotification.isRead,
         classId: updatedNotification.class.idCode,
-        gradeStructure: updatedNotification.grade.id,
-        reviewId: updatedNotification.review.id,
+        gradeStructure: updatedNotification.grade?.id,
+        reviewId: updatedNotification.review?.id,
         createdAt: updatedNotification.createdAt,
         
     };

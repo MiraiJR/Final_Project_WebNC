@@ -2,7 +2,7 @@ import { Button, Grid, TextField } from "@mui/material";
 import { useUser } from "../root/Root";
 import Box from "@mui/material/Box";
 import { useForm } from "react-hook-form";
-import { ActionFunction, redirect, useNavigate, useSubmit } from "react-router-dom";
+import { ActionFunction, useNavigate, useSubmit } from "react-router-dom";
 import { toast } from "react-toastify";
 import UserService from "@/shared/services/UserService";
 
@@ -27,6 +27,7 @@ export default function UpdateProfilePage(){
     })
 
     const onSubmit =  (data:Inputs) => {
+        console.log(user.fullname)
         const formData = new FormData();
         Object.entries(data).forEach(([key, value]) => {
             formData.append(key, value);
@@ -48,7 +49,8 @@ export default function UpdateProfilePage(){
                     label="Full Name"
                     variant="outlined"
                     margin="normal"
-                    name="name"
+                    name="fullname"
+                    type="text"
                     defaultValue={user.fullname}
                 />
                 <p className='ml-10 text-red-500'>{errors.fullname?.message} </p>
@@ -61,7 +63,7 @@ export default function UpdateProfilePage(){
                     name="studentId"
                     defaultValue={user.studentId}
                 />
-                <p className='ml-10 text-red-500'>{errors.fullname?.message} </p>
+                <p className='ml-10 text-red-500'>{errors.studentId?.message} </p>
                  <Grid container spacing={2} className="mt-4">
                     <Grid item xs={6}>
                         <Button
@@ -94,7 +96,8 @@ export const updateProfileAction : ActionFunction = async({request})=>{
     const data:UserProfileReq = Object.fromEntries(formData) as UserProfileReq;
     try{
         await UserService.updateProfile(data);
-        return redirect ('/class');
+        toast.success("Update success")
+        return null;
     }catch(e:any){
         toast.error(e.message);
         return null;

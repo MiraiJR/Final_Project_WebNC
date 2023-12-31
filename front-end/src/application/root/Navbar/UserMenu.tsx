@@ -22,6 +22,8 @@ interface UserMenuProps {
 }
 
 export default function UserMenu({ fullname }: UserMenuProps) {
+  const {setIsLogin} = useGlobalState();
+  const { logout } = useAuth0();
   const navigate = useNavigate();
   const { setIsLogin } = useGlobalState();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
