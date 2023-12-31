@@ -17,6 +17,7 @@ import { UserRole } from 'src/shared/types/EnumUserRole';
 import { ClassDetailResponseDto } from './dto/class/ClassDetailResponse.dto';
 import { MailService } from '../mail/mail.service';
 import { InviteToken } from 'src/shared/types/InviteToken';
+import { AdminClassResponseDto } from './dto/class/AdminClassResponse.dto';
 
 @Injectable()
 export class ClassService {
@@ -141,5 +142,33 @@ export class ClassService {
             throw new BadRequestException(e.message);
         }
         
+    }
+
+    async getAllClass(): Promise<AdminClassResponseDto[]> {
+        const classList = await this.classRepository.getAll();
+        classList.sort((a,b) => {
+            return +a.created_at - +b.created_at;
+        })
+        const rs: AdminClassResponseDto[] = classList.map((classItem) => {
+            const rs: AdminClassResponseDto = {
+                title: classItem.title,
+                creator: {
+                    id : classItem.creator.id,
+                    fullname : classItem.creator.fullname,
+                    email: classItem.creator.email,
+                },
+                create_at: classItem.created_at.toString(),
+                idCode: classItem.idCode,
+                description: classItem.description,
+                isActive: classItem.isActive,
+            }
+            return rs;
+        }); 
+        return rs;
+    }
+    async updateClassState(classIdCode: string, isActive: boolean){
+        await this.classRepository.updateClassState(classIdCode,isActive);
+
+        return "Update success";
     }
 }

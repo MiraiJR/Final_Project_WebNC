@@ -10,62 +10,87 @@ import {
 } from "@mui/material";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { useState, useEffect } from "react";
-interface TableData {
-  name: string;
-  grade: number;
-}
+import ClassService from "@/shared/services/ClassService";
+import { useClassDetail } from "../ClassDetail";
+import { toast } from "react-toastify";
 
 const GradeStructure = () => {
   const [isEdit, setIsEdit] = useState(false);
-  const [rows, setRows] = useState<TableData[] | undefined>([]);
+  const [isSave, setIsSave] = useState(false);
+  const [assignments, setAssignments] = useState<GradeAssignmentReq[]>();
+  const classDetail = useClassDetail();
   useEffect(() => {
-    // const data = [
-    //   { name: "Midterm", grade: 40 },
-    //   { name: "Final", grade: 60 },
-    //   {
-    //     name: "Total",
-    //     grade: 100,
-    //   },
-    // ];
-    const data = undefined;
-    setRows(data);
-  }, []);
-  let UIrows: TableData[] = [];
-  if (rows) {
-    UIrows = rows.map((row) => ({ ...row }));
-  }
-  const handleSaveButton = () => {
-    const temp = UIrows.map((row) => ({ ...row }));
-    const totalRow = temp.find((row) => row.name === "Total");
-    if (totalRow) {
-      totalRow.grade =
-        temp.reduce((acc, cur) => acc + cur.grade, 0) - totalRow.grade;
-    } else {
-      temp.push({
-        name: "Total",
-        grade: temp.reduce((acc, cur) => acc + cur.grade, 0),
-      });
+    try {
+      const fetchData = async () => {
+        const response = await ClassService.getGradeStructure(
+          classDetail.idCode
+        );
+        const data = response.data;
+        if (data) {
+          setAssignments(
+            data.assignments.sort((a, b) => a.position - b.position)
+          );
+        }
+      };
+
+      fetchData();
+    } catch (error: any) {
+      toast.error(error.message);
     }
-    setRows([...temp]);
+  }, [isSave]);
+  let UIassignments: GradeAssignmentReq[] = [];
+  if (assignments) {
+    UIassignments = assignments.map((assignment) => ({ ...assignment }));
+  }
+
+  const totalRow: GradeAssignmentReq = {
+    nameAssignment: "Total",
+    percentScore: UIassignments.reduce((acc, cur) => acc + cur.percentScore, 0),
+    position: UIassignments.length - 1,
+  };
+
+  const handleSaveButton = async () => {
+    const newAssignment: GradeAssignmentReq[] = UIassignments.map(
+      (assignment) => ({
+        ...assignment,
+      })
+    );
+    newAssignment.forEach((assignment, index) => {
+      assignment.position = index;
+    });
     // send new structure to backend
     // Todo:
-
+    const newGradeStructure: GradeStructureReq = {
+      assignments: newAssignment,
+    };
+    await ClassService.updateGradeStructure(
+      classDetail.idCode,
+      newGradeStructure
+    );
+    setIsSave(!isSave);
+    toast.success("Grade structure updated successfully");
     // set state to not edit
     setIsEdit(false);
   };
 
   const handleDragEnd = (e: any) => {
     if (!e.destination) return;
-    if (e.destination.index === UIrows.length - 1) return;
-    let tempData = Array.from(UIrows);
+    if (e.destination.index === UIassignments.length - 1) return;
+    let tempData = Array.from(UIassignments);
     let [source_data] = tempData.splice(e.source.index, 1);
     tempData.splice(e.destination.index, 0, source_data);
-    setRows(tempData);
+
+    // Update the position property of the assignments
+    tempData.forEach((assignment, index) => {
+      assignment.position = index;
+    });
+
+    setAssignments(tempData);
   };
   return (
     <>
       <p className=" text-base m-2 font-bold">Grade Structure</p>
-      {rows === undefined ? (
+      {assignments === undefined ? (
         <div className="flex flex-col justify-center items-center">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -105,23 +130,17 @@ const GradeStructure = () => {
                     ref={provider.innerRef}
                     {...provider.droppableProps}
                   >
-                    {rows &&
-                      UIrows.map((row, index) => (
+                    {assignments &&
+                      UIassignments.map((assignment, index) => (
                         <Draggable
-                          key={`${row.name}-${row.grade}`}
-                          draggableId={row.name}
+                          key={`${assignment.nameAssignment}-${assignment.percentScore}`}
+                          draggableId={assignment.nameAssignment}
                           index={index}
-                          isDragDisabled={
-                            isEdit
-                              ? row.name === "Total"
-                                ? true
-                                : false
-                              : true
-                          }
+                          isDragDisabled={isEdit ? false : true}
                         >
                           {(provider) => (
                             <TableRow
-                              key={`${row.name}-${row.grade}`}
+                              key={`${assignment.nameAssignment}-${assignment.percentScore}`}
                               sx={{
                                 "&:last-child td, &:last-child th": {
                                   border: 0,
@@ -136,23 +155,20 @@ const GradeStructure = () => {
                                 {...provider.dragHandleProps}
                               >
                                 <TextField
-                                  disabled={
-                                    isEdit
-                                      ? row.name === "Total"
-                                        ? true
-                                        : false
-                                      : true
-                                  }
-                                  id={`${row.name}-${row.grade}-name`}
+                                  disabled={isEdit ? false : true}
+                                  id={`${assignment.nameAssignment}-${assignment.percentScore}-name`}
                                   className={
-                                    row.name === "Total" ? "font-bold" : ""
+                                    assignment.nameAssignment === "Total"
+                                      ? "font-bold"
+                                      : ""
                                   }
                                   variant="standard"
-                                  defaultValue={row.name}
+                                  defaultValue={assignment.nameAssignment}
                                   onChange={(
                                     event: React.ChangeEvent<HTMLInputElement>
                                   ) => {
-                                    row.name = event.target.value;
+                                    assignment.nameAssignment =
+                                      event.target.value;
                                   }}
                                 />
                               </TableCell>
@@ -160,27 +176,29 @@ const GradeStructure = () => {
                                 <TextField
                                   disabled={
                                     isEdit
-                                      ? row.name === "Total"
+                                      ? assignment.nameAssignment === "Total"
                                         ? true
                                         : false
                                       : true
                                   }
-                                  id={`${row.name}-${row.grade}-grade`}
+                                  id={`${assignment.nameAssignment}-${assignment.percentScore}-grade`}
                                   className={
-                                    row.name === "Total"
+                                    assignment.nameAssignment === "Total"
                                       ? "font-bold text-right"
                                       : "text-end"
                                   }
                                   variant="standard"
-                                  defaultValue={row.grade}
+                                  defaultValue={assignment.percentScore}
                                   onChange={(
                                     event: React.ChangeEvent<HTMLInputElement>
                                   ) => {
-                                    row.grade = Number(event.target.value);
+                                    assignment.percentScore = Number(
+                                      event.target.value
+                                    );
                                   }}
                                 />
                               </TableCell>
-                              {row.name !== "Total" ? (
+                              {assignment.nameAssignment !== "Total" ? (
                                 isEdit ? (
                                   <TableCell align="right">
                                     <Button
@@ -189,17 +207,26 @@ const GradeStructure = () => {
                                       size="small"
                                       hidden={
                                         isEdit
-                                          ? row.name === "Total"
+                                          ? assignment.nameAssignment ===
+                                            "Total"
                                             ? true
                                             : false
                                           : true
                                       }
                                       onClick={() => {
-                                        const temp = UIrows.map((row) => ({
-                                          ...row,
-                                        }));
-                                        temp.splice(UIrows.indexOf(row), 1);
-                                        setRows(temp);
+                                        const temp = UIassignments.map(
+                                          (assignment) => ({
+                                            ...assignment,
+                                          })
+                                        );
+                                        temp.splice(
+                                          UIassignments.indexOf(assignment),
+                                          1
+                                        );
+                                        temp.forEach((assignment, index) => {
+                                          assignment.position = index;
+                                        });
+                                        setAssignments(temp);
                                       }}
                                     >
                                       <svg
@@ -228,6 +255,45 @@ const GradeStructure = () => {
                           )}
                         </Draggable>
                       ))}
+                    <Draggable
+                      key={`${totalRow.nameAssignment}-${totalRow.percentScore}`}
+                      draggableId={totalRow.nameAssignment}
+                      index={UIassignments.length}
+                      isDragDisabled={true}
+                    >
+                      {(provider) => (
+                        <TableRow
+                          key={`${totalRow.nameAssignment}-${totalRow.percentScore}`}
+                          sx={{
+                            "&:last-child td, &:last-child th": {
+                              border: 0,
+                            },
+                          }}
+                          {...provider.draggableProps}
+                          ref={provider.innerRef}
+                        >
+                          <TableCell component="th" scope="row">
+                            <TextField
+                              disabled={true}
+                              id={`${totalRow.nameAssignment}-${totalRow.percentScore}-name`}
+                              className="font-bold"
+                              variant="standard"
+                              defaultValue={totalRow.nameAssignment}
+                            />
+                          </TableCell>
+                          <TableCell align="right">
+                            <TextField
+                              disabled={true}
+                              id={`${totalRow.nameAssignment}-${totalRow.percentScore}-grade`}
+                              className="font-bold text-right"
+                              variant="standard"
+                              defaultValue={totalRow.percentScore}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </Draggable>
+
                     {provider.placeholder}
                   </TableBody>
                 )}
@@ -242,12 +308,18 @@ const GradeStructure = () => {
             variant="contained"
             className="w-fit"
             onClick={() => {
-              const temp = UIrows.map((row) => ({ ...row }));
+              const temp = [...UIassignments];
+
               temp.splice(temp.length - 1, 0, {
-                name: `Assignment ${temp.length}`,
-                grade: 0,
+                nameAssignment: `Assignment ${temp.length}`,
+                percentScore: 0,
+                position: 0,
               });
-              setRows(temp);
+              temp.forEach((assignment, index) => {
+                assignment.position = index;
+              });
+
+              setAssignments(temp);
             }}
           >
             <svg

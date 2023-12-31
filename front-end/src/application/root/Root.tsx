@@ -1,52 +1,56 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
-import Drawer from '@mui/material/Drawer';
-import Navbar from './Navbar/Navbar';
-import { DrawerHeader } from './StyledDrawerHeader';
-import Sidebar from './Sidebar/Sidebar';
-import { MiniDrawer } from './StyledMiniDrawer';
-import { DRAWERWIDTH } from '@/shared/utils/constant';
-import useCheckSmallScreen from '@/shared/hooks/useCheckSmallScreen';
-import { Outlet, redirect, useLoaderData, useOutletContext } from 'react-router-dom';
-import UserService from '@/shared/services/UserService';
-import { CodeResponse } from '@/shared/utils/codeResponse';
-import ClassService from '@/shared/services/ClassService';
-import { ClassRespData } from '@/shared/types/Resp/ClassResp';
+import * as React from "react";
+import Box from "@mui/material/Box";
+import CssBaseline from "@mui/material/CssBaseline";
+import Drawer from "@mui/material/Drawer";
+import Navbar from "./Navbar/Navbar";
+import { DrawerHeader } from "./StyledDrawerHeader";
+import Sidebar from "./Sidebar/Sidebar";
+import { MiniDrawer } from "./StyledMiniDrawer";
+import { DRAWERWIDTH } from "@/shared/utils/constant";
+import useCheckSmallScreen from "@/shared/hooks/useCheckSmallScreen";
+import {
+  Outlet,
+  redirect,
+  useLoaderData,
+  useOutletContext,
+} from "react-router-dom";
+import UserService from "@/shared/services/UserService";
+import { CodeResponse } from "@/shared/utils/codeResponse";
+import ClassService from "@/shared/services/ClassService";
+import { ClassRespData } from "@/shared/types/Resp/ClassResp";
+import { NotificationService } from "@/shared/services/NotificationService";
 
-interface LoaderData{
-  userData: UserRespData,
-  classList: ClassRespData[],
+interface LoaderData {
+  userData: UserRespData;
+  classList: ClassRespData[];
+  notifications: NotificationResp[];
 }
 
 type RootContextType = {
-  userData: UserRespData,
-  classList: ClassRespData[],
-}
+  userData: UserRespData;
+  classList: ClassRespData[];
+};
 
 const drawerWidth = DRAWERWIDTH;
 function Root() {
-  const {userData,classList} =  useLoaderData() as LoaderData;
+  const { userData, classList,notifications } = useLoaderData() as LoaderData;
   const [mobileOpen, setMobileOpen] = React.useState(true);
   const [sidebarExpand, setSidebarExpand] = React.useState(false);
   const isSmallScreen = useCheckSmallScreen();
 
   const handleDrawerToggle = () => {
-    if(isSmallScreen){
+    if (isSmallScreen) {
       setMobileOpen(!mobileOpen);
-    }else{
-      setSidebarExpand(!sidebarExpand)
+    } else {
+      setSidebarExpand(!sidebarExpand);
     }
   };
 
-
-
-
   return (
-    <Box sx={{ display: 'flex', overflowY: 'auto' }}>
+    <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <Navbar onToggleMenuClick={handleDrawerToggle} userData={userData}/>
- 
+      <Navbar onToggleMenuClick={handleDrawerToggle} userData={userData} notifications={notifications}/>
+
       <Drawer
         variant="temporary"
         open={mobileOpen}
@@ -55,32 +59,41 @@ function Root() {
           keepMounted: true, // Better open performance on mobile.
         }}
         sx={{
-          display: { xs: 'block', sm: 'none' },
-          '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth },
+          display: { xs: "block", sm: "none" },
+          "& .MuiDrawer-paper": { boxSizing: "border-box", width: drawerWidth },
         }}
       >
-        <Sidebar isExpand={true} expandToOpen={()=>setSidebarExpand(true)} classList={classList}></Sidebar>
+        <Sidebar
+          isExpand={true}
+          expandToOpen={() => setSidebarExpand(true)}
+          classList={classList}
+        ></Sidebar>
       </Drawer>
       <MiniDrawer
         variant="permanent"
         sx={{
-          display: { xs: 'none', sm: 'block' },
+          display: { xs: "none", sm: "block" },
         }}
         open={sidebarExpand}
       >
-        <Sidebar isExpand={sidebarExpand} expandToOpen={()=>setSidebarExpand(true)} classList={classList}></Sidebar>
+        <Sidebar
+          isExpand={sidebarExpand}
+          expandToOpen={() => setSidebarExpand(true)}
+          classList={classList}
+        ></Sidebar>
       </MiniDrawer>
 
-      
       <Box
         component="main"
-        sx={{ 
-          flexGrow: 1, p: 3,
-          
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          overflowY: "scroll",
+          maxHeight: "calc(100vh - 64px)",
         }}
       >
         <DrawerHeader></DrawerHeader>
-        <Outlet context={{userData,classList}}></Outlet>
+        <Outlet context={{ userData, classList }}></Outlet>
       </Box>
     </Box>
   );
@@ -88,23 +101,24 @@ function Root() {
 
 export default Root;
 
-export async function loader():Promise<LoaderData|Response> {
-  try{
+export async function loader(): Promise<LoaderData | Response> {
+  try {
     const userData = (await UserService.getMe()).data;
     const classList = (await ClassService.getClassList()).data;
-    return {userData,classList};
-  }catch(e: any){
-    if(e.message == CodeResponse.UNAUTHORIZED){
-      return redirect('/');
+    const notifications = (await NotificationService.getNotification()).data
+    return { userData, classList,notifications };
+  } catch (e: any) {
+    if (e.message == CodeResponse.UNAUTHORIZED) {
+      return redirect("/");
     }
     throw new Error(e);
   }
 }
 
-export function useUser(): UserRespData{
+export function useUser(): UserRespData {
   return useOutletContext<RootContextType>().userData;
 }
 
-export function useClassList(): ClassRespData[]{
+export function useClassList(): ClassRespData[] {
   return useOutletContext<RootContextType>().classList;
 }

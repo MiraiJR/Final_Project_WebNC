@@ -12,7 +12,7 @@ axiosClient.interceptors.request.use(
       JwtStorage.getToken()?.accessToken
     }`;
 
-    config.headers['roleToken'] = RoleTokenStorage.getToken();
+    config.headers["roleToken"] = RoleTokenStorage.getToken();
     return config;
   },
   (error) => {

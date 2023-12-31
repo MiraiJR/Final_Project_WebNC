@@ -5,12 +5,13 @@ import {
 import { Button, TextField } from "@mui/material";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import * as yup from "yup";
 import AuthService from "@/shared/services/AuthService";
 import JwtStorage from "@/shared/storages/JwtStorage";
 import { toast } from "react-toastify";
 import ListSocialButton from "../auth-component/ListSocialButton";
+import { useGlobalState } from "@/shared/storages/GlobalStorage";
 
 const schemaValidation = yup
   .object({
@@ -30,10 +31,11 @@ const schemaValidation = yup
   .required();
 
 const LoginForm = () => {
+  const { setIsLogin } = useGlobalState();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const next:string = searchParams.get("next") as string
-  console.log(next);
+  const next: string = searchParams.get("next") as string;
+
   const {
     register,
     handleSubmit,
@@ -47,10 +49,10 @@ const LoginForm = () => {
 
       JwtStorage.setToken(data);
       toast.success("Login successfully!");
-      if(next){
-        
+      if (next) {
         navigate(next);
       }
+      setIsLogin(true);
       navigate("/class");
     } catch (error: any) {
       toast.error(error.message);

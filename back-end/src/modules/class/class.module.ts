@@ -5,20 +5,30 @@ import { ClassService } from './class.service';
 import { ClassController } from './class.controller';
 import { ClassRepository } from './class.repository';
 import { UserModule } from '../user/user.module';
-import { AuthGuard } from 'src/shared/guards/AuthGuard';
 import { ClassUserModule } from '../classUser/class-user.module';
-import { RoleGuard } from 'src/shared/guards/RoleGuard';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailModule } from '../mail/mail.module';
-
-
-
+import { GradeStructureModule } from '../grade-structure/grade-structure.module';
+import { GradeReviewModule } from '../grade-review/grade-review.module';
+import { GradeModule } from '../grade/grade.module';
+import { AdminAccountModule } from '../admin-auth/admin-auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Class]),UserModule,JwtModule,MailModule,ConfigModule, forwardRef(()=>ClassUserModule )],
-  providers: [ClassService,ClassRepository,JwtService,ConfigService],
+  imports: [
+    TypeOrmModule.forFeature([Class]),
+    UserModule,
+    JwtModule,
+    MailModule,
+    ConfigModule,
+    GradeStructureModule,
+    forwardRef(() => ClassUserModule),
+    forwardRef(() => GradeStructureModule),
+    forwardRef(() => GradeReviewModule),
+    forwardRef(() => AdminAccountModule)
+  ],
+  providers: [ClassService, ClassRepository, JwtService, ConfigService],
   controllers: [ClassController],
-  exports: [ClassService]
+  exports: [ClassService],
 })
 export class ClassModule {}

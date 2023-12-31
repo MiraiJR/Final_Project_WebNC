@@ -3,6 +3,7 @@ import person from "@/shared/assets/header-pic.png";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth0 } from "@auth0/auth0-react";
 import Cookies from "universal-cookie";
+import { useGlobalState } from "@/shared/storages/GlobalStorage";
 
 const LogoutButton = () => {
   const { logout } = useAuth0();
@@ -25,6 +26,7 @@ const LogoutButton = () => {
 };
 
 const Header = () => {
+  const { isLogin } = useGlobalState();
   const navigate = useNavigate();
   const cookies = new Cookies(null, { path: "/" });
   const accessToken = cookies.get("accessToken");
@@ -79,7 +81,17 @@ const Header = () => {
             interactive way
           </h2>
           <div>
-            <button className="bg-orange-700 text-white py-4 px-10 rounded-lg text-base">
+            <button
+              className="bg-orange-700 text-white py-4 px-10 rounded-lg text-base"
+              onClick={() => {
+                if (isLogin) {
+                  navigate("/class");
+                  return;
+                }
+
+                navigate("/auth/sign-in");
+              }}
+            >
               Join for free
             </button>
           </div>
