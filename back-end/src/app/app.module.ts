@@ -12,8 +12,8 @@ import { GradeReviewModule } from 'src/modules/grade-review/grade-review.module'
 import { StudentModule } from 'src/modules/student/student.module';
 import { LockedUserModule } from 'src/modules/locked-user/locked-user.module';
 import { GradeReviewCommentModule } from 'src/modules/grade-review-comment/grade-review-comment.module';
-import { EventsGateway } from 'src/modules/events/events.gateway';
 import { AdminAccountModule } from 'src/modules/admin-auth/admin-auth.module';
+import { NotificationModule } from 'src/modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -28,8 +28,8 @@ import { AdminAccountModule } from 'src/modules/admin-auth/admin-auth.module';
     StudentModule,
     LockedUserModule,
     GradeReviewCommentModule,
-    EventsGateway,
     AdminAccountModule,
+    NotificationModule,
     ConfigModule.forRoot({ envFilePath: '.env', isGlobal: true, cache: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

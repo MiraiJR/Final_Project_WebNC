@@ -18,10 +18,12 @@ import UserService from "@/shared/services/UserService";
 import { CodeResponse } from "@/shared/utils/codeResponse";
 import ClassService from "@/shared/services/ClassService";
 import { ClassRespData } from "@/shared/types/Resp/ClassResp";
+import { NotificationService } from "@/shared/services/NotificationService";
 
 interface LoaderData {
   userData: UserRespData;
   classList: ClassRespData[];
+  notifications: NotificationResp[];
 }
 
 type RootContextType = {
@@ -31,7 +33,7 @@ type RootContextType = {
 
 const drawerWidth = DRAWERWIDTH;
 function Root() {
-  const { userData, classList } = useLoaderData() as LoaderData;
+  const { userData, classList,notifications } = useLoaderData() as LoaderData;
   const [mobileOpen, setMobileOpen] = React.useState(true);
   const [sidebarExpand, setSidebarExpand] = React.useState(false);
   const isSmallScreen = useCheckSmallScreen();
@@ -47,7 +49,7 @@ function Root() {
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
-      <Navbar onToggleMenuClick={handleDrawerToggle} userData={userData} />
+      <Navbar onToggleMenuClick={handleDrawerToggle} userData={userData} notifications={notifications}/>
 
       <Drawer
         variant="temporary"
@@ -103,7 +105,8 @@ export async function loader(): Promise<LoaderData | Response> {
   try {
     const userData = (await UserService.getMe()).data;
     const classList = (await ClassService.getClassList()).data;
-    return { userData, classList };
+    const notifications = (await NotificationService.getNotification()).data
+    return { userData, classList,notifications };
   } catch (e: any) {
     if (e.message == CodeResponse.UNAUTHORIZED) {
       return redirect("/");

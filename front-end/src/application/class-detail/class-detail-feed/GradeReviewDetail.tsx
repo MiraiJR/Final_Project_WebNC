@@ -45,7 +45,7 @@ const GradeReviewDetail = () => {
         prevComments ? [...prevComments, newComment] : [newComment]
       );
     });
-    console.log(comments);
+    
     return () => {
       SocketCommentService.disconnect();
     };

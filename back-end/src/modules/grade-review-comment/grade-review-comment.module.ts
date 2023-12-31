@@ -8,6 +8,7 @@ import { GradeReviewModule } from "../grade-review/grade-review.module";
 import { GradeReviewCommentGateWay } from "./grade-review-comment.gateway";
 import { UserModule } from "../user/user.module";
 import { ClassUserModule } from "../classUser/class-user.module";
+import { NotificationModule } from "../notification/notification.module";
 
 
 @Module({
@@ -15,7 +16,8 @@ import { ClassUserModule } from "../classUser/class-user.module";
     forwardRef(()=> GradeReviewModule),
     forwardRef(()=> UserModule),
     forwardRef(()=> GradeReviewModule),
-    forwardRef(()=>ClassUserModule)],
+    forwardRef(()=>ClassUserModule),
+    forwardRef(()=>NotificationModule)],
     providers: [GradeReviewCommentRepository,GradeReviewCommentService,GradeReviewCommentGateWay],
     controllers: [GradeReviewController],
     exports: [GradeReviewCommentService],

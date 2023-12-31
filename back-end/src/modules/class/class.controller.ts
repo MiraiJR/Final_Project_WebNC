@@ -31,6 +31,7 @@ import { GradeService } from '../grade/grade.service';
 import { UpdateGradeRespDTO } from './dto/class/UpdateGradeResp.dto';
 import { AdminClassResponseDto } from './dto/class/AdminClassResponse.dto';
 import { AdminAuthGuard } from 'src/shared/guards/AdminAuthGuard';
+import { Class } from './class.entity';
 
 @Controller('class')
 @UseGuards(AuthGuard)
@@ -134,9 +135,9 @@ export class ClassController {
     }
 
     @Post('/updateScore')
-    async handleUpdateScore( @Req() req): Promise<string>{
+    async handleUpdateScore( @Req() req, @UserId() id:number): Promise<string>{
         const data: UpdateGradeRespDTO = req.body;
-        await this.gradeReviewService.updateScoreAndChangeStateOfReview(data.studentId, data.structureId, data.newScore);
+        await this.gradeReviewService.updateScoreAndChangeStateOfReview(id,data.studentId, data.structureId, data.newScore);
         return "Updated score successfully"
     }
 

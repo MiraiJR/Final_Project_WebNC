@@ -7,6 +7,8 @@ import { User } from "../user/user.entity";
 import { GradeReviewService } from "../grade-review/grade-review.service";
 import { ClassUserService } from "../classUser/class-user.service";
 import { UserRole } from "src/shared/types/EnumUserRole";
+import { NotificationService } from "../notification/notification.service";
+import { NotificationType } from "src/shared/types/EnumNotificationType";
 
 
 @Injectable()
@@ -17,6 +19,7 @@ export class GradeReviewCommentService{
         private readonly userService: UserService,
         private readonly gradeReviewService: GradeReviewService,
         private readonly classUserService: ClassUserService,
+        private readonly notificationService: NotificationService,
     ){}
 
     async createComment(userId:number, reviewId: number,content:string):Promise<GradeReviewCommentResponse>{
@@ -58,6 +61,16 @@ export class GradeReviewCommentService{
         }
 
         this.commentsGateway.handleComment(response);
+
+
+        const classroom = await review.class;
+        const structure = await review.structure;
+        const receiver = await this.userService.findByStudentId(review.studentId);
+        if(role == UserRole.HS){
+            this.notificationService.creatteNotificationForAllTeacherOfClass(userId,NotificationType.StudentReplyReview,classroom,structure,review);
+        }else{
+            this.notificationService.createNotification(userId,receiver.id,NotificationType.TeacherReplyReview,classroom,structure,review);
+        }
 
         return response;
     }

@@ -208,12 +208,12 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
                   }else if(menuItem.label == "View Review"){
                     const data = await menuItem.handler(classId,gradeStructure.id);
                     console.log(data);
-                    if(data){
+                    if(data.id){
                       navigate(`/class/${classId}/feed/review/${data.id}`)
                     }
                   }
                   else if (!menuItem.file) {
-                    menuItem.handler(gradeStructure.id);
+                    menuItem.handler(classId,gradeStructure.id);
                   }
                 }}
                 className="relative h-full"

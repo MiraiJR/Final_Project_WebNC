@@ -13,9 +13,10 @@ import { Link } from "react-router-dom";
 interface NavbarProps{
   onToggleMenuClick : Function,
   userData : UserRespData,
+  notifications :NotificationResp[],
 }
 
-export default function Navbar({ onToggleMenuClick, userData }: NavbarProps) {
+export default function Navbar({ onToggleMenuClick, userData,notifications }: NavbarProps) {
   const handleToggleMenuClick = () => {
     onToggleMenuClick();
   };
@@ -48,7 +49,7 @@ export default function Navbar({ onToggleMenuClick, userData }: NavbarProps) {
           <AddClassMenu />
         </div>
         <div>
-          <NotificationList></NotificationList>
+          <NotificationList notifications={notifications}></NotificationList>
         </div>
         <div>
           <UserMenu fullname={userData.fullname} />

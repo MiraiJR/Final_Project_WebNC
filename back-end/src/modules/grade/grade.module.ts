@@ -8,6 +8,7 @@ import { UserModule } from '../user/user.module';
 import { ClassModule } from '../class/class.module';
 import { GradeStructureModule } from '../grade-structure/grade-structure.module';
 import { StudentModule } from '../student/student.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { StudentModule } from '../student/student.module';
     forwardRef(()=>GradeStructureModule),
     forwardRef(()=>ClassModule),
     forwardRef(()=>UserModule),
+    forwardRef(()=>NotificationModule),
   ],
   controllers: [GradeController],
   providers: [GradeRepository, GradeService],

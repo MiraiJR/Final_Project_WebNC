@@ -97,6 +97,6 @@ export const updateProfileAction : ActionFunction = async({request})=>{
         return redirect ('/class');
     }catch(e:any){
         toast.error(e.message);
-        return;
+        return null;
     }
 }
