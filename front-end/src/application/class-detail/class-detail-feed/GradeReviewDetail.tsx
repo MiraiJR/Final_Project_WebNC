@@ -28,16 +28,18 @@ import { useUser } from "@/application/root/Root";
 
 const GradeReviewDetail = () => {
   const info = useLoaderData() as GradeReviewResp;
-  console.log(info.isFinalized);
   const classDetail = useClassDetail();
   const user = useUser();
   const [userComment, setUserComment] = useState("");
   const [comments, setComments] = useState<GradeReviewComment[] | undefined>(
     info.comment
   );
+  console.log(info.comment);
 
   const [isOpen, setIsOpen] = useState(false);
   useEffect(() => {
+    setComments(info.comment);
+    SocketCommentService.disconnect();
     SocketCommentService.connect();
     SocketCommentService.joinRoom(info.id);
     SocketCommentService.listenForNewComment((newComment) => {

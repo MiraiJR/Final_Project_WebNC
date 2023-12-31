@@ -14,7 +14,6 @@ export default function NotificationList({notifications}:NotificationListProps) 
   const [notificationList,setNotificationList] = useState(notifications);
 
   useEffect(()=>{
-    console.log(1);
     SocketNotificationService.connect();
     SocketNotificationService.joinRoom();
     SocketNotificationService.listenForNewNotification((newNotification) => {

@@ -72,14 +72,14 @@ export class UserService {
           studentId: updateData.studentId,
         },
       });
-      console.log(isStudentIDExist);
-      if(isStudentIDExist != null){
+      if(isStudentIDExist != null && isStudentIDExist.studentId != user.studentId){
         throw new BadRequestException("StudentID is used by another student. Please choose another StudentID.")
       }
   
       user.fullname = updateData.fullname;
       user.studentId = updateData.studentId;
-      this.userRepository.save(user);
+      console.log(updateData);
+      await this.userRepository.save(user);
       
       const userResp: UserRespDTO = {
         email: user.email,

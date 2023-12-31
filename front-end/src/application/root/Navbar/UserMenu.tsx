@@ -13,12 +13,16 @@ import { useNavigate } from "react-router-dom";
 import JwtStorage from "@/shared/storages/JwtStorage";
 import AuthService from "@/shared/services/AuthService";
 import { toast } from "react-toastify";
+import { useAuth0 } from "@auth0/auth0-react";
+import { useGlobalState } from "@/shared/storages/GlobalStorage";
 
 interface UserMenuProps {
   fullname: string;
 }
 
 export default function UserMenu({ fullname }: UserMenuProps) {
+  const {setIsLogin} = useGlobalState();
+  const { logout } = useAuth0();
   const navigate = useNavigate();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -33,7 +37,9 @@ export default function UserMenu({ fullname }: UserMenuProps) {
     try {
       await AuthService.logout();
       JwtStorage.deleteToken();
-      navigate("/auth/sign-in");
+      //navigate("/auth/sign-in");
+      logout({ logoutParams: { returnTo: window.location.origin+'/sign-in' } });
+      setIsLogin(false);
     } catch (error: any) {
       toast.error(error.message);
     }
