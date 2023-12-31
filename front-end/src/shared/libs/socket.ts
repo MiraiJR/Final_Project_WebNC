@@ -8,3 +8,9 @@ export const socketComment = io(BE_SOCKET_URL,{
     transports : ['websocket'],
     query: {token: JwtStorage.getToken()?.accessToken}
 });
+
+export const socketNotification = io(BE_SOCKET_URL+'/notification',{
+    autoConnect: false,
+    transports : ['websocket'],
+    query: {token: JwtStorage.getToken()?.accessToken}
+})

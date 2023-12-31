@@ -14,6 +14,8 @@ import { UserRole } from "src/shared/types/EnumUserRole";
 import { GradeReviewComment } from "../grade-review-comment/grade-review-comment.entity";
 import { GradeReviewCommentResponse } from "../grade-review-comment/dto/res/GradeReviewCommentResp.dto";
 import { GradeReviewCommentService } from "../grade-review-comment/grade-review-comment.service";
+import { NotificationService } from "../notification/notification.service";
+import { NotificationType } from "src/shared/types/EnumNotificationType";
 @Injectable()
 export class GradeReviewService {
     constructor (
@@ -24,6 +26,7 @@ export class GradeReviewService {
         private readonly userServide: UserService,
         private readonly configService: ConfigService,
         private readonly classUserService: ClassUserService,
+        private readonly notificationService: NotificationService,
       
     ) {}
     
@@ -155,6 +158,7 @@ export class GradeReviewService {
     }
 
     async updateScoreAndChangeStateOfReview( 
+        userId: number,
         studentId: string,
         structureId: number,
         newScore: number,){
@@ -165,7 +169,12 @@ export class GradeReviewService {
             // Log the error or handle it appropriately
             console.error(`Error update score: ${error.message}`);
             throw new Error('Failed to update score'); 
-        }   
+        }
+
+        const review = await this.findGradeReviewOfStudentByStructureId(studentId,structureId);
+        const student = await this.userServide.findByStudentId(studentId)
+        await this.notificationService.createNotification(userId,(await student).id, NotificationType.FinalDecisionOnMarkReview,await review.class,await review.structure,review);
+        
     }
 
     async createGradeReview(classIdCode : string, userId: number, structureId:number,expectPercentScore: number,explain:string) : Promise<GradeReviewRespDTO>{
@@ -206,6 +215,9 @@ export class GradeReviewService {
             comment: [],
             isFinalized: grade.isFinalized,
         } 
+        const classroom = await savedGradeReview.class;
+        const structure = await savedGradeReview.structure
+        await this.notificationService.creatteNotificationForAllTeacherOfClass(userId,NotificationType.GradeReviewRequest,classroom,structure,savedGradeReview);
 
         return gradeReviewResponse;
     }

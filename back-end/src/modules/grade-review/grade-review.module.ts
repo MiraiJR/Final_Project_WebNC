@@ -11,6 +11,7 @@ import { GradeModule } from '../grade/grade.module';
 import { UserModule } from '../user/user.module';
 import { ClassUserModule } from '../classUser/class-user.module';
 import { GradeReviewCommentModule } from '../grade-review-comment/grade-review-comment.module';
+import { NotificationModule } from '../notification/notification.module';
 
 @Module({
     imports: [TypeOrmModule.forFeature([GradeReview, GradeReviewRepository]),
@@ -20,7 +21,8 @@ import { GradeReviewCommentModule } from '../grade-review-comment/grade-review-c
     forwardRef(()=>StudentModule),
     forwardRef(()=>GradeModule),
     forwardRef(()=>ClassUserModule),
-    forwardRef(()=>GradeReviewCommentModule)],
+    forwardRef(()=>GradeReviewCommentModule),
+    forwardRef(()=>NotificationModule)],
     providers: [GradeReviewService , GradeReviewRepository ],
     controllers: [GradeReviewController],
     exports: [GradeReviewService], 

@@ -10,6 +10,9 @@ import { GradeStructureRepository } from '../grade-structure/grade-structure.rep
 import { StudentRepository } from '../student/student.repository';
 import { StudentService } from '../student/student.service';
 import { UserService } from '../user/user.service';
+import { NotificationService } from '../notification/notification.service';
+import { NotificationType } from 'src/shared/types/EnumNotificationType';
+import { send } from 'process';
 
 @Injectable()
 export class GradeService {
@@ -20,6 +23,7 @@ export class GradeService {
     private readonly gradeStructureRepository: GradeStructureRepository,
     private readonly studentService: StudentService,
     private readonly userService: UserService,
+    private readonly notificationService: NotificationService,
   ) {}
 
   async insertListGradeStudent(classId: string, gradeStudents: GradeStudent[]) {
@@ -141,6 +145,7 @@ export class GradeService {
   }
 
   async updateStatusGradeForStudent(
+    userId: number,
     studentId: string,
     gradeStructureId: number,
     isFinalized: boolean,
@@ -166,9 +171,16 @@ export class GradeService {
       ...gradeStudentToUpdate,
       isFinalized,
     });
+
+    //Create Notification
+    const receiver = await this.userService.findByStudentId(studentId);
+    if(isFinalized == true){
+      this.notificationService.createNotification(userId,receiver.id,NotificationType.FinalizedGradeComposition,gradeStudentToUpdate.gradeStructure.class,gradeStudentToUpdate.gradeStructure,null);
+    }
   }
 
   async updateStatusGradeForAllStudents(
+    userId:number,
     gradeStructureId: number,
     isFinalized: boolean,
   ): Promise<void> {
@@ -186,9 +198,12 @@ export class GradeService {
       gradeStructureId,
       isFinalized,
     );
+
+    await this.notificationService.createNotificationWhenFinalizeByStructureId(userId,gradeStructureId);
   }
 
   async updateGradeForSpecificAssignment(
+    userId: number,
     gradeStructureId: number,
     gradeStudents: GradeStudentInAssignment[],
   ) {
@@ -219,7 +234,7 @@ export class GradeService {
       );
     const grades: number[] = [];
 
-    gradeStudent.forEach((gradeStudentEle) => {
+    gradeStudent.forEach(async (gradeStudentEle) => {
       if (gradeStudentEle.isFinalized) {
         grades.push(gradeStudentEle.score);
       } else {
@@ -251,5 +266,14 @@ export class GradeService {
       studentId,
       gradeStructureId,
     );
+  }
+
+  async findGradesByStructureId (structureId: number){
+    const grades = await this.gradeRepository.find({
+      where: { gradeStructureId: structureId },
+      relations: ['student'],
+    });
+
+    return grades;
   }
 }

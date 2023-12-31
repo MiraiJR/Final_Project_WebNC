@@ -60,6 +60,7 @@ export class GradeController {
   @UseInterceptors(FileInterceptor('file'))
   async handleUploadGradesForAssignmentCsv(
     @Body() dataReq: UpdateGradesForAssignmentReq,
+    @UserId() userId: number,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<string> {
     Checker.checkCsvFile(file, Constant.CSV_FILE_TYPE);
@@ -67,6 +68,7 @@ export class GradeController {
     const gradeStudents =
       await FileHandler.readFileCsvForGradeInSpecificAssignment(file);
     await this.gradeService.updateGradeForSpecificAssignment(
+      userId,
       gradeStructureId,
       gradeStudents,
     );
@@ -88,9 +90,10 @@ export class GradeController {
 
   @Roles([UserRole.GV, UserRole.AD])
   @Patch('/:classIdCode/update-status/students')
-  async handleUpdateStatusGrade(@Body() reqData: UpdateStatusGradeReq) {
+  async handleUpdateStatusGrade(@Body() reqData: UpdateStatusGradeReq, @UserId() id:number) {
     const { isFinalized, studentId, gradeStructureId } = reqData;
     await this.gradeService.updateStatusGradeForStudent(
+      id,
       studentId,
       gradeStructureId,
       isFinalized,
@@ -103,10 +106,12 @@ export class GradeController {
   @Patch('/:classIdCode/update-status/assignments')
   async handleUpdateStatusGradeForAllStudents(
     @Body() reqData: UpdateStatusGradeForAllReq,
+    @UserId() userId:number
   ) {
     const { isFinalized, gradeStructureId } = reqData;
 
     await this.gradeService.updateStatusGradeForAllStudents(
+      userId,
       gradeStructureId,
       isFinalized,
     );

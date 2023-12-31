@@ -92,7 +92,7 @@ export class ClassUserService {
     classId: string,
   ): Promise<StudentsAndTeachersTdo> {
     const classUsers = await this.classUserRepository.findUserByClassId(
-      classId,
+      classId ,
     );
     const students = classUsers
       .filter((classUser) => classUser.role === UserRole.HS)
@@ -106,6 +106,8 @@ export class ClassUserService {
 
     return { students, teachers };
   }
+
+
 
   private mapUserToMemberDataRespDto(user: User): MemberDataRespDTO {
     const { email, fullname, id, studentId } = user;

@@ -15,7 +15,7 @@ export class ClassUserRepository extends Repository<ClassUser> {
 
   async findUserByClassId(classId: string) : Promise<ClassUser[]>{
     return await this.find({
-      where: { classId },
+      where: { classId: classId },
       relations: ['user'],
     });
   }
