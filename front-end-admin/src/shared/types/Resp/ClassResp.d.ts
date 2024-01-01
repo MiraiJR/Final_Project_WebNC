@@ -7,7 +7,7 @@ type ClassRespData = {
     fullname: string;
     email: string;
   };
-  create_at: string;
+  created_at: Date;
   idCode: string;
   role: UserRole;
   description: string;

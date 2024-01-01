@@ -7,7 +7,7 @@ export class AdminClassResponseDto{
         fullname : string,
         email: string,
     };
-    create_at: string;
+    created_at: Date;
     idCode: string;
     description: string;
     isActive: boolean;

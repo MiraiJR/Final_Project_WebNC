@@ -2,7 +2,7 @@ import { queryClient } from "@/shared/libs/react-query";
 
 import UserService from "@/shared/services/UserService";
 import { Button, Input } from "@mui/material";
-import { Download } from "lucide-react";
+import { Check } from "lucide-react";
 import { useState } from "react";
 
 import { toast } from "react-toastify";
@@ -64,7 +64,7 @@ const StudentId = ({ student }: Props) => {
             id={`button ${student.id}`}
             onClick={() => handleSave(student.id)}
           >
-            <Download color="blue" />
+            <Check color="green" />
           </Button>
         </div>
       )}
