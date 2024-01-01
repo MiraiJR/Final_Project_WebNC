@@ -72,7 +72,7 @@ export class ClassUserService {
   }
 
   private mapClassToClassResponseDto(classUser: ClassUser): ClassResponseDto {
-    const { title, creator, idCode, description } = classUser.classroom;
+    const { title, creator, idCode, description, isActive } = classUser.classroom;
 
     const ClassResponse: ClassResponseDto = {
       title,
@@ -84,6 +84,7 @@ export class ClassUserService {
       idCode,
       description,
       role: classUser.role,
+      isActive,
     };
     return ClassResponse;
   }

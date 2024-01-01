@@ -11,4 +11,5 @@ export class ClassResponseDto{
     idCode: string;
     role: UserRole;
     description: string;
+    isActive: boolean;
 }

@@ -146,9 +146,6 @@ export class ClassService {
 
     async getAllClass(): Promise<AdminClassResponseDto[]> {
         const classList = await this.classRepository.getAll();
-        classList.sort((a,b) => {
-            return +a.created_at - +b.created_at;
-        })
         const rs: AdminClassResponseDto[] = classList.map((classItem) => {
             const rs: AdminClassResponseDto = {
                 title: classItem.title,
@@ -157,7 +154,7 @@ export class ClassService {
                     fullname : classItem.creator.fullname,
                     email: classItem.creator.email,
                 },
-                create_at: classItem.created_at.toString(),
+                created_at: classItem.created_at,
                 idCode: classItem.idCode,
                 description: classItem.description,
                 isActive: classItem.isActive,
