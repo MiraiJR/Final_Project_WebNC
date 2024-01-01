@@ -22,16 +22,15 @@ interface UserMenuProps {
 }
 
 export default function UserMenu({ fullname }: UserMenuProps) {
-  const {setIsLogin} = useGlobalState();
+  const { setIsLogin } = useGlobalState();
   const { logout } = useAuth0();
   const navigate = useNavigate();
-  const { setIsLogin } = useGlobalState();
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  const { logout } = useAuth0();
   const handleClose = () => {
     setAnchorEl(null);
   };
