@@ -2,29 +2,18 @@ import React, { useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
+import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import TableSortLabel from "@mui/material/TableSortLabel";
-import { styled } from "@mui/material";
 import { useQuery, useQueryClient } from "react-query";
 import { getClasses } from "@/shared/services/QueryService";
-import { Search, ShieldCheck, ShieldX } from "lucide-react";
+import { ShieldCheck, ShieldX } from "lucide-react";
 import { toast } from "react-toastify";
 import { ClassRespData } from "@/shared/types/Resp/ClassResp";
 import ClassService from "@/shared/services/ClassService";
-
-const StyledTableCell = styled(TableCell)(({ theme }) => ({
-  // [`&.${tableCellClasses.head}`]: {
-  //   backgroundColor: theme.palette.common.black,
-  //   color: theme.palette.common.white,
-  // },
-  [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
-  },
-}));
 
 interface Column {
   id:
@@ -95,7 +84,7 @@ const columns: readonly Column[] = [
   },
   {
     id: "action",
-    label: "action",
+    label: "Action",
     minWidth: 170,
     align: "center",
     sortable: false,
@@ -138,7 +127,17 @@ export default function ListClassesTable({ searchText }: Props) {
   let UIrows: ClassRespData[] | undefined;
   if (searchText !== "") {
     UIrows = rows?.filter((row) => {
-      return row.title.toLowerCase().includes(searchText.toLowerCase());
+      return (
+        row.title.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.idCode.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.description.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.creator.fullname.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.creator.email.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.created_at
+          .toDateString()
+          .toLowerCase()
+          .includes(searchText.toLowerCase())
+      );
     });
   } else {
     UIrows = rows;
@@ -211,13 +210,31 @@ export default function ListClassesTable({ searchText }: Props) {
               <TableHead>
                 <TableRow>
                   {columns.map((column) => (
-                    <StyledTableCell
+                    <TableCell
                       key={column.id}
                       align={column.align}
-                      style={{ minWidth: column.minWidth }}
+                      style={{
+                        minWidth: column.minWidth,
+                        backgroundColor: "black",
+                        color: "white",
+                      }}
                     >
                       {column.sortable ? (
                         <TableSortLabel
+                          sx={{
+                            "&.MuiTableSortLabel-root": {
+                              color: "white",
+                            },
+                            "&.MuiTableSortLabel-root:hover": {
+                              color: "white",
+                            },
+                            "&.Mui-active": {
+                              color: "white",
+                            },
+                            "& .MuiTableSortLabel-icon": {
+                              color: "white !important",
+                            },
+                          }}
                           active={orderBy.includes(column.id)}
                           direction={
                             orderBy.includes(column.id) ? order : "asc"
@@ -227,12 +244,11 @@ export default function ListClassesTable({ searchText }: Props) {
                           }
                         >
                           {column.label}
-                          <Search />
                         </TableSortLabel>
                       ) : (
                         column.label
                       )}
-                    </StyledTableCell>
+                    </TableCell>
                   ))}
                 </TableRow>
               </TableHead>
