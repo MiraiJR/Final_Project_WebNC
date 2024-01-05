@@ -24,7 +24,7 @@ jobs:
         cache: 'npm'
         cache-dependency-path: front-end/package.json
     - name: Run check eslint for front-end client
-    - run: |
+      run: |
           cd front-end
           npm install
           npm run lint
