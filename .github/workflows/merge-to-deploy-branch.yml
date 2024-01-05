@@ -12,15 +12,12 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Debug information
-      run: |
-        echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
-        git branch -a
-
     - name: Merge to deploy branch
       run: git merge --no-ff main -m "Auto-merge to deploy branch"
 
     - name: Push to deploy branch
       run: |
-        git push origin main
-        git push origin deploy-backend
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git push --set-upstream origin main
+        git push --set-upstream origin deploy-backend
