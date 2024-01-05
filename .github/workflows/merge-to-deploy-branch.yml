@@ -17,8 +17,8 @@ jobs:
       run: |
         git config --global user.email "actions@github.com"
         git config --global user.name "GitHub Actions"
-        git checkout deploy-backend
+        git checkout deloy-backend
         git merge --no-ff main -m "Auto-merge to deploy-backend branch"
-        git push origin deploy-backend
+        git push origin deloy-backend
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
