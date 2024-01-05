@@ -9,12 +9,12 @@ jobs:
   sync-branch:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Merge main -> deploy-branch
         uses: devmasx/merge-branch@v1.4.0
         with:
           type: now
           from_branch: main
-          target_branch: deloy-branch
+          target_branch: deloy-backend
           github_token: ${{ secrets.GITHUB_TOKEN }}
