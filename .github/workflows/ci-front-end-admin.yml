@@ -22,7 +22,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-        cache-dependency-path: front-end/package.json
+        cache-dependency-path: front-end-admin/package.json
     - name: Run check eslint for front-end admin
     - run: |
           cd front-end-admin
