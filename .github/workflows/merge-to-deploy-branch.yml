@@ -11,14 +11,12 @@ jobs:
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Merge main to deploy
       run: |
         git config --global user.email "actions@github.com"
         git config --global user.name "GitHub Actions"
         git checkout deloy-backend
-        git merge --no-ff main -m "Auto-merge to deploy-backend branch"
+        git merge --no-ff main -m "Auto-merge to deloy-backend branch"
         git push origin deloy-backend
-      env:
-        GH_TOKEN: ${{ secrets.GH_TOKEN }}
