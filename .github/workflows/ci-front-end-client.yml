@@ -23,11 +23,8 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: front-end/package.json
-    - name: Set up front-end environment
-      run: cd front-end
-    - name: Install dependencies
-      run: npm install
-    - name: Run linting
-      run: npm run lint
-    - name: Clean
-      run: npm run clean
+    - run: |
+          cd frontend
+          npm install
+          npm run lint
+          npm run clean
