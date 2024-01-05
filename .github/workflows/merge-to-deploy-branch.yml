@@ -1,22 +1,20 @@
-name: Merge main to deploy
+name: Mere main to deploy branch
 
 on:
   push:
     branches:
-      - main
+      - 'main'
 
 jobs:
-  merge-to-deploy:
+  sync-branch:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v2
 
-    - name: Merge main to deploy
-      run: |
-        git config --global user.email "actions@github.com"
-        git config --global user.name "GitHub Actions"
-        git checkout deloy-backend
-        git merge --no-ff main -m "Auto-merge to deloy-backend branch"
-        git push origin deloy-backend
+      - name: Merge main -> deploy-branch
+        uses: devmasx/merge-branch@master
+        with:
+          type: now
+          from_branch: main
+          target_branch: deloy-branch
+          github_token: ${{ secrets.GITHUB_TOKEN }}
