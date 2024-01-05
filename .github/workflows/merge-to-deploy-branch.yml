@@ -9,13 +9,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Use Node.js ${{ matrix.node-version }}
-      with:
-        ref: main
-        
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Debug information
+      run: |
+        echo "Current branch: $(git rev-parse --abbrev-ref HEAD)"
+        git branch -a
+
     - name: Merge to deploy branch
       run: git merge --no-ff main -m "Auto-merge to deploy branch"
+
     - name: Push to deploy branch
       run: |
         git push origin main
