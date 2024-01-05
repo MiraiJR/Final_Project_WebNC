@@ -17,4 +17,4 @@ jobs:
           type: now
           from_branch: main
           target_branch: deloy-backend
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GH_TOKEN }}
