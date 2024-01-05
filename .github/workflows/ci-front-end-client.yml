@@ -23,6 +23,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
         cache-dependency-path: front-end/package.json
+    - name: Run check eslint for front-end client
     - run: |
           cd front-end
           npm install
