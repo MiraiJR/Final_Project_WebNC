@@ -24,7 +24,7 @@ jobs:
         cache: 'npm'
         cache-dependency-path: back-end/package.json
     - name: Run check eslint for back-end
-    - run: |
+      run: |
           cd back-end
           npm install
           npm run lint
