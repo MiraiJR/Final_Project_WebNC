@@ -1,32 +1,24 @@
-name: Merge main branch to deploy branch
+name: Merge main to deploy
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
-  merge-2-deploy:
+  merge-to-deploy:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
-    - name: Set up Git
-      run: git config --global user.email "actions@github.com"
-
-    - name: Merge to deploy branch
-      run: git merge --no-ff main -m "Auto-merge to deploy branch"
-
-    - name: Debug Information
+    - name: Merge main to deploy
       run: |
-        git remote -v
-        git branch -a
-        git log -n 3
-
-    - name: Push to deploy branch
-      run: |
-        git push origin main
+        git config --global user.email "actions@github.com"
+        git config --global user.name "GitHub Actions"
+        git checkout deploy-backend
+        git merge --no-ff main -m "Auto-merge to deploy-backend branch"
         git push origin deploy-backend
       env:
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
