@@ -53,7 +53,7 @@ export default function CreateClassFormDialog({open,onClose}:CreateClassFormDial
                     autoFocus
                     margin="dense"
                     id="title"
-                    label="Grade Expected"
+                    label="Create new class"
                     type="text"
                     fullWidth
                     variant="standard"

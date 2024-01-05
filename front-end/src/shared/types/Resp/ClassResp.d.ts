@@ -10,6 +10,7 @@ type ClassRespData = {
   idCode: string;
   role: UserRole;
   description: string;
+  isActive: boolean;
 };
 
 type ClassDetailResp = {

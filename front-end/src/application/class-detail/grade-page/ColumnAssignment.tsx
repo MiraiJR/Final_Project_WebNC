@@ -1,6 +1,9 @@
 import { queryClient } from "@/shared/libs/react-query";
 import { GradeService } from "@/shared/services/GradeService";
-import { GradeAssignmentResp, GradeReviewResp } from "@/shared/types/Resp/ClassResp";
+import {
+  GradeAssignmentResp,
+  GradeReviewResp,
+} from "@/shared/types/Resp/ClassResp";
 import { Button, Menu, MenuItem } from "@mui/material";
 import {
   ArrowDownFromLine,
@@ -42,10 +45,12 @@ const menuItems: CustomMenuItem[] = [
           toast.success(data);
           queryClient.invalidateQueries(`getGradeStudentsOfClass`);
         })
-        .catch((error: ResponseError) => toast.error(error.message));
+        .catch((error: ResponseError) => {
+          console.log(error);
+        });
     },
     file: false,
-    role: [UserRole.AD,UserRole.GV],
+    role: [UserRole.AD, UserRole.GV],
   },
   {
     label: "Draft",
@@ -63,14 +68,14 @@ const menuItems: CustomMenuItem[] = [
         .catch((error: ResponseError) => toast.error(error.message));
     },
     file: false,
-    role: [UserRole.AD,UserRole.GV],
+    role: [UserRole.AD, UserRole.GV],
   },
   {
     label: "Upload grade",
     icon: FolderUp,
     handler: () => {},
     file: true,
-    role: [UserRole.AD,UserRole.GV],
+    role: [UserRole.AD, UserRole.GV],
   },
   {
     label: "Template",
@@ -87,20 +92,25 @@ const menuItems: CustomMenuItem[] = [
       document.body.removeChild(link);
     },
     file: false,
-    role: [UserRole.AD,UserRole.GV],
+    role: [UserRole.AD, UserRole.GV],
   },
   {
     label: "Create Review",
     icon: FolderUp,
-    handler: ()=>{},
+    handler: () => {},
     file: false,
     role: [UserRole.HS],
   },
   {
     label: "View Review",
     icon: FolderUp,
-    handler: (classId: string, gradeStructureId: number) :Promise<GradeReviewResp> => {
-      return GradeReviewService.getGradeReviewByStructureId(classId,gradeStructureId
+    handler: (
+      classId: string,
+      gradeStructureId: number
+    ): Promise<GradeReviewResp> => {
+      return GradeReviewService.getGradeReviewByStructureId(
+        classId,
+        gradeStructureId
       )
         .then((response) => {
           const { data } = response;
@@ -111,7 +121,6 @@ const menuItems: CustomMenuItem[] = [
     file: false,
     role: [UserRole.HS],
   },
-
 ];
 
 const ColumnAssignment = ({ gradeStructure }: itemProps) => {
@@ -122,7 +131,7 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const open = Boolean(anchorEl);
-  const [createReviewOpen,setCreateReviewOpen] = useState<boolean>(false);
+  const [createReviewOpen, setCreateReviewOpen] = useState<boolean>(false);
   const handleShowMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -178,9 +187,9 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
     setSelectedFile(null);
   };
 
-  const handleCreateReviewFormClose = ()=>{
+  const handleCreateReviewFormClose = () => {
     setCreateReviewOpen(false);
-  }
+  };
 
   return (
     <th className="text-left p-4 border-l-2" key={gradeStructure.id}>
@@ -199,61 +208,69 @@ const ColumnAssignment = ({ gradeStructure }: itemProps) => {
             open={open}
             onClose={handleClose}
           >
-            {menuItems.filter(menuItem => menuItem.role.includes(classDetail.role)).map((menuItem, _index) => (
-              <MenuItem
-                key={_index}
-                onClick={async () => {
-                  if(menuItem.label == "Create Review"){
-                    setCreateReviewOpen(true); 
-                  }else if(menuItem.label == "View Review"){
-                    const data = await menuItem.handler(classId,gradeStructure.id);
-                    console.log(data);
-                    if(data.id){
-                      navigate(`/class/${classId}/feed/review/${data.id}`)
+            {menuItems
+              .filter((menuItem) => menuItem.role.includes(classDetail.role))
+              .map((menuItem, _index) => (
+                <MenuItem
+                  key={_index}
+                  onClick={async () => {
+                    if (menuItem.label == "Create Review") {
+                      setCreateReviewOpen(true);
+                    } else if (menuItem.label == "View Review") {
+                      const data = await menuItem.handler(
+                        classId,
+                        gradeStructure.id
+                      );
+                      console.log(data);
+                      if (data.id) {
+                        navigate(`/class/${classId}/feed/review/${data.id}`);
+                      }
+                    } else if (!menuItem.file) {
+                      menuItem.handler(classId, gradeStructure.id);
                     }
-                  }
-                  else if (!menuItem.file) {
-                    menuItem.handler(classId,gradeStructure.id);
-                  }
-                }}
-                className="relative h-full"
-              >
-                <Button component="label" startIcon={<menuItem.icon />}>
-                  {menuItem.label}
-                  {menuItem.file && (
-                    <VisuallyHiddenInput
-                      ref={fileRef}
-                      type="file"
-                      accept=".csv"
-                      onChange={handleUploadFile}
-                    />
-                  )}
-                </Button>
-                {selectedFile && menuItem.file && (
-                  <div className="text-white absolute bottom-0 bg-black translate-y-full w-full text-center p-2 normal-case break-words">
-                    <div>{selectedFile.name}</div>
-                    <div className="flex flex-row items-center gap-4 justify-center mt-2">
-                      <button
-                        className="bg-red-700 p-1 h-full"
-                        onClick={handleCancelUpload}
-                      >
-                        <X />
-                      </button>
-                      <button
-                        className="bg-green-700 p-1 h-full"
-                        onClick={handleUploadFileToBe}
-                      >
-                        <UploadCloud />
-                      </button>
+                  }}
+                  className="relative h-full"
+                >
+                  <Button component="label" startIcon={<menuItem.icon />}>
+                    {menuItem.label}
+                    {menuItem.file && (
+                      <VisuallyHiddenInput
+                        ref={fileRef}
+                        type="file"
+                        accept=".csv"
+                        onChange={handleUploadFile}
+                      />
+                    )}
+                  </Button>
+                  {selectedFile && menuItem.file && (
+                    <div className="text-white absolute bottom-0 bg-black translate-y-full w-full text-center p-2 normal-case break-words">
+                      <div>{selectedFile.name}</div>
+                      <div className="flex flex-row items-center gap-4 justify-center mt-2">
+                        <button
+                          className="bg-red-700 p-1 h-full"
+                          onClick={handleCancelUpload}
+                        >
+                          <X />
+                        </button>
+                        <button
+                          className="bg-green-700 p-1 h-full"
+                          onClick={handleUploadFileToBe}
+                        >
+                          <UploadCloud />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </MenuItem>
-            ))}
+                  )}
+                </MenuItem>
+              ))}
           </Menu>
         </div>
       </div>
-      <CreateReviewFormDialog onClose = {handleCreateReviewFormClose} open={createReviewOpen} gradeAssignment={gradeStructure}></CreateReviewFormDialog>
+      <CreateReviewFormDialog
+        onClose={handleCreateReviewFormClose}
+        open={createReviewOpen}
+        gradeAssignment={gradeStructure}
+      ></CreateReviewFormDialog>
     </th>
   );
 };

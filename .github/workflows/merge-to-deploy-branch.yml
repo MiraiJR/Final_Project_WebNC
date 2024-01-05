@@ -1,0 +1,20 @@
+name: Mere main to deploy branch
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  sync-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Merge main -> deploy-branch
+        uses: devmasx/merge-branch@v1.4.0
+        with:
+          type: now
+          from_branch: main
+          target_branch: deloy-backend
+          github_token: ${{ secrets.GH_TOKEN }}
