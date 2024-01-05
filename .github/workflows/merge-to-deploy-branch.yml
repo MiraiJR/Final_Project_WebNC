@@ -1,0 +1,22 @@
+name: Merge main branch to deploy branch
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  merge-2-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node.js ${{ matrix.node-version }}
+      with:
+        ref: main
+        
+    - name: Merge to deploy branch
+      run: git merge --no-ff main -m "Auto-merge to deploy branch"
+    - name: Push to deploy branch
+      run: |
+        git push origin main
+        git push origin deloy-backend
