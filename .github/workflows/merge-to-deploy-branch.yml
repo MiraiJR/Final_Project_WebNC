@@ -18,6 +18,12 @@ jobs:
     - name: Merge to deploy branch
       run: git merge --no-ff main -m "Auto-merge to deploy branch"
 
+    - name: Debug Information
+      run: |
+        git remote -v
+        git branch -a
+        git log -n 3
+
     - name: Push to deploy branch
       run: |
         git push origin main
