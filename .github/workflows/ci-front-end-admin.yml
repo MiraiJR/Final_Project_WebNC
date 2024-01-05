@@ -24,7 +24,7 @@ jobs:
         cache: 'npm'
         cache-dependency-path: front-end-admin/package.json
     - name: Run check eslint for front-end admin
-    - run: |
+      run: |
           cd front-end-admin
           npm install
           npm run lint
