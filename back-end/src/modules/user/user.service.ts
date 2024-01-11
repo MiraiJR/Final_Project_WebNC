@@ -78,7 +78,6 @@ export class UserService {
         studentId: updateData.studentId,
       },
     });
-    console.log(isStudentIDExist);
     if (isStudentIDExist != null) {
       throw new BadRequestException(
         'StudentID is used by another student. Please choose another StudentID.',

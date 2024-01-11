@@ -17,7 +17,6 @@ export class ReviewSocketGuard implements CanActivate{
 
     async canActivate(context: ExecutionContext): Promise<boolean>  {
         const request = context.switchToWs().getClient();
-        console.log(request);
         const reviewId = request.body;
         const review = await this.gradeReviewService.findGrandReviewById(reviewId);
         if(!review){

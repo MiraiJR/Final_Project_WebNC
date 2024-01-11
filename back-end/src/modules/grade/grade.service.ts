@@ -177,10 +177,12 @@ export class GradeService {
 
     //Create Notification
     const receiver = await this.userService.findByStudentId(studentId);
-    const classroom = await gradeStudentToUpdate.gradeStructure.class;
-    const role = await this.classUserService.findRole(classroom.idCode,receiver.id);
-    if(isFinalized == true && receiver != null && role==UserRole.HS){
-      await this.notificationService.createNotification(userId,receiver.id,NotificationType.FinalizedGradeComposition,classroom,gradeStudentToUpdate.gradeStructure,null);
+    if(receiver){
+      const classroom = await gradeStudentToUpdate.gradeStructure.class;
+      const role = await this.classUserService.findRole(classroom.idCode,receiver.id);
+      if(isFinalized == true && receiver != null && role==UserRole.HS){
+        await this.notificationService.createNotification(userId,receiver.id,NotificationType.FinalizedGradeComposition,classroom,gradeStudentToUpdate.gradeStructure,null);
+      }
     }
   }
 
