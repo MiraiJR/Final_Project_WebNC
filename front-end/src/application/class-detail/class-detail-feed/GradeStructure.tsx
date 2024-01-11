@@ -119,7 +119,7 @@ const GradeStructure = () => {
                     <p className="font-bold">Assignment</p>
                   </TableCell>
                   <TableCell align="right">
-                    <p className="font-bold">Grade</p>
+                    <p className="font-bold">Percent</p>
                   </TableCell>
                 </TableRow>
               </TableHead>
