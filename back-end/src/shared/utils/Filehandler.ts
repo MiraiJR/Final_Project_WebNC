@@ -116,7 +116,6 @@ export const FileHandler = {
         )
         .on('data', (data) => {
           if (data['Email'] === '' || data['Email'] === undefined) {
-            console.log(data['Email']);
             return;
           }
           let studentIdUser: StudentIdUser = {
