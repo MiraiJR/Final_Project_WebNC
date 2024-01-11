@@ -15,6 +15,7 @@ import { GradeReview } from '../grade-review/grade-review.entity';
 import { ClassUserService } from '../classUser/class-user.service';
 import { NotificationGateWay } from './notification.gateway';
 import { UserRole } from 'src/shared/types/EnumUserRole';
+import { Console } from 'console';
 
 @Injectable()
 export class NotificationService {
@@ -38,8 +39,11 @@ export class NotificationService {
     notification.notificationType = notificationType;
     notification.class = classRoom;
     notification.grade = grade;
-    notification.review = review;
-    
+    if(review != null){
+      notification.review = review;
+    }
+
+
     const savedNotification = await this.notificationRepository.save(notification);
 
     const notificationDto: NotificationRespDto = {
@@ -67,7 +71,6 @@ export class NotificationService {
         const classroom = await grade.gradeStructure.class;
         const role = await this.classUserService.findRole(classroom.idCode,user.id);
         if(user && role==UserRole.HS){
-
           await this.createNotification(senderId,user.id,NotificationType.FinalizedGradeComposition,classroom,grade.gradeStructure);
         }  
     })

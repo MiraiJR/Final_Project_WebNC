@@ -13,6 +13,8 @@ import { UserService } from '../user/user.service';
 import { NotificationService } from '../notification/notification.service';
 import { NotificationType } from 'src/shared/types/EnumNotificationType';
 import { send } from 'process';
+import { ClassUserService } from '../classUser/class-user.service';
+import { UserRole } from 'src/shared/types/EnumUserRole';
 
 @Injectable()
 export class GradeService {
@@ -24,6 +26,7 @@ export class GradeService {
     private readonly studentService: StudentService,
     private readonly userService: UserService,
     private readonly notificationService: NotificationService,
+    private readonly classUserService: ClassUserService,
   ) {}
 
   async insertListGradeStudent(classId: string, gradeStudents: GradeStudent[]) {
@@ -174,8 +177,10 @@ export class GradeService {
 
     //Create Notification
     const receiver = await this.userService.findByStudentId(studentId);
-    if(isFinalized == true && receiver != null){
-      this.notificationService.createNotification(userId,receiver.id,NotificationType.FinalizedGradeComposition,gradeStudentToUpdate.gradeStructure.class,gradeStudentToUpdate.gradeStructure,null);
+    const classroom = await gradeStudentToUpdate.gradeStructure.class;
+    const role = await this.classUserService.findRole(classroom.idCode,receiver.id);
+    if(isFinalized == true && receiver != null && role==UserRole.HS){
+      await this.notificationService.createNotification(userId,receiver.id,NotificationType.FinalizedGradeComposition,classroom,gradeStudentToUpdate.gradeStructure,null);
     }
   }
 
