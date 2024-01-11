@@ -122,9 +122,7 @@ export class UserService {
     });
 
     if (!matchedStudent) {
-      throw new NotFoundException(
-        `Student with id ${studentId} not found in class!`,
-      );
+      return null;
     }
 
     const matchedStudentResp: UserRespDTO = {
