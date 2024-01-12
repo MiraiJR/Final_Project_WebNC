@@ -108,7 +108,7 @@ export class ClassService {
         const classFound:Class = await this.findByIdCode(idCode);
         
         
-        emails.forEach(async(email) => {
+        for(const email of emails) {
             const payload : InviteToken = {
                 email,
                 classID: idCode,
@@ -116,7 +116,7 @@ export class ClassService {
             }
             const token = await this.classUserService.signInviteToke(payload);
             await this.mailService.sendMailInvite(email,classFound,role,token);
-        });
+        };
         
         
     }
